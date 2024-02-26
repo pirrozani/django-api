@@ -167,8 +167,8 @@ LOGGING = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'UsersAPI',
-    'DESCRIPTION': 'An API designed to allow users to create and manage.',
+    'TITLE': 'DjangoAPI',
+    'DESCRIPTION': 'User and Blog API for Django project',
     'VERSION': '1.0.0',
     'SECURITY': [
         {
