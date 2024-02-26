@@ -169,7 +169,7 @@ LOGGING = {
 SPECTACULAR_SETTINGS = {
     'TITLE': 'DjangoAPI',
     'DESCRIPTION': 'User and Blog API for Django project',
-    'VERSION': '1.0.0',
+    'VERSION': '1.0.1',
     'SECURITY': [
         {
             'TokenAuth': {
