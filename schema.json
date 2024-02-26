@@ -1,0 +1,577 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "UsersAPI",
+        "version": "1.0.0",
+        "description": "An API designed to allow users to create and manage."
+    },
+    "paths": {
+        "/api/schema/": {
+            "get": {
+                "operationId": "api_schema_retrieve",
+                "description": "OpenApi3 schema for this API. Format can be selected via content negotiation.\n\n- YAML: application/vnd.oai.openapi\n- JSON: application/vnd.oai.openapi+json",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "format",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "json",
+                                "yaml"
+                            ]
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "lang",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "af",
+                                "ar",
+                                "ar-dz",
+                                "ast",
+                                "az",
+                                "be",
+                                "bg",
+                                "bn",
+                                "br",
+                                "bs",
+                                "ca",
+                                "ckb",
+                                "cs",
+                                "cy",
+                                "da",
+                                "de",
+                                "dsb",
+                                "el",
+                                "en",
+                                "en-au",
+                                "en-gb",
+                                "eo",
+                                "es",
+                                "es-ar",
+                                "es-co",
+                                "es-mx",
+                                "es-ni",
+                                "es-ve",
+                                "et",
+                                "eu",
+                                "fa",
+                                "fi",
+                                "fr",
+                                "fy",
+                                "ga",
+                                "gd",
+                                "gl",
+                                "he",
+                                "hi",
+                                "hr",
+                                "hsb",
+                                "hu",
+                                "hy",
+                                "ia",
+                                "id",
+                                "ig",
+                                "io",
+                                "is",
+                                "it",
+                                "ja",
+                                "ka",
+                                "kab",
+                                "kk",
+                                "km",
+                                "kn",
+                                "ko",
+                                "ky",
+                                "lb",
+                                "lt",
+                                "lv",
+                                "mk",
+                                "ml",
+                                "mn",
+                                "mr",
+                                "ms",
+                                "my",
+                                "nb",
+                                "ne",
+                                "nl",
+                                "nn",
+                                "os",
+                                "pa",
+                                "pl",
+                                "pt",
+                                "pt-br",
+                                "ro",
+                                "ru",
+                                "sk",
+                                "sl",
+                                "sq",
+                                "sr",
+                                "sr-latn",
+                                "sv",
+                                "sw",
+                                "ta",
+                                "te",
+                                "tg",
+                                "th",
+                                "tk",
+                                "tr",
+                                "tt",
+                                "udm",
+                                "ug",
+                                "uk",
+                                "ur",
+                                "uz",
+                                "vi",
+                                "zh-hans",
+                                "zh-hant"
+                            ]
+                        }
+                    }
+                ],
+                "tags": [
+                    "api"
+                ],
+                "security": [
+                    {
+                        "tokenAuth": []
+                    },
+                    {
+                        "TokenAuth": {
+                            "type": "apiKey",
+                            "in": "header",
+                            "name": "Authorization",
+                            "description": "Enter your token in the format \"Token <token>\""
+                        }
+                    },
+                    {}
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/vnd.oai.openapi": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {}
+                                }
+                            },
+                            "application/yaml": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {}
+                                }
+                            },
+                            "application/vnd.oai.openapi+json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {}
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {}
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/users/": {
+            "get": {
+                "operationId": "Get_Users",
+                "tags": [
+                    "api"
+                ],
+                "security": [
+                    {
+                        "tokenAuth": []
+                    },
+                    {
+                        "TokenAuth": {
+                            "type": "apiKey",
+                            "in": "header",
+                            "name": "Authorization",
+                            "description": "Enter your token in the format \"Token <token>\""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/User"
+                                    }
+                                },
+                                "examples": {
+                                    "ExampleResponse": {
+                                        "value": [
+                                            {
+                                                "id": 1,
+                                                "first_name": "Robert",
+                                                "last_name": "Oliver",
+                                                "username": "lyang",
+                                                "mobile": "(482)598-4678",
+                                                "password": "139ae976ad128361d769a4605c9fea67",
+                                                "email": "breanna03@example.com",
+                                                "register_at": "2021-06-11"
+                                            }
+                                        ],
+                                        "summary": "Detailed example"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "operationId": "Create_User",
+                "tags": [
+                    "api"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "tokenAuth": []
+                    },
+                    {
+                        "TokenAuth": {
+                            "type": "apiKey",
+                            "in": "header",
+                            "name": "Authorization",
+                            "description": "Enter your token in the format \"Token <token>\""
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                },
+                                "examples": {
+                                    "ExampleResponse": {
+                                        "value": {
+                                            "id": 1,
+                                            "first_name": "Robert",
+                                            "last_name": "Oliver",
+                                            "username": "lyang",
+                                            "mobile": "(482)598-4678",
+                                            "password": "139ae976ad128361d769a4605c9fea67",
+                                            "email": "breanna03@example.com",
+                                            "register_at": "2021-06-11"
+                                        },
+                                        "summary": "Detailed example"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/users/{user_id}": {
+            "get": {
+                "operationId": "Get_User",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "user_id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "api"
+                ],
+                "security": [
+                    {
+                        "tokenAuth": []
+                    },
+                    {
+                        "TokenAuth": {
+                            "type": "apiKey",
+                            "in": "header",
+                            "name": "Authorization",
+                            "description": "Enter your token in the format \"Token <token>\""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                },
+                                "examples": {
+                                    "ExampleResponse": {
+                                        "value": {
+                                            "id": 1,
+                                            "first_name": "Robert",
+                                            "last_name": "Oliver",
+                                            "username": "lyang",
+                                            "mobile": "(482)598-4678",
+                                            "password": "139ae976ad128361d769a4605c9fea67",
+                                            "email": "breanna03@example.com",
+                                            "register_at": "2021-06-11"
+                                        },
+                                        "summary": "Detailed example"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "put": {
+                "operationId": "Update_User",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "user_id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "api"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "security": [
+                    {
+                        "tokenAuth": []
+                    },
+                    {
+                        "TokenAuth": {
+                            "type": "apiKey",
+                            "in": "header",
+                            "name": "Authorization",
+                            "description": "Enter your token in the format \"Token <token>\""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                },
+                                "examples": {
+                                    "ExampleResponse": {
+                                        "value": {
+                                            "id": 1,
+                                            "first_name": "Robert",
+                                            "last_name": "Oliver",
+                                            "username": "lyang",
+                                            "mobile": "(482)598-4678",
+                                            "password": "139ae976ad128361d769a4605c9fea67",
+                                            "email": "breanna03@example.com",
+                                            "register_at": "2021-06-11"
+                                        },
+                                        "summary": "Detailed example"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "Delete_User",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "user_id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "api"
+                ],
+                "security": [
+                    {
+                        "tokenAuth": []
+                    },
+                    {
+                        "TokenAuth": {
+                            "type": "apiKey",
+                            "in": "header",
+                            "name": "Authorization",
+                            "description": "Enter your token in the format \"Token <token>\""
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "User": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "first_name": {
+                        "type": "string",
+                        "maxLength": 200
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "maxLength": 200
+                    },
+                    "username": {
+                        "type": "string",
+                        "maxLength": 200
+                    },
+                    "mobile": {
+                        "type": "string",
+                        "nullable": true,
+                        "maxLength": 20
+                    },
+                    "password": {
+                        "type": "string",
+                        "maxLength": 256,
+                        "minLength": 6
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "maxLength": 254
+                    },
+                    "register_at": {
+                        "type": "string",
+                        "format": "date",
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "email",
+                    "first_name",
+                    "id",
+                    "last_name",
+                    "password",
+                    "register_at",
+                    "username"
+                ]
+            },
+            "UserRequest": {
+                "type": "object",
+                "properties": {
+                    "first_name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 200
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 200
+                    },
+                    "username": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 200
+                    },
+                    "mobile": {
+                        "type": "string",
+                        "nullable": true,
+                        "maxLength": 20
+                    },
+                    "password": {
+                        "type": "string",
+                        "minLength": 6,
+                        "maxLength": 256
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "minLength": 1,
+                        "maxLength": 254
+                    }
+                },
+                "required": [
+                    "email",
+                    "first_name",
+                    "last_name",
+                    "password",
+                    "username"
+                ]
+            }
+        },
+        "securitySchemes": {
+            "tokenAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "Authorization",
+                "description": "Token-based authentication with required prefix \"Token\""
+            }
+        }
+    }
+}
