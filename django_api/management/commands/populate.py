@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand
+from django.contrib.auth.hashers import make_password
 from faker import Faker
 from api.models import User, Blog
 
@@ -28,7 +29,7 @@ class Command(BaseCommand):
                 mobile=faker.phone_number(),
                 username=faker.user_name(),
                 email=faker.email(),
-                password=faker.md5(),
+                password=make_password(faker.password(), None, 'pbkdf2_sha256'),
                 register_at=faker.date()
             )
         self.stdout.write(self.style.SUCCESS(f'Successfully created {count} fake users.'))
