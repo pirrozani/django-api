@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from api.models.user import User
 from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
+from django.contrib.auth.hashers import make_password
 
 
 @extend_schema_serializer(
@@ -23,12 +24,10 @@ from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ['id', 'first_name', 'last_name', 'username', 'mobile', 'password', 'email', 'register_at']
+        extra_kwargs = {'password': {'write_only': True}}
 
-    def __init__(self, *args, **kwargs):
-        super(UserSerializer, self).__init__(*args, **kwargs)
-        if 'context' in kwargs and kwargs['context'].get('request_method') == 'PUT':
-            self.fields['first_name'].required = False
-            self.fields['last_name'].required = False
-            self.fields['email'].required = False
-            self.fields['password'].required = False
+    def create(self, validated_data):
+        validated_data['password'] = make_password(validated_data.get('password'), None, 'pbkdf2_sha256')
+        return super(UserSerializer, self).create(validated_data)
+    
