@@ -14,14 +14,14 @@ class BlogListView(APIView):
 
     @extend_schema(operation_id='Get_Blogs', responses={200: BlogSerializer(many=True)})
     # The get method is used to get all blogs
-    def get(self, request):
+    def get(self, request) -> Response:
         blogs = Blog.objects.all()
         serializer = BlogSerializer(blogs, many=True)
         return Response({"Total": len(serializer.data), "Blogs": serializer.data})
 
     @extend_schema(operation_id='Create_Blog', request=BlogSerializer, responses={201: BlogSerializer})
     # The post method is used to create a new blog
-    def post(self, request):
+    def post(self, request) -> Response:
         serializer = BlogSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -35,7 +35,7 @@ class BlogDetailView(APIView):
 
     @extend_schema(operation_id='Get_Blog', responses={200: BlogSerializer})
     # The get method is used to get a single blog
-    def get(self, request, blog_id):
+    def get(self, request, blog_id) -> Response:
         try:
             blog = Blog.objects.get(pk=blog_id)
         except Blog.DoesNotExist:
@@ -45,7 +45,7 @@ class BlogDetailView(APIView):
 
     @extend_schema(operation_id='Update_Blog', request=BlogSerializer, responses={200: BlogSerializer})
     # The put method is used to update a single blog
-    def put(self, request, blog_id):
+    def put(self, request, blog_id) -> Response:
         try:
             blog = Blog.objects.get(pk=blog_id)
         except Blog.DoesNotExist:
@@ -58,7 +58,7 @@ class BlogDetailView(APIView):
 
     @extend_schema(operation_id='Delete_Blog', responses={204: None})
     # The delete method is used to delete a single blog
-    def delete(self, request, blog_id):
+    def delete(self, request, blog_id) -> Response:
         try:
             blog = Blog.objects.get(pk=blog_id)
         except Blog.DoesNotExist:
@@ -66,13 +66,14 @@ class BlogDetailView(APIView):
         blog.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
 class UserBlogView(APIView):
     permission_classes = [IsAuthenticated]
     renderer_classes = [JSONRenderer]
 
     @extend_schema(operation_id='Get_User_Blogs', responses={200: BlogSerializer(many=True)})
     # The get method is used to get all blogs of a user
-    def get(self, request, user_id):
+    def get(self, request, user_id) -> Response:
         try:
             user = User.objects.get(pk=user_id)
         except User.DoesNotExist:

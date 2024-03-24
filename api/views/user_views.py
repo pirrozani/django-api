@@ -14,7 +14,7 @@ class UserListView(APIView):
 
     @extend_schema(operation_id='Get_Users', responses={200: UserSerializer(many=True)})
     # The get method is used to get all users
-    def get(self, request):
+    def get(self, request) -> Response:
         users = User.objects.all()
         serializer = UserSerializer(users, many=True)
         return Response({
@@ -24,7 +24,7 @@ class UserListView(APIView):
 
     @extend_schema(operation_id='Create_User', request=UserSerializer, responses={201: UserSerializer})
     # The post method is used to create a new user
-    def post(self, request):
+    def post(self, request) -> Response:
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -38,7 +38,7 @@ class UserDetailView(APIView):
 
     @extend_schema(operation_id='Get_User', responses={200: UserSerializer})
     # The get method is used to get a single user
-    def get(self, request, user_id):
+    def get(self, request, user_id) -> Response:
         try:
             user = User.objects.get(pk=user_id)
         except User.DoesNotExist:
@@ -48,7 +48,7 @@ class UserDetailView(APIView):
 
     @extend_schema(operation_id='Update_User', request=UserSerializer, responses={200: UserSerializer})
     # The put method is used to update a single user
-    def put(self, request, user_id):
+    def put(self, request, user_id) -> Response:
         try:
             user = User.objects.get(pk=user_id)
         except User.DoesNotExist:
@@ -61,7 +61,7 @@ class UserDetailView(APIView):
 
     @extend_schema(operation_id='Delete_User', responses={204: None})
     # The delete method is used to delete a single user
-    def delete(self, request, user_id):
+    def delete(self, request, user_id) -> Response:
         try:
             user = User.objects.get(pk=user_id)
         except User.DoesNotExist:
