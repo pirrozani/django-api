@@ -67,4 +67,4 @@ class UserDetailView(APIView):
         except User.DoesNotExist:
             return Response({"message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
         user.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({"message": "User deleted"}, status=status.HTTP_204_NO_CONTENT)
