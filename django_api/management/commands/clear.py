@@ -3,6 +3,7 @@ from django.db import transaction
 from django.apps import apps
 from django.db import connection
 
+
 class Command(BaseCommand):
     help = 'Clear the User table and reset its auto-increment index'
 
@@ -19,14 +20,14 @@ class Command(BaseCommand):
     def clear_data_and_reset_index(self):
         user_model = apps.get_model('api', 'User')
         blog_model = apps.get_model('api', 'Blog')
-        
+
         with transaction.atomic():
             user_model.objects.all().delete()
             self.reset_sequence(user_model)
 
             blog_model.objects.all().delete()
             self.reset_sequence(blog_model)
-        
+
         self.stdout.write(self.style.SUCCESS(
             'Successfully clear and reset auto-increment index for each table.')
         )
