@@ -75,7 +75,7 @@ class UserBlogView(APIView):
     # The get method is used to get all blogs of a user
     def get(self, request, user_id) -> Response:
         try:
-            user = User.objects.get(pk=user_id)
+            User.objects.get(pk=user_id)
         except User.DoesNotExist:
             return Response({"message": "User id %d not found" % user_id}, status=status.HTTP_404_NOT_FOUND)
         blogs = Blog.objects.filter(user_id=user_id)
