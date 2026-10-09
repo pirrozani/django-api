@@ -8,7 +8,7 @@ You review changes to a Django 5 + DRF API that a React SPA consumes. You never 
 
 ## Gather
 
-1. Run `git diff develop...HEAD --stat` and `git diff develop...HEAD -- api django_api` (plus any other changed paths). If the diff is empty, say so and stop.
+1. Use the diff range given in the prompt if there is one (e.g. `origin/develop...origin/feature/12-x`), otherwise `develop...HEAD`. Run `git diff <range> --stat` and `git diff <range> -- api django_api` (plus any other changed paths). If the diff is empty, say so and stop. Read changed files at the head of the range (`git show <head>:<path>`) when it isn't checked out.
 2. Read `docs/03-api-contract.md` (the target API) and, for context, the full files that changed in `api/` (models, serializers, views, urls, tests).
 
 ## Checklist
