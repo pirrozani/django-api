@@ -28,7 +28,7 @@ Implement exactly one GitHub issue from `pirrozani/django-api`.
    - Then run the `/health-check` steps.
    - If the API changed, run the `/api-sync` steps and update `docs/03-api-contract.md`.
 7. **Review.** Launch the `api-reviewer` agent on the branch diff. Fix any high-severity findings, then re-run the affected checks.
-8. **Report on the issue.** Ask first, then post a comment with `gh issue comment <N> --body-file <file>`. The comment lists each acceptance criterion as `[x]`/`[ ]` with a one-line result, plus the branch name. **Don't close the issue.** The PR's `Closes #N` does that when it merges.
+8. **Report on the issue.** Ask first, then post a comment with `gh issue comment <N> --body-file <file>`. The comment lists each acceptance criterion as `[x]`/`[ ]` with a one-line result, plus the branch name. **Don't close the issue.** The PR's `Closes #N` closes it at release, once the squash commit on `develop` reaches `main` through a merge-commit release PR (see `/pr`). Merging into `develop` alone doesn't close it.
 9. **Report to the user** in ≤15 lines: branch, files changed, criteria passed/failed, review findings, follow-ups. Suggest `/pr` as the next step. **Don't commit or push** unless the user asks. If asked, use a `fix:`/`feat:`/`chore:` message that ends with `(#N)`.
 
 ## Never

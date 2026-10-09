@@ -53,7 +53,7 @@ Hooks in `.claude/settings.json` block reading `.env` and editing files inside `
 
 1. **Never edit anything under `.venv/` or `venv/`.** If a library looks broken, rebuild with `uv sync` (or see #1).
 2. **Never read `.env`** (it holds secrets). Use `.env.example` to learn the variables.
-3. Branch from `develop` as `feature/<N>-<slug>`; PRs go `feature/*` → `develop` → `main`. `main` deploys. Never commit or open PRs directly against `main`.
+3. Branch from `develop` as `feature/<N>-<slug>`; PRs go `feature/*` → `develop` → `main`. `main` deploys. Never commit or open PRs directly against `main`. Squash-merge `feature/*` → `develop` (the squash message is the PR title and description, so it carries `Closes #N`). Merge `develop` → `main` with a **merge commit, never squash**, so those commits reach `main` and GitHub closes the issues at release.
 4. Commit only when the user asks. Use the existing prefixes: `feat`, `fix`, `refactor`, `chore`, `docs`.
 5. PRs that resolve an issue include `Closes #N`. Every API change updates `docs/03-api-contract.md` in the same PR. New problems become issues (`/issue`), not TODO comments.
 6. Keep the existing code style: single quotes, class-based views, `@extend_schema` on every endpoint, a short comment above each method.
