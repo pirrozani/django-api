@@ -66,6 +66,7 @@ Every finding maps to a GitHub issue; status lives in the [issue tracker](https:
 | A13 | Django 5.0 no longer receives security fixes | [#4](https://github.com/pirrozani/django-api/issues/4) |
 | A14 | `DoesNotExist = None` / `objects = None` on models | [#13](https://github.com/pirrozani/django-api/issues/13) |
 | A15 | No tests; README is a placeholder | [#14](https://github.com/pirrozani/django-api/issues/14) |
+| A16 | App starts with a placeholder or weak `SECRET_KEY` when `DEBUG` is off | [#17](https://github.com/pirrozani/django-api/issues/17) |
 
 ## Unmerged branches
 
