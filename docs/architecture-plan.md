@@ -94,7 +94,7 @@ Repo: `django_api_project` · branch `develop` · Django 5.0.2 · DRF 3.14 · dr
 | A1 | **No token-issuing endpoint.** The SPA can't log in. | `api/urls.py` | Blocker |
 | A2 | **No CORS.** Browser blocks cross-origin calls. | `settings.py` | Blocker |
 | A3 | **SQLite only.** Data is lost on Render. | `settings.py` `DATABASES` | Blocker |
-| A4 | No `gunicorn`, `whitenoise`, `STATIC_ROOT`, Postgres driver. | `requirements.txt`, `settings.py` | Blocker |
+| A4 | No `gunicorn`, `whitenoise`, `STATIC_ROOT`, Postgres driver. | `pyproject.toml`, `settings.py` | Blocker |
 | A5 | `clear` command uses `sqlite_sequence`, so it **fails on Postgres**. | `django_api/management/commands/clear.py` | Blocker for demo reset |
 | A6 | **Password hash exposed** in responses (`fields='__all__'`) and **stored in plain text** on create/update via API. | `api/serializers/user_serializer.py` | Security |
 | A7 | `BasicAuthentication` is listed first, so a 401 returns `WWW-Authenticate: Basic`, which can trigger the browser's native login popup. | `settings.py` `REST_FRAMEWORK` | UX |
@@ -102,8 +102,8 @@ Repo: `django_api_project` · branch `develop` · Django 5.0.2 · DRF 3.14 · dr
 | A9 | No pagination or ordering on lists. | views | Scalability/UX |
 | A10 | Blog responses only include the author's `user` id, so the frontend needs N+1 calls to show author names. | `BlogSerializer` | UX/perf |
 | A11 | The `UserSerializer.__init__` PUT hack is dead code (views never pass `request_method` in context). PUT requires all fields. | serializer + views | Correctness |
-| A12 | Junk dependency `django-rest-framework==0.1.0` (the real package is `djangorestframework`). | `requirements.txt` | Hygiene |
-| A13 | Django 5.0 no longer receives security fixes. | `requirements.txt` | Security |
+| A12 | Junk dependency `django-rest-framework==0.1.0` (the real package is `djangorestframework`). Resolved in #1. | `requirements.txt` (removed in #1) | Hygiene |
+| A13 | Django 5.0 no longer receives security fixes. | `pyproject.toml` | Security |
 | A14 | `DoesNotExist = None` / `objects = None` class attributes on models (IDE workaround). | `api/models/*.py` | Hygiene |
 | A15 | No tests (`api/tests.py` is empty). README is "Upcoming...". | — | Portfolio quality |
 
@@ -187,7 +187,7 @@ Order matters: BE-01 → BE-04 can be done in one local pass, then BE-05+.
 - Upgrade: `Django` → latest **5.2.x LTS**, `djangorestframework` → latest 3.16.x, `drf-spectacular` → latest. Re-run migrations and smoke-test.
 - Add: `gunicorn`, `whitenoise`, `psycopg[binary]`, `django-cors-headers`. (`django-environ` is already installed and parses `DATABASE_URL` via `env.db()`, so no `dj-database-url` needed.)
 - Pin the Python version for Render (`.python-version`, e.g. `3.12` or `3.13`).
-- **Done when:** `pip install -r requirements.txt` works on a clean venv; `python manage.py check` passes.
+- **Done when:** `uv sync --frozen` works on a clean clone; `uv run python manage.py check` passes. Dependencies are managed with uv (`pyproject.toml` + `uv.lock`, #1); add packages with `uv add`.
 
 ### BE-02 — Environment-driven production settings
 - `DATABASES = {'default': env.db('DATABASE_URL', default=f'sqlite:///{BASE_DIR / "db.sqlite3"}')}` plus `CONN_MAX_AGE` (e.g. 60) and `CONN_HEALTH_CHECKS = True`.
@@ -345,7 +345,7 @@ Delete actions for blogs and users sit behind a confirm dialog and require auth.
 
 - **OPS-01 Neon:** create project + database, copy the pooled or direct connection string. Optionally create a `dev` branch for local use.
 - **OPS-02 Render:** new Web Service from `django_api_project`, branch `main`, free plan, region close to the Neon region.
-  - Build: `pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput` (or a `build.sh`).
+  - Build: `pip install uv && uv sync --frozen --no-dev && uv run python manage.py collectstatic --noinput && uv run python manage.py migrate --noinput` (or a `build.sh`; see [07-deployment.md](07-deployment.md)).
   - Start: `gunicorn django_api.wsgi:application --bind 0.0.0.0:$PORT --workers 2`
   - Health check path: `/api/health/`
   - Optional: commit a `render.yaml` blueprint so the setup is reproducible.

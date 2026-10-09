@@ -4,16 +4,18 @@
 
 ## Local environment health
 
-**The project does not start.** Any `manage.py` command crashes during logging setup:
+> **Resolved by [#1](https://github.com/pirrozani/django-api/issues/1):** the environment is now rebuilt with uv (`pyproject.toml` + `uv.lock`, `.venv/`), and `manage.py check` passes. The audit findings below describe the state before #1.
+
+**At audit time, the project did not start.** Any `manage.py` command crashed during logging setup:
 
 ```
 AttributeError: module 'django.utils.termcolors' has no attribute 'get'
 ValueError: Unable to configure formatter 'django.server'
 ```
 
-Cause: the installed third-party packages inside `venv/` were edited in place. 60 files differ from their published hashes, all modified on 2024-08-27 20:58. → **[#1](https://github.com/pirrozani/django-api/issues/1)**.
+Cause: the installed third-party packages inside the old `venv/` had been edited in place. 60 files differ from their published hashes, all modified on 2024-08-27 20:58. → **[#1](https://github.com/pirrozani/django-api/issues/1)**.
 
-Rebuilding the environment (with uv, [#1](https://github.com/pirrozani/django-api/issues/1)) and fixing the `.env` setup ([#2](https://github.com/pirrozani/django-api/issues/2)) are both needed before the app runs reliably on a fresh clone.
+With the environment rebuilt ([#1](https://github.com/pirrozani/django-api/issues/1)), fixing the `.env` setup ([#2](https://github.com/pirrozani/django-api/issues/2)) is still needed before the app runs reliably on a fresh clone.
 
 ## Domain model
 
@@ -47,7 +49,7 @@ Every finding maps to a GitHub issue; status lives in the [issue tracker](https:
 
 | ID | Issue | Fix |
 |---|---|---|
-| L1 | Edited/corrupted packages in `venv/`, so nothing starts | [#1](https://github.com/pirrozani/django-api/issues/1) |
+| L1 | Edited/corrupted packages in `venv/`, so nothing starts (**resolved**: rebuilt with uv) | [#1](https://github.com/pirrozani/django-api/issues/1) |
 | L2 | `.env.example` has empty `SECRET_KEY`; `.env` path is relative to the CWD; `DEBUG=False` locally | [#2](https://github.com/pirrozani/django-api/issues/2) |
 | A1 | No token-issuing endpoint, so the SPA can't log in | [#9](https://github.com/pirrozani/django-api/issues/9) |
 | A2 | No CORS | [#8](https://github.com/pirrozani/django-api/issues/8) |
