@@ -24,3 +24,4 @@
 | Q4 | Can the demo account delete data, or only create/edit? | Allow all, rely on `reset_demo` |
 | Q5 | Python version on Render? | 3.12, pinned in `.python-version` by [#1](https://github.com/pirrozani/django-api/issues/1) |
 | Q6 | Switch views to ViewSets + router (BE-05)? | Yes |
+| Q7 | Drop `api.User.password`? Authors never log in (login uses `auth.User`), so the field only stores a hash nobody checks. Removing it is a model and API change. | Keep it for v1 (write-only, hashed by [#3](https://github.com/pirrozani/django-api/issues/3)) |

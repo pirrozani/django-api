@@ -56,12 +56,12 @@ Every finding maps to a GitHub issue; status lives in the [issue tracker](https:
 | A3 | SQLite only, so data is lost on Render | [#5](https://github.com/pirrozani/django-api/issues/5) |
 | A4 | No gunicorn / whitenoise / `STATIC_ROOT` / security settings | [#7](https://github.com/pirrozani/django-api/issues/7) |
 | A5 | `clear` uses `sqlite_sequence`, so it fails on Postgres | [#6](https://github.com/pirrozani/django-api/issues/6) |
-| A6 | Password hash returned in responses; plain-text passwords stored via API | [#3](https://github.com/pirrozani/django-api/issues/3) |
+| A6 | Password hash returned in responses; plain-text passwords stored via API (**resolved**: write-only, hashed on create/update, data migration hashes old rows) | [#3](https://github.com/pirrozani/django-api/issues/3) |
 | A7 | `BasicAuthentication` first, so 401 responses can trigger the browser's native login popup | [#9](https://github.com/pirrozani/django-api/issues/9) |
 | A8 | Inconsistent response shapes and status codes | [#10](https://github.com/pirrozani/django-api/issues/10) |
 | A9 | No pagination or ordering | [#11](https://github.com/pirrozani/django-api/issues/11) |
 | A10 | Blog responses only carry the author id, so the frontend needs N+1 calls | [#12](https://github.com/pirrozani/django-api/issues/12) |
-| A11 | Dead PUT-relaxation hack in `UserSerializer`; no PATCH | [#3](https://github.com/pirrozani/django-api/issues/3) |
+| A11 | Dead PUT-relaxation hack in `UserSerializer`; no PATCH (**resolved**: hack removed, `PATCH /api/users/<id>` added) | [#3](https://github.com/pirrozani/django-api/issues/3) |
 | A12 | Junk dependency `django-rest-framework==0.1.0` | [#1](https://github.com/pirrozani/django-api/issues/1) |
 | A13 | Django 5.0 no longer receives security fixes | [#4](https://github.com/pirrozani/django-api/issues/4) |
 | A14 | `DoesNotExist = None` / `objects = None` on models | [#13](https://github.com/pirrozani/django-api/issues/13) |
@@ -72,5 +72,5 @@ Every finding maps to a GitHub issue; status lives in the [issue tracker](https:
 
 | Branch | Contents | Action |
 |---|---|---|
-| `feature/update-user_serializer` | `password` write-only, hashed on create, explicit field list, `PASSWORD_HASHERS` | Merge first as part of [#3](https://github.com/pirrozani/django-api/issues/3). |
+| `feature/update-user_serializer` | `password` write-only, hashed on create, explicit field list, `PASSWORD_HASHERS` | Merged in [#3](https://github.com/pirrozani/django-api/issues/3); safe to delete. |
 | `feature/add-container` | The commit above + `Dockerfile` / `.dockerignore` | Not used: the project runs without Docker (decision D7). Only the serializer commit is reused, via [#3](https://github.com/pirrozani/django-api/issues/3). |
