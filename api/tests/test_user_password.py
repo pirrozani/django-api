@@ -43,28 +43,52 @@ class UserPasswordTests(TestCase):
         self.assertTrue(stored.startswith('pbkdf2_sha256$'), stored)
         self.assertTrue(check_password(raw, stored))
 
+    # Reading users never exposes the password
     def test_list_and_detail_hide_password(self):
         self.assertNoPassword(self.client.get(reverse('user-list')))
         self.assertNoPassword(self.client.get(self.detail_url))
 
+    # Creating a user stores a hash and hides it in the response
     def test_post_hashes_password_and_hides_it(self):
         response = self.client.post(reverse('user-list'), NEW_USER, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertNoPassword(response)
-        self.assertHashed(response.data['Users']['id'], NEW_USER['password'])
+        self.assertHashed(User.objects.get(email=NEW_USER['email']).id, NEW_USER['password'])
 
+    # A new user must come with a password
+    def test_post_requires_password(self):
+        data = {k: v for k, v in NEW_USER.items() if k != 'password'}
+        response = self.client.post(reverse('user-list'), data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('password', response.data)
+        self.assertFalse(User.objects.filter(email=NEW_USER['email']).exists())
+
+    # A full update with a password stores a new hash
     def test_put_hashes_password_and_hides_it(self):
         response = self.client.put(self.detail_url, NEW_USER, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertNoPassword(response)
         self.assertHashed(self.user.id, NEW_USER['password'])
 
+    # A full update without a password keeps the stored one
+    def test_put_without_password_keeps_it(self):
+        old_password = self.user.password
+        data = {k: v for k, v in NEW_USER.items() if k != 'password'}
+        response = self.client.put(self.detail_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertNoPassword(response)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.first_name, NEW_USER['first_name'])
+        self.assertEqual(self.user.password, old_password)
+
+    # A partial update with a password stores a new hash
     def test_patch_hashes_password(self):
         response = self.client.patch(self.detail_url, {'password': 'other-456'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertNoPassword(response)
         self.assertHashed(self.user.id, 'other-456')
 
+    # A partial update of one field leaves the password alone
     def test_patch_single_field_keeps_password(self):
         old_password = self.user.password
         response = self.client.patch(self.detail_url, {'mobile': '555-0100'}, format='json')
@@ -74,12 +98,14 @@ class UserPasswordTests(TestCase):
         self.assertEqual(self.user.mobile, '555-0100')
         self.assertEqual(self.user.password, old_password)
 
+    # Anonymous clients cannot update a user
     def test_patch_requires_authentication(self):
         response = APIClient().patch(self.detail_url, {'mobile': '555-0100'}, format='json')
         self.assertIn(response.status_code, (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN))
         self.user.refresh_from_db()
         self.assertIsNone(self.user.mobile)
 
+    # The data migration hashes plain text and skips existing hashes
     def test_migration_hashes_only_plain_text(self):
         plain = User.objects.create(
             first_name='P', last_name='T', username='pt', email='pt@example.com',

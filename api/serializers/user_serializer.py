@@ -38,3 +38,9 @@ class UserSerializer(serializers.ModelSerializer):
         if 'password' in validated_data:
             validated_data['password'] = make_password(validated_data['password'])
         return super().update(instance, validated_data)
+
+
+# The UserUpdateSerializer class is used for PUT/PATCH, where the password is optional
+class UserUpdateSerializer(UserSerializer):
+    class Meta(UserSerializer.Meta):
+        extra_kwargs = {'password': {'write_only': True, 'required': False}}

@@ -23,9 +23,9 @@ The frontend has no consumers yet, so it is safe to standardize the contract now
 | POST | `/api/auth/logout/` | token | Deletes the token → 204 |
 | GET | `/api/auth/me/` | token | `{id, username, is_staff}` of the logged-in account |
 | GET | `/api/users/` | public | paginated; `?search=` on name/username/email (optional) |
-| POST | `/api/users/` | token | password write-only, hashed |
+| POST | `/api/users/` | token | password required, write-only, hashed |
 | GET | `/api/users/<id>/` | public | |
-| PUT/PATCH | `/api/users/<id>/` | token | hash the password if present |
+| PUT/PATCH | `/api/users/<id>/` | token | password optional on both (omitted → stored one kept); hashed if present |
 | DELETE | `/api/users/<id>/` | token | 204, cascades blogs |
 | GET | `/api/users/<id>/blogs/` | public | paginated. **Empty list → 200** with `results: []`. 404 only if the user doesn't exist. |
 | GET | `/api/blogs/` | public | paginated; `?search=` on title (optional); `?author=<id>` filter |
