@@ -40,11 +40,11 @@ python .claude/skills/health-check/verify_venv.py   # environment integrity (std
 | Helper | Use |
 |---|---|
 | `/issue <description>` | Investigate a problem and draft a GitHub issue from the fix template (asks before creating) |
-| `/fix <N>` | Implement issue #N on `feature/<N>-<slug>`, verify acceptance criteria, report on the issue |
+| `/resolve-issue <N>` | Implement issue #N on `feature/<N>-<slug>`, verify acceptance criteria, report on the issue |
 | `/pr` | Health check, then open a PR to `develop` with `Closes #N` (asks before pushing) |
 | `/health-check` | One-pass local checks, with each failure mapped to its issue |
 | `/api-sync` | Compare the generated OpenAPI schema with `docs/03-api-contract.md` |
-| `api-reviewer` agent | DRF-focused review of the branch diff; `/fix` runs it before reporting |
+| `api-reviewer` agent | DRF-focused review of the branch diff; `/resolve-issue` runs it before reporting |
 
 Hooks in `.claude/settings.json` block reading `.env` and editing files inside `.venv/`/`venv/`.
 

@@ -52,4 +52,4 @@ Copy these into the frontend repo's `docs/` folder and keep them in sync: [01-ar
 - New problem found → `/issue <description>` in Claude Code, or "New issue → Fix" on GitHub. Add it to the issue register in [02-current-state.md](02-current-state.md).
 - New decision → add a row to the decision log in [01-architecture.md](01-architecture.md).
 
-Claude Code helpers in this repo: `/issue`, `/fix`, `/pr`, `/health-check`, `/api-sync`, and the `api-reviewer` agent (see `CLAUDE.md`).
+Claude Code helpers in this repo: `/issue`, `/resolve-issue`, `/pr`, `/health-check`, `/api-sync`, and the `api-reviewer` agent (see `CLAUDE.md`).

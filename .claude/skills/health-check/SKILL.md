@@ -1,6 +1,6 @@
 ---
 name: health-check
-description: One-pass, read-only health check of the Django project (environment integrity, system checks, migration drift, tests, deploy checks), with each failure mapped to its GitHub issue. Use when the user asks whether the project runs, after dependency changes, or as the verification step of /fix and /pr.
+description: One-pass, read-only health check of the Django project (environment integrity, system checks, migration drift, tests, deploy checks), with each failure mapped to its GitHub issue. Use when the user asks whether the project runs, after dependency changes, or as the verification step of /resolve-issue and /pr.
 ---
 
 # /health-check

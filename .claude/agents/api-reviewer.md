@@ -1,6 +1,6 @@
 ---
 name: api-reviewer
-description: Reviews the current branch's diff against develop for Django REST Framework problems (permissions, serializer field leaks, N+1 queries, status codes, contract drift, missing tests, secrets). Use before opening a PR, after implementing an issue with /fix, or when the user asks for an API review. Read-only.
+description: Reviews the current branch's diff against develop for Django REST Framework problems (permissions, serializer field leaks, N+1 queries, status codes, contract drift, missing tests, secrets). Use before opening a PR, after implementing an issue with /resolve-issue, or when the user asks for an API review. Read-only.
 tools: Read, Grep, Glob, Bash
 ---
 

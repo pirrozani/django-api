@@ -1,9 +1,9 @@
 ---
-name: fix
-description: Implement one GitHub issue (e.g. /fix 9 or /fix #9) on a feature branch, verify its acceptance criteria, run the api-reviewer agent, and post the results on the issue. Use when the user asks to fix, implement, or work on an issue.
+name: resolve-issue
+description: Implement one GitHub issue (e.g. /resolve-issue 9 or /resolve-issue #9) on a feature branch, verify its acceptance criteria, run the api-reviewer agent, and post the results on the issue. Use when the user asks to fix, implement, or work on an issue.
 ---
 
-# /fix <issue number>
+# /resolve-issue <issue number>
 
 Implement exactly one GitHub issue from `pirrozani/django-api`.
 

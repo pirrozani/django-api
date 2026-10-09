@@ -1,6 +1,6 @@
 ---
 name: pr
-description: Open a pull request from the current feature branch into develop with "Closes #N", after running the health check. Asks before pushing. Use when the user asks to open, create or raise a PR, or after /fix is done.
+description: Open a pull request from the current feature branch into develop with "Closes #N", after running the health check. Asks before pushing. Use when the user asks to open, create or raise a PR, or after /resolve-issue is done.
 ---
 
 # /pr
