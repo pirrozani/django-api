@@ -11,6 +11,7 @@ identifier.sqlite
 
 # Environments
 venv/
+.venv/
 .env*
 
 # Claude Code (local settings)

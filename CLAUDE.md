@@ -12,7 +12,7 @@ Django 5 + Django REST Framework API (users/authors and blogs) that serves as th
 
 ## Current state
 
-The project **does not start** until issue **#1** is done: packages inside the old `venv/` were edited in place, and the fix is to rebuild with **uv**. Don't try to work around it by patching `venv/`. Until #1 lands, `pyproject.toml`/`uv.lock` don't exist yet, so `uv run` commands won't work.
+The environment is managed with **uv** (#1): `pyproject.toml` + `uv.lock` are the source of truth, and there is no `requirements.txt`. The old `venv/` had library files edited in place and was deleted; never reuse it. If a host needs a requirements file, generate it with `uv export --no-hashes -o requirements.txt`. In the IDE, use `.venv` as the interpreter and mark `.venv/` as Excluded so inspections/cleanup never touch library code.
 
 ## Stack & layout
 
