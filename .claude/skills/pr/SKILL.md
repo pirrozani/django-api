@@ -51,3 +51,7 @@ Open a PR for the current branch against `develop` on `pirrozani/django-api`.
 - Target `main`, force-push, or use `--no-verify`.
 - Push without confirmation.
 - Merge the PR. The user merges it.
+
+## How `Closes #N` works here
+
+`main` is the default branch, so GitHub ignores `Closes #N` in a PR into `develop`, and the issue stays open after the merge. The repo's squash commit message is set to the PR title and description, so **squash-merging** a feature PR puts `Closes #N` in the commit on `develop`. The issue closes when the release PR (`develop` → `main`) brings that commit into `main`. That release PR must use a **merge commit, never squash**, or the `Closes` lines are lost. In the final report, remind the user to squash-merge, and that the issue closes at release.
