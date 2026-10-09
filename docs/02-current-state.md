@@ -15,7 +15,7 @@ ValueError: Unable to configure formatter 'django.server'
 
 Cause: the installed third-party packages inside the old `venv/` had been edited in place. 60 files differ from their published hashes, all modified on 2024-08-27 20:58. → **[#1](https://github.com/pirrozani/django-api/issues/1)**.
 
-With the environment rebuilt ([#1](https://github.com/pirrozani/django-api/issues/1)), fixing the `.env` setup ([#2](https://github.com/pirrozani/django-api/issues/2)) is still needed before the app runs reliably on a fresh clone.
+With the environment rebuilt ([#1](https://github.com/pirrozani/django-api/issues/1)) and the `.env` setup fixed ([#2](https://github.com/pirrozani/django-api/issues/2)), a fresh clone runs with `cp .env.example .env`.
 
 ## Domain model
 
@@ -50,7 +50,7 @@ Every finding maps to a GitHub issue; status lives in the [issue tracker](https:
 | ID | Issue | Fix |
 |---|---|---|
 | L1 | Edited/corrupted packages in `venv/`, so nothing starts (**resolved**: rebuilt with uv) | [#1](https://github.com/pirrozani/django-api/issues/1) |
-| L2 | `.env.example` has empty `SECRET_KEY`; `.env` path is relative to the CWD; `DEBUG=False` locally | [#2](https://github.com/pirrozani/django-api/issues/2) |
+| L2 | `.env.example` has empty `SECRET_KEY`; `.env` path is relative to the CWD; `DEBUG=False` locally (**resolved**: absolute path, working local defaults) | [#2](https://github.com/pirrozani/django-api/issues/2) |
 | A1 | No token-issuing endpoint, so the SPA can't log in | [#9](https://github.com/pirrozani/django-api/issues/9) |
 | A2 | No CORS | [#8](https://github.com/pirrozani/django-api/issues/8) |
 | A3 | SQLite only, so data is lost on Render | [#5](https://github.com/pirrozani/django-api/issues/5) |
