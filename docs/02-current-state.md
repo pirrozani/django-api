@@ -64,7 +64,7 @@ Every finding maps to a GitHub issue; status lives in the [issue tracker](https:
 | A11 | Dead PUT-relaxation hack in `UserSerializer`; no PATCH | [#3](https://github.com/pirrozani/django-api/issues/3) |
 | A12 | Junk dependency `django-rest-framework==0.1.0` | [#1](https://github.com/pirrozani/django-api/issues/1) |
 | A13 | Django 5.0 no longer receives security fixes | [#4](https://github.com/pirrozani/django-api/issues/4) |
-| A14 | `DoesNotExist = None` / `objects = None` on models | [#13](https://github.com/pirrozani/django-api/issues/13) |
+| A14 | `DoesNotExist = None` / `objects = None` on models (**resolved**: removed IDE stub attributes) | [#13](https://github.com/pirrozani/django-api/issues/13) |
 | A15 | No tests; README is a placeholder | [#14](https://github.com/pirrozani/django-api/issues/14) |
 | A16 | App starts with a placeholder or weak `SECRET_KEY` when `DEBUG` is off | [#17](https://github.com/pirrozani/django-api/issues/17) |
 
