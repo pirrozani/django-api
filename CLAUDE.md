@@ -42,6 +42,7 @@ python .claude/skills/health-check/verify_venv.py   # environment integrity (std
 | `/issue <description>` | Investigate a problem and draft a GitHub issue from the fix template (asks before creating) |
 | `/resolve-issue <N>` | Implement issue #N on `feature/<N>-<slug>`, verify acceptance criteria, report on the issue |
 | `/pr` | Health check, then open a PR to `develop` with `Closes #N` (asks before pushing) |
+| `/review-pr [N]` | Review PR #N (or the current branch) against its issue and the repo rules, with a verdict (asks before posting) |
 | `/health-check` | One-pass local checks, with each failure mapped to its issue |
 | `/api-sync` | Compare the generated OpenAPI schema with `docs/03-api-contract.md` |
 | `api-reviewer` agent | DRF-focused review of the branch diff; `/resolve-issue` runs it before reporting |
