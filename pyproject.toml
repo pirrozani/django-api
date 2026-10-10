@@ -9,5 +9,7 @@ dependencies = [
     "djangorestframework>=3.18",
     "drf-spectacular>=0.30",
     "faker>=40",
+    "gunicorn>=26.2.0",
     "psycopg[binary]>=3.3.6",
+    "whitenoise>=6.12.0",
 ]
