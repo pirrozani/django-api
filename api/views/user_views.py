@@ -1,5 +1,5 @@
 from api.models import User
-from api.serializers import UserSerializer
+from api.serializers import UserSerializer, UserUpdateSerializer
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.views import APIView
@@ -46,14 +46,27 @@ class UserDetailView(APIView):
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
-    @extend_schema(operation_id='Update_User', request=UserSerializer, responses={200: UserSerializer})
+    @extend_schema(operation_id='Update_User', request=UserUpdateSerializer, responses={200: UserSerializer})
     # The put method is used to update a single user
     def put(self, request, user_id) -> Response:
         try:
             user = User.objects.get(pk=user_id)
         except User.DoesNotExist:
             return Response({"message": "User id %d not found" % user_id}, status=status.HTTP_404_NOT_FOUND)
-        serializer = UserSerializer(user, data=request.data)
+        serializer = UserUpdateSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @extend_schema(operation_id='Partial_Update_User', request=UserUpdateSerializer, responses={200: UserSerializer})
+    # The patch method is used to update only the fields sent for a single user
+    def patch(self, request, user_id) -> Response:
+        try:
+            user = User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            return Response({"message": "User id %d not found" % user_id}, status=status.HTTP_404_NOT_FOUND)
+        serializer = UserUpdateSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
