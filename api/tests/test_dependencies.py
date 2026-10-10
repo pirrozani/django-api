@@ -11,6 +11,17 @@ from rest_framework.authtoken.models import Token
 
 from api.models import Blog, User
 
+NEW_USER = {
+    'first_name': 'Ada',
+    'last_name': 'Lovelace',
+    'username': 'ada',
+    'mobile': '555-010-0199',
+    'password': 'secret-123',
+    'email': 'ada@example.com',
+}
+
+# Mirrors the current URLconf; update together with docs/03-api-contract.md
+# when the v2 paths land (#10, #12)
 API_PATHS = {
     '/api/users/': {'get', 'post'},
     '/api/users/{user_id}': {'get', 'put', 'patch', 'delete'},
@@ -41,18 +52,23 @@ class DependencyUpgradeTests(TestCase):
                 self.assertIn(path, paths)
                 self.assertTrue(methods <= set(paths[path]))
 
-    # Creating a login account issues a token that authenticates requests
+    # Creating a login account issues a token that authorizes writes
     def test_token_authentication(self):
-        account = Account.objects.create_user('reader', password='secret-123')
+        account = Account.objects.create_user('writer', password='secret-123')
         token = Token.objects.get(user=account)
-        response = self.client.get(
-            reverse('user-list'), HTTP_AUTHORIZATION=f'Token {token.key}'
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        response = self.client.get(reverse('user-list'))
+        url = reverse('user-list')
+        response = self.client.post(url, NEW_USER, content_type='application/json')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        response = self.client.post(
+            url,
+            NEW_USER,
+            content_type='application/json',
+            HTTP_AUTHORIZATION=f'Token {token.key}',
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    # populate still works with the upgraded Faker
+    # populate still works with the upgraded Faker. SQLite doesn't enforce
+    # max_length, so this can't catch over-long mobile numbers (#20)
     def test_populate_creates_fake_data(self):
         Faker.seed(4)
         call_command('populate', users=3, articles=5, stdout=StringIO())
