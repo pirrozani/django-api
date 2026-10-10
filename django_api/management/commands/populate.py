@@ -32,7 +32,8 @@ class Command(BaseCommand):
             User.objects.create(
                 first_name=faker.first_name(),
                 last_name=faker.last_name(),
-                mobile=faker.phone_number(),
+                # phone_number() can exceed mobile's max_length=20, which Postgres rejects
+                mobile=faker.numerify('###-###-####'),
                 username=faker.user_name(),
                 email=faker.email(),
                 password=make_password(faker.password(), None, 'pbkdf2_sha256'),
