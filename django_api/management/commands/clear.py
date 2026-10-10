@@ -8,6 +8,10 @@ from django.db import connection, transaction
 # Postgres gets TRUNCATE ... RESTART IDENTITY, which rolls back with the transaction
 # (a separate setval() would not); SQLite gets DELETE plus a sqlite_sequence reset.
 def flush_tables(*models):
+    # Fire pending deferred FK checks first: Postgres refuses to TRUNCATE a table with
+    # pending trigger events from rows inserted earlier in the same transaction
+    if connection.vendor == 'postgresql':
+        connection.check_constraints()
     statements = connection.ops.sql_flush(
         no_style(),
         [m._meta.db_table for m in models],
