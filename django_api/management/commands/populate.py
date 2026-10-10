@@ -1,4 +1,4 @@
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.contrib.auth.hashers import make_password
 from faker import Faker
 from api.models import User, Blog
@@ -12,11 +12,17 @@ class Command(BaseCommand):
         parser.add_argument('--users', type=int, default=100, help='The number of fake users to create')
         parser.add_argument('--articles', type=int, default=200, help='The number of fake articles to create')
 
+    # Check there will be users to own the articles, then create users before blogs
     def handle(self, *args, **options):
         user_count = options.get('users', 100)
-        self.populate_fake_user_data(user_count)
-
         blog_count = options.get('articles', 200)
+        if blog_count > 0 and user_count <= 0 and not User.objects.exists():
+            raise CommandError(
+                'Cannot create articles without users: '
+                'pass --users N or populate users first.'
+            )
+
+        self.populate_fake_user_data(user_count)
         self.populate_fake_blog_data(blog_count)
 
     # Populate the User table with fake data

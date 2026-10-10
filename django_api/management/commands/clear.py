@@ -1,32 +1,35 @@
-from django.core.management.base import BaseCommand
-from django.db import transaction
 from django.apps import apps
-from django.db import connection
+from django.core.management.base import BaseCommand
+from django.core.management.color import no_style
+from django.db import connection, transaction
+
+
+# Empty the models' tables and restart their id sequences at 1, on any database backend.
+# Postgres gets TRUNCATE ... RESTART IDENTITY, which rolls back with the transaction
+# (a separate setval() would not); SQLite gets DELETE plus a sqlite_sequence reset.
+def flush_tables(*models):
+    statements = connection.ops.sql_flush(
+        no_style(),
+        [m._meta.db_table for m in models],
+        reset_sequences=True,
+    )
+    connection.ops.execute_sql_flush(statements)
 
 
 class Command(BaseCommand):
-    help = 'Clear the User table and reset its auto-increment index'
+    help = 'Clear the User and Blog tables and reset their id sequences'
 
-    # Reset the auto-increment index for the given model
-    def reset_sequence(self, model):
-        table_name = model._meta.db_table
-        with connection.cursor() as cursor:
-            cursor.execute(f"DELETE FROM sqlite_sequence WHERE name='{table_name}';")
-
+    # Clear every demo table
     def handle(self, *args, **options):
         self.clear_data_and_reset_index()
 
-    # Clear the User table and reset its auto-increment index
+    # Empty blogs, then users, and restart both id sequences at 1
     def clear_data_and_reset_index(self):
         user_model = apps.get_model('api', 'User')
         blog_model = apps.get_model('api', 'Blog')
 
         with transaction.atomic():
-            user_model.objects.all().delete()
-            self.reset_sequence(user_model)
-
-            blog_model.objects.all().delete()
-            self.reset_sequence(blog_model)
+            flush_tables(blog_model, user_model)
 
         self.stdout.write(self.style.SUCCESS(
             'Successfully clear and reset auto-increment index for each table.')

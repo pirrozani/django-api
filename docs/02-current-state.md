@@ -55,7 +55,7 @@ Every finding maps to a GitHub issue; status lives in the [issue tracker](https:
 | A2 | No CORS | [#8](https://github.com/pirrozani/django-api/issues/8) |
 | A3 | SQLite only, so data is lost on Render | [#5](https://github.com/pirrozani/django-api/issues/5) |
 | A4 | No gunicorn / whitenoise / `STATIC_ROOT` / security settings | [#7](https://github.com/pirrozani/django-api/issues/7) |
-| A5 | `clear` uses `sqlite_sequence`, so it fails on Postgres | [#6](https://github.com/pirrozani/django-api/issues/6) |
+| A5 | `clear` uses `sqlite_sequence`, so it fails on Postgres (**resolved**: backend-agnostic flush SQL, new `reset_demo` command) | [#6](https://github.com/pirrozani/django-api/issues/6) |
 | A6 | Password hash returned in responses; plain-text passwords stored via API (**resolved**: write-only, hashed on create/update, data migration hashes old rows) | [#3](https://github.com/pirrozani/django-api/issues/3) |
 | A7 | `BasicAuthentication` first, so 401 responses can trigger the browser's native login popup | [#9](https://github.com/pirrozani/django-api/issues/9) |
 | A8 | Inconsistent response shapes and status codes | [#10](https://github.com/pirrozani/django-api/issues/10) |
