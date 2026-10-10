@@ -63,10 +63,11 @@ Every finding maps to a GitHub issue; status lives in the [issue tracker](https:
 | A10 | Blog responses only carry the author id, so the frontend needs N+1 calls | [#12](https://github.com/pirrozani/django-api/issues/12) |
 | A11 | Dead PUT-relaxation hack in `UserSerializer`; no PATCH (**resolved**: hack removed, `PATCH /api/users/<id>` added) | [#3](https://github.com/pirrozani/django-api/issues/3) |
 | A12 | Junk dependency `django-rest-framework==0.1.0` | [#1](https://github.com/pirrozani/django-api/issues/1) |
-| A13 | Django 5.0 no longer receives security fixes | [#4](https://github.com/pirrozani/django-api/issues/4) |
+| A13 | Django 5.0 no longer receives security fixes (**resolved**: Django 5.2 LTS, DRF 3.18, drf-spectacular 0.30; transitive pins dropped from `pyproject.toml`) | [#4](https://github.com/pirrozani/django-api/issues/4) |
 | A14 | `DoesNotExist = None` / `objects = None` on models (**resolved**: removed IDE stub attributes) | [#13](https://github.com/pirrozani/django-api/issues/13) |
 | A15 | No tests; README is a placeholder | [#14](https://github.com/pirrozani/django-api/issues/14) |
 | A16 | App starts with a placeholder or weak `SECRET_KEY` when `DEBUG` is off | [#17](https://github.com/pirrozani/django-api/issues/17) |
+| A17 | `populate` writes phone numbers longer than `User.mobile` (20 chars), so seeding fails on Postgres | [#20](https://github.com/pirrozani/django-api/issues/20) |
 
 ## Unmerged branches
 
