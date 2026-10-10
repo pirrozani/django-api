@@ -12,7 +12,7 @@ Suggested order: BE-00 → BE-01 → BE-02 → BE-03 → BE-04 → BE-05, then t
 | BE-03 | Authentication for the SPA | [#9](https://github.com/pirrozani/django-api/issues/9) | Token login/logout/me work; public reads; no Basic-auth popup |
 | BE-04 | User serializer security | [#3](https://github.com/pirrozani/django-api/issues/3) | No response contains `password`; all stored passwords are hashed |
 | BE-05 | API contract v2 | [#10](https://github.com/pirrozani/django-api/issues/10), [#11](https://github.com/pirrozani/django-api/issues/11), [#12](https://github.com/pirrozani/django-api/issues/12), [#13](https://github.com/pirrozani/django-api/issues/13) | Swagger matches [03-api-contract.md](03-api-contract.md); frontend type generation runs cleanly |
-| BE-06 | Health endpoint | (new feature) | `GET /api/health/` → 200 `{"status":"ok"}` without auth; used as Render health-check path |
+| BE-06 | Health endpoint | [#26](https://github.com/pirrozani/django-api/issues/26) | `GET /api/health/` → 200 `{"status":"ok"}` without auth; used as Render health-check path |
 | BE-07 | Tests | [#14](https://github.com/pirrozani/django-api/issues/14) | `uv run python manage.py test` green locally and in CI |
 | BE-08 | Lint & formatting | (new tooling) | `ruff check` and `ruff format --check` pass; one dedicated formatting commit |
 | BE-09 | DB-agnostic `clear` + `reset_demo` | [#6](https://github.com/pirrozani/django-api/issues/6), [#20](https://github.com/pirrozani/django-api/issues/20) | `reset_demo` works on SQLite and Postgres |
