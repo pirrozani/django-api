@@ -111,22 +111,23 @@ class SecuritySettingsTests(SimpleTestCase):
 class StaticFilesServingTests(TestCase):
     # With DEBUG=False, WhiteNoise serves the collected admin CSS (#7)
     def test_admin_css_served_without_debug(self):
-        with tempfile.TemporaryDirectory() as static_root:
-            with override_settings(STATIC_ROOT=static_root):
-                call_command('collectstatic', interactive=False, stdout=StringIO())
-                response = self.client.get('/admin/login/', secure=True)
-                self.assertEqual(response.status_code, 200)
-                # The template links the hashed name from the manifest
-                match = re.search(
-                    r'href="(/static/admin/css/base\.[0-9a-f]{12}\.css)"',
-                    response.content.decode(),
-                )
-                self.assertIsNotNone(match)
-                css_url = match.group(1)
-                css = self.client.get(css_url, secure=True)
-                self.assertEqual(css.status_code, 200)
-                self.assertTrue(css['Content-Type'].startswith('text/css'))
-                css.close()
+        # Cleanups run last-in-first-out, so the CSS response registered below
+        # closes before the temp dir is deleted (Windows can't delete open files)
+        static_root = self.enterContext(tempfile.TemporaryDirectory())
+        with override_settings(STATIC_ROOT=static_root):
+            call_command('collectstatic', interactive=False, stdout=StringIO())
+            response = self.client.get('/admin/login/', secure=True)
+            self.assertEqual(response.status_code, 200)
+            # The template links the hashed name from the manifest
+            match = re.search(
+                r'href="(/static/admin/css/base\.[0-9a-f]{12}\.css)"',
+                response.content.decode(),
+            )
+            self.assertIsNotNone(match)
+            css = self.client.get(match.group(1), secure=True)
+            self.addCleanup(css.close)
+            self.assertEqual(css.status_code, 200)
+            self.assertTrue(css['Content-Type'].startswith('text/css'))
 
 
 PROXY_SETTINGS = {
