@@ -15,7 +15,7 @@ Suggested order: BE-00 → BE-01 → BE-02 → BE-03 → BE-04 → BE-05, then t
 | BE-06 | Health endpoint | (new feature) | `GET /api/health/` → 200 `{"status":"ok"}` without auth; used as Render health-check path |
 | BE-07 | Tests | [#14](https://github.com/pirrozani/django-api/issues/14) | `uv run python manage.py test` green locally and in CI |
 | BE-08 | Lint & formatting | (new tooling) | `ruff check` and `ruff format --check` pass; one dedicated formatting commit |
-| BE-09 | DB-agnostic `clear` + `reset_demo` | [#6](https://github.com/pirrozani/django-api/issues/6) | `reset_demo` works on SQLite and Postgres |
+| BE-09 | DB-agnostic `clear` + `reset_demo` | [#6](https://github.com/pirrozani/django-api/issues/6), [#20](https://github.com/pirrozani/django-api/issues/20) | `reset_demo` works on SQLite and Postgres |
 | BE-10 | README | [#14](https://github.com/pirrozani/django-api/issues/14) | README has live links, setup, env vars, demo credentials, architecture |
 
 ## Implementation notes
