@@ -4,6 +4,7 @@ from unittest.mock import patch
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
+from faker.proxy import UniqueProxy
 
 from api.models import Blog, User
 from django_api.management.commands.populate import Command as PopulateCommand
@@ -36,6 +37,48 @@ class ManagementCommandTests(TestCase):
         self.run_command('populate', users=2, articles=0)
         self.run_command('populate', users=0, articles=3)
         self.assertEqual(Blog.objects.count(), 3)
+
+    # Every generated mobile fits max_length=20, which SQLite doesn't enforce (#20)
+    def test_populate_mobile_fits_column(self):
+        self.run_command('populate', users=200, articles=0)
+        self.assertFalse(User.objects.filter(mobile__regex=r'^.{21,}$').exists())
+        for mobile in User.objects.values_list('mobile', flat=True):
+            self.assertRegex(mobile, r'^\d{3}-\d{3}-\d{4}$')
+
+    # populate skips an email an earlier run already stored, since email is unique (#20)
+    def test_populate_skips_emails_already_in_the_table(self):
+        User.objects.create(
+            first_name='a',
+            last_name='b',
+            username='c',
+            password='secret',
+            email='taken@example.com',
+        )
+
+        # Faker draws the taken email first, then a free one
+        with patch.object(
+            UniqueProxy,
+            'email',
+            create=True,
+            side_effect=['taken@example.com', 'new@example.com'],
+        ):
+            self.run_command('populate', users=1, articles=0)
+
+        self.assertEqual(
+            sorted(User.objects.values_list('email', flat=True)),
+            ['new@example.com', 'taken@example.com'],
+        )
+
+    # A failure part-way through populate leaves no users or blogs behind (#20)
+    def test_populate_failure_leaves_no_partial_data(self):
+        with patch.object(
+            PopulateCommand, 'populate_fake_blog_data', side_effect=RuntimeError('boom')
+        ):
+            with self.assertRaises(RuntimeError):
+                self.run_command('populate', users=3, articles=4)
+
+        self.assertFalse(User.objects.exists())
+        self.assertFalse(Blog.objects.exists())
 
     # reset_demo leaves exactly the demo row counts, with ids from 1
     def test_reset_demo_leaves_30_users_and_80_blogs(self):
