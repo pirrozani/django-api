@@ -9,6 +9,7 @@ from django.core.management import call_command
 from django.test import SimpleTestCase, TestCase
 
 from api.models import User
+from django_api.management.commands.clear import flush_tables
 
 SETTINGS_FILE = Path(settings.BASE_DIR) / 'django_api' / 'settings.py'
 
@@ -51,3 +52,26 @@ class PopulateMobileLengthTests(TestCase):
         max_length = User._meta.get_field('mobile').max_length
         for mobile in User.objects.values_list('mobile', flat=True):
             self.assertLessEqual(len(mobile), max_length)
+
+
+@patch('django_api.management.commands.clear.connection')
+class FlushTablesTests(SimpleTestCase):
+    # On Postgres, pending deferred FK checks fire before the TRUNCATE
+    def test_postgres_checks_constraints_before_flush(self, connection):
+        connection.vendor = 'postgresql'
+        calls = []
+        connection.check_constraints.side_effect = lambda: calls.append('check')
+        connection.ops.execute_sql_flush.side_effect = lambda _: calls.append('flush')
+
+        flush_tables(User)
+
+        self.assertEqual(calls, ['check', 'flush'])
+
+    # Other backends skip the check (SQLite would scan every table for orphans)
+    def test_sqlite_skips_constraint_check(self, connection):
+        connection.vendor = 'sqlite'
+
+        flush_tables(User)
+
+        connection.check_constraints.assert_not_called()
+        connection.ops.execute_sql_flush.assert_called_once()
