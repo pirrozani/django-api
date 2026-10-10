@@ -17,7 +17,7 @@ The environment is managed with **uv** (#1): `pyproject.toml` + `uv.lock` are th
 ## Stack & layout
 
 - Python 3.12, managed with **uv** (`pyproject.toml`, `uv.lock`, `.python-version`, environment in `.venv/`). Add dependencies with `uv add`; never hand-edit the lock. Settings via `django-environ` reading `.env`.
-- `django_api/`: project (settings, urls, management commands `populate`, `clear`).
+- `django_api/`: project (settings, urls, management commands `populate`, `clear`, `reset_demo`).
 - `api/`: app: `models/` (`User` = authors, **not** login accounts; `Blog`), `serializers/`, `views/` (APIView classes), `urls.py`, `signals.py` (auto-creates tokens for `auth.User`), `middleware.py` (request logging).
 - OpenAPI via drf-spectacular: `/api/schema/swagger-ui/`.
 - Login accounts are `django.contrib.auth.User` + DRF `TokenAuthentication`.
@@ -30,6 +30,7 @@ uv run python manage.py check
 uv run python manage.py migrate
 uv run python manage.py populate --users 30 --articles 80
 uv run python manage.py clear
+uv run python manage.py reset_demo                     # clear + 30 users, 80 blogs, one transaction
 uv run python manage.py runserver
 uv run python manage.py test
 python .claude/skills/health-check/verify_venv.py   # environment integrity (stdlib only)
