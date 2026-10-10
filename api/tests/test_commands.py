@@ -4,7 +4,7 @@ from unittest.mock import patch
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
-from faker import Faker
+from faker.proxy import UniqueProxy
 
 from api.models import Blog, User
 from django_api.management.commands.populate import Command as PopulateCommand
@@ -47,19 +47,27 @@ class ManagementCommandTests(TestCase):
 
     # populate skips an email an earlier run already stored, since email is unique (#20)
     def test_populate_skips_emails_already_in_the_table(self):
-        Faker.seed(20)
-        self.run_command('populate', users=1, articles=0)
-        taken_email = User.objects.get().email
-        User.objects.all().delete()
         User.objects.create(
-            first_name='a', last_name='b', username='c', password='secret', email=taken_email
+            first_name='a',
+            last_name='b',
+            username='c',
+            password='secret',
+            email='taken@example.com',
         )
 
-        # Same seed, so Faker draws taken_email first again
-        Faker.seed(20)
-        self.run_command('populate', users=1, articles=0)
-        self.assertEqual(User.objects.count(), 2)
-        self.assertEqual(User.objects.filter(email=taken_email).count(), 1)
+        # Faker draws the taken email first, then a free one
+        with patch.object(
+            UniqueProxy,
+            'email',
+            create=True,
+            side_effect=['taken@example.com', 'new@example.com'],
+        ):
+            self.run_command('populate', users=1, articles=0)
+
+        self.assertEqual(
+            sorted(User.objects.values_list('email', flat=True)),
+            ['new@example.com', 'taken@example.com'],
+        )
 
     # A failure part-way through populate leaves no users or blogs behind (#20)
     def test_populate_failure_leaves_no_partial_data(self):
