@@ -13,9 +13,12 @@
 
 ## Render settings (OPS-02)
 
-- **Build command:** `pip install uv && uv sync --frozen --no-dev && uv run python manage.py collectstatic --noinput && uv run python manage.py migrate --noinput`. A `build.sh` works too. If Render's Python runtime detects `uv.lock` natively, drop `pip install uv`.
+- **Build command:** `uv sync --frozen --no-dev && uv run python manage.py collectstatic --noinput && uv run python manage.py migrate --noinput`. Render's Python runtime adds uv automatically when `uv.lock` is in the repo root (pin it with `UV_VERSION` if needed), so no `pip install uv` step. A `build.sh` works too.
 - **Start command:** `uv run gunicorn django_api.wsgi:application --bind 0.0.0.0:$PORT --workers 2`
 - **Health check path:** `/api/health/`
+- **HTTPS:** with `DEBUG=False`, settings trust Render's `X-Forwarded-Proto` header, redirect HTTP to HTTPS, mark session/CSRF cookies secure and send HSTS (`SECURE_HSTS_SECONDS`, default 3600). Render counts any 2xx/3xx health-check response as healthy, so the redirect can't fail the check; once `/api/health/` exists (BE-06), confirm it returns 200 after deploy and add it to `SECURE_REDIRECT_EXEMPT` if it doesn't.
+- **Static files:** WhiteNoise serves `collectstatic` output from `staticfiles/` (compressed, hashed names), so `/admin/` and the browsable API stay styled with `DEBUG=False`. Run `collectstatic` before serving with `DEBUG=False` (even locally): without the manifest, pages that use `{% static %}` return 500.
+- **Accepted `check --deploy` warnings:** `security.W005` (HSTS `includeSubDomains`) and `security.W021` (HSTS preload). The service lives on a shared `onrender.com` subdomain, so neither applies.
 - **Optional:** commit a `render.yaml` blueprint so the setup is reproducible.
 
 ## Post-deploy smoke test
