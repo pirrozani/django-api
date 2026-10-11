@@ -69,6 +69,7 @@ Every finding maps to a GitHub issue; status lives in the [issue tracker](https:
 | A16 | App starts with a placeholder or weak `SECRET_KEY` when `DEBUG` is off | [#17](https://github.com/pirrozani/django-api/issues/17) |
 | A17 | `populate` writes phone numbers longer than `User.mobile` (20 chars), so seeding fails on Postgres | [#20](https://github.com/pirrozani/django-api/issues/20) |
 | A18 | No `/api/health/` endpoint for Render's health check; the HTTPS redirect would also hide it from plain-HTTP probes | [#26](https://github.com/pirrozani/django-api/issues/26) |
+| A19 | `SPECTACULAR_SETTINGS['SECURITY']` holds a scheme definition, adding an invalid `TokenAuth` requirement to every operation in the OpenAPI schema | [#27](https://github.com/pirrozani/django-api/issues/27) |
 
 ## Unmerged branches
 
