@@ -584,7 +584,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserUpdate'
+                $ref: '#/components/schemas/User'
               examples:
                 ExampleResponse:
                   value:
@@ -631,7 +631,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserUpdate'
+                $ref: '#/components/schemas/User'
               examples:
                 ExampleResponse:
                   value:
@@ -879,40 +879,6 @@ components:
       - first_name
       - last_name
       - password
-      - username
-    UserUpdate:
-      type: object
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        first_name:
-          type: string
-          maxLength: 200
-        last_name:
-          type: string
-          maxLength: 200
-        username:
-          type: string
-          maxLength: 200
-        mobile:
-          type: string
-          nullable: true
-          maxLength: 20
-        email:
-          type: string
-          format: email
-          maxLength: 254
-        register_at:
-          type: string
-          format: date
-          readOnly: true
-      required:
-      - email
-      - first_name
-      - id
-      - last_name
-      - register_at
       - username
     UserUpdateRequest:
       type: object

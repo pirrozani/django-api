@@ -53,6 +53,12 @@ class ResponseShapeTests(APITestCase):
                 self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
                 self.assertEqual(response.content, b'')
 
+    # Deleting a user also deletes their blogs
+    def test_delete_user_cascades_blogs(self):
+        response = self.client.delete(reverse('user-detail', args=[self.user.id]))
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Blog.objects.filter(pk=self.blog.id).exists())
+
     # A user's blogs are listed; a user without blogs gets 200 and an empty list
     def test_user_blogs_lists_and_allows_empty(self):
         response = self.client.get(reverse('user-blogs', args=[self.user.id]))
@@ -92,5 +98,6 @@ class ResponseShapeTests(APITestCase):
         self.assertEqual(reverse('user-detail', args=[1]), '/api/users/1/')
         self.assertEqual(reverse('user-blogs', args=[1]), '/api/users/1/blogs/')
         self.assertEqual(reverse('blog-detail', args=[1]), '/api/blogs/1/')
-        response = self.client.get(f'/api/blogs/user/{self.user.id}')
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        for url in (f'/api/blogs/user/{self.user.id}', '/api/', '/api/users.json'):
+            with self.subTest(url=url):
+                self.assertEqual(self.client.get(url).status_code, status.HTTP_404_NOT_FOUND)

@@ -12,8 +12,10 @@ from rest_framework.response import Response
     list=extend_schema(operation_id='Get_Users'),
     create=extend_schema(operation_id='Create_User'),
     retrieve=extend_schema(operation_id='Get_User'),
-    update=extend_schema(operation_id='Update_User', request=UserUpdateSerializer),
-    partial_update=extend_schema(operation_id='Partial_Update_User', request=UserUpdateSerializer),
+    update=extend_schema(operation_id='Update_User', request=UserUpdateSerializer, responses={200: UserSerializer}),
+    partial_update=extend_schema(
+        operation_id='Partial_Update_User', request=UserUpdateSerializer, responses={200: UserSerializer},
+    ),
     destroy=extend_schema(operation_id='Delete_User'),
 )
 class UserViewSet(viewsets.ModelViewSet):
