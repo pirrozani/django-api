@@ -187,6 +187,12 @@
                                             {
                                                 "id": 1,
                                                 "user": 1,
+                                                "author": {
+                                                    "id": 1,
+                                                    "username": "lyang",
+                                                    "first_name": "Robert",
+                                                    "last_name": "Oliver"
+                                                },
                                                 "title": "Doloremque et et.",
                                                 "content": "Discuss than some debate this. Entire him certain single west rock......",
                                                 "created_at": "2021-06-11"
@@ -213,15 +219,13 @@
                                 "$ref": "#/components/schemas/BlogRequest"
                             },
                             "examples": {
-                                "ExampleResponse": {
+                                "ExampleRequest": {
                                     "value": {
-                                        "id": 1,
                                         "user": 1,
                                         "title": "Doloremque et et.",
-                                        "content": "Discuss than some debate this. Entire him certain single west rock......",
-                                        "created_at": "2021-06-11"
+                                        "content": "Discuss than some debate this. Entire him certain single west rock......"
                                     },
-                                    "summary": "Detailed example"
+                                    "summary": "Create or update a blog"
                                 }
                             }
                         },
@@ -266,6 +270,12 @@
                                         "value": {
                                             "id": 1,
                                             "user": 1,
+                                            "author": {
+                                                "id": 1,
+                                                "username": "lyang",
+                                                "first_name": "Robert",
+                                                "last_name": "Oliver"
+                                            },
                                             "title": "Doloremque et et.",
                                             "content": "Discuss than some debate this. Entire him certain single west rock......",
                                             "created_at": "2021-06-11"
@@ -336,6 +346,12 @@
                                         "value": {
                                             "id": 1,
                                             "user": 1,
+                                            "author": {
+                                                "id": 1,
+                                                "username": "lyang",
+                                                "first_name": "Robert",
+                                                "last_name": "Oliver"
+                                            },
                                             "title": "Doloremque et et.",
                                             "content": "Discuss than some debate this. Entire him certain single west rock......",
                                             "created_at": "2021-06-11"
@@ -372,15 +388,13 @@
                                 "$ref": "#/components/schemas/BlogRequest"
                             },
                             "examples": {
-                                "ExampleResponse": {
+                                "ExampleRequest": {
                                     "value": {
-                                        "id": 1,
                                         "user": 1,
                                         "title": "Doloremque et et.",
-                                        "content": "Discuss than some debate this. Entire him certain single west rock......",
-                                        "created_at": "2021-06-11"
+                                        "content": "Discuss than some debate this. Entire him certain single west rock......"
                                     },
-                                    "summary": "Detailed example"
+                                    "summary": "Create or update a blog"
                                 }
                             }
                         },
@@ -425,6 +439,12 @@
                                         "value": {
                                             "id": 1,
                                             "user": 1,
+                                            "author": {
+                                                "id": 1,
+                                                "username": "lyang",
+                                                "first_name": "Robert",
+                                                "last_name": "Oliver"
+                                            },
                                             "title": "Doloremque et et.",
                                             "content": "Discuss than some debate this. Entire him certain single west rock......",
                                             "created_at": "2021-06-11"
@@ -471,15 +491,13 @@
                                 "$ref": "#/components/schemas/PatchedBlogRequest"
                             },
                             "examples": {
-                                "ExampleResponse": {
+                                "ExampleRequest": {
                                     "value": {
-                                        "id": 1,
                                         "user": 1,
                                         "title": "Doloremque et et.",
-                                        "content": "Discuss than some debate this. Entire him certain single west rock......",
-                                        "created_at": "2021-06-11"
+                                        "content": "Discuss than some debate this. Entire him certain single west rock......"
                                     },
-                                    "summary": "Detailed example"
+                                    "summary": "Create or update a blog"
                                 }
                             }
                         },
@@ -523,6 +541,12 @@
                                         "value": {
                                             "id": 1,
                                             "user": 1,
+                                            "author": {
+                                                "id": 1,
+                                                "username": "lyang",
+                                                "first_name": "Robert",
+                                                "last_name": "Oliver"
+                                            },
                                             "title": "Doloremque et et.",
                                             "content": "Discuss than some debate this. Entire him certain single west rock......",
                                             "created_at": "2021-06-11"
@@ -1282,6 +1306,12 @@
                                             {
                                                 "id": 1,
                                                 "user": 1,
+                                                "author": {
+                                                    "id": 1,
+                                                    "username": "lyang",
+                                                    "first_name": "Robert",
+                                                    "last_name": "Oliver"
+                                                },
                                                 "title": "Doloremque et et.",
                                                 "content": "Discuss than some debate this. Entire him certain single west rock......",
                                                 "created_at": "2021-06-11"
@@ -1344,11 +1374,49 @@
                     "username"
                 ]
             },
+            "AuthorSummary": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "username": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "first_name": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "first_name",
+                    "id",
+                    "last_name",
+                    "username"
+                ]
+            },
             "Blog": {
                 "type": "object",
                 "properties": {
                     "id": {
                         "type": "integer",
+                        "readOnly": true
+                    },
+                    "user": {
+                        "type": "integer"
+                    },
+                    "author": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/AuthorSummary"
+                            }
+                        ],
                         "readOnly": true
                     },
                     "title": {
@@ -1362,12 +1430,10 @@
                         "type": "string",
                         "format": "date",
                         "readOnly": true
-                    },
-                    "user": {
-                        "type": "integer"
                     }
                 },
                 "required": [
+                    "author",
                     "content",
                     "created_at",
                     "id",
@@ -1378,6 +1444,9 @@
             "BlogRequest": {
                 "type": "object",
                 "properties": {
+                    "user": {
+                        "type": "integer"
+                    },
                     "title": {
                         "type": "string",
                         "minLength": 1,
@@ -1386,9 +1455,6 @@
                     "content": {
                         "type": "string",
                         "minLength": 1
-                    },
-                    "user": {
-                        "type": "integer"
                     }
                 },
                 "required": [
@@ -1447,6 +1513,9 @@
             "PatchedBlogRequest": {
                 "type": "object",
                 "properties": {
+                    "user": {
+                        "type": "integer"
+                    },
                     "title": {
                         "type": "string",
                         "minLength": 1,
@@ -1455,9 +1524,6 @@
                     "content": {
                         "type": "string",
                         "minLength": 1
-                    },
-                    "user": {
-                        "type": "integer"
                     }
                 }
             },

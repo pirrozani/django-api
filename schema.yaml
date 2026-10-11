@@ -114,6 +114,11 @@ paths:
                   value:
                   - id: 1
                     user: 1
+                    author:
+                      id: 1
+                      username: lyang
+                      first_name: Robert
+                      last_name: Oliver
                     title: Doloremque et et.
                     content: Discuss than some debate this. Entire him certain single
                       west rock......
@@ -130,15 +135,13 @@ paths:
             schema:
               $ref: '#/components/schemas/BlogRequest'
             examples:
-              ExampleResponse:
+              ExampleRequest:
                 value:
-                  id: 1
                   user: 1
                   title: Doloremque et et.
                   content: Discuss than some debate this. Entire him certain single
                     west rock......
-                  created_at: '2021-06-11'
-                summary: Detailed example
+                summary: Create or update a blog
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/BlogRequest'
@@ -165,6 +168,11 @@ paths:
                   value:
                     id: 1
                     user: 1
+                    author:
+                      id: 1
+                      username: lyang
+                      first_name: Robert
+                      last_name: Oliver
                     title: Doloremque et et.
                     content: Discuss than some debate this. Entire him certain single
                       west rock......
@@ -209,6 +217,11 @@ paths:
                   value:
                     id: 1
                     user: 1
+                    author:
+                      id: 1
+                      username: lyang
+                      first_name: Robert
+                      last_name: Oliver
                     title: Doloremque et et.
                     content: Discuss than some debate this. Entire him certain single
                       west rock......
@@ -232,15 +245,13 @@ paths:
             schema:
               $ref: '#/components/schemas/BlogRequest'
             examples:
-              ExampleResponse:
+              ExampleRequest:
                 value:
-                  id: 1
                   user: 1
                   title: Doloremque et et.
                   content: Discuss than some debate this. Entire him certain single
                     west rock......
-                  created_at: '2021-06-11'
-                summary: Detailed example
+                summary: Create or update a blog
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/BlogRequest'
@@ -267,6 +278,11 @@ paths:
                   value:
                     id: 1
                     user: 1
+                    author:
+                      id: 1
+                      username: lyang
+                      first_name: Robert
+                      last_name: Oliver
                     title: Doloremque et et.
                     content: Discuss than some debate this. Entire him certain single
                       west rock......
@@ -296,15 +312,13 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedBlogRequest'
             examples:
-              ExampleResponse:
+              ExampleRequest:
                 value:
-                  id: 1
                   user: 1
                   title: Doloremque et et.
                   content: Discuss than some debate this. Entire him certain single
                     west rock......
-                  created_at: '2021-06-11'
-                summary: Detailed example
+                summary: Create or update a blog
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/PatchedBlogRequest'
@@ -330,6 +344,11 @@ paths:
                   value:
                     id: 1
                     user: 1
+                    author:
+                      id: 1
+                      username: lyang
+                      first_name: Robert
+                      last_name: Oliver
                     title: Doloremque et et.
                     content: Discuss than some debate this. Entire him certain single
                       west rock......
@@ -834,6 +853,11 @@ paths:
                   value:
                   - id: 1
                     user: 1
+                    author:
+                      id: 1
+                      username: lyang
+                      first_name: Robert
+                      last_name: Oliver
                     title: Doloremque et et.
                     content: Discuss than some debate this. Entire him certain single
                       west rock......
@@ -876,11 +900,37 @@ components:
       required:
       - password
       - username
+    AuthorSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          readOnly: true
+        first_name:
+          type: string
+          readOnly: true
+        last_name:
+          type: string
+          readOnly: true
+      required:
+      - first_name
+      - id
+      - last_name
+      - username
     Blog:
       type: object
       properties:
         id:
           type: integer
+          readOnly: true
+        user:
+          type: integer
+        author:
+          allOf:
+          - $ref: '#/components/schemas/AuthorSummary'
           readOnly: true
         title:
           type: string
@@ -891,9 +941,8 @@ components:
           type: string
           format: date
           readOnly: true
-        user:
-          type: integer
       required:
+      - author
       - content
       - created_at
       - id
@@ -902,6 +951,8 @@ components:
     BlogRequest:
       type: object
       properties:
+        user:
+          type: integer
         title:
           type: string
           minLength: 1
@@ -909,8 +960,6 @@ components:
         content:
           type: string
           minLength: 1
-        user:
-          type: integer
       required:
       - content
       - title
@@ -951,6 +1000,8 @@ components:
     PatchedBlogRequest:
       type: object
       properties:
+        user:
+          type: integer
         title:
           type: string
           minLength: 1
@@ -958,8 +1009,6 @@ components:
         content:
           type: string
           minLength: 1
-        user:
-          type: integer
     PatchedUserUpdateRequest:
       type: object
       properties:
