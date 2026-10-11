@@ -35,7 +35,32 @@ class DatabaseSettingsTests(SimpleTestCase):
         self.assertEqual(db['ENGINE'], 'django.db.backends.postgresql')
         self.assertEqual(db['NAME'], 'demo')
         self.assertEqual(db['HOST'], 'db.example.com')
-        self.assertEqual(db['OPTIONS'], {'sslmode': 'require'})
+        self.assertEqual(db['OPTIONS'], {'sslmode': 'require', 'connect_timeout': 10})
+
+    # Postgres gets a 10 s connect timeout instead of psycopg's 130 s (#29)
+    def test_postgres_connect_timeout_default(self):
+        db = self.load_settings(DATABASE_URL='postgresql://u:p@db.example.com/demo')
+        self.assertEqual(db['OPTIONS']['connect_timeout'], 10)
+
+    # DB_CONNECT_TIMEOUT changes the default
+    def test_postgres_connect_timeout_from_env(self):
+        db = self.load_settings(
+            DATABASE_URL='postgresql://u:p@db.example.com/demo', DB_CONNECT_TIMEOUT='5'
+        )
+        self.assertEqual(db['OPTIONS']['connect_timeout'], 5)
+
+    # A connect_timeout in DATABASE_URL wins over DB_CONNECT_TIMEOUT
+    def test_postgres_connect_timeout_from_url(self):
+        db = self.load_settings(
+            DATABASE_URL='postgresql://u:p@db.example.com/demo?connect_timeout=3',
+            DB_CONNECT_TIMEOUT='5',
+        )
+        self.assertEqual(db['OPTIONS']['connect_timeout'], 3)
+
+    # SQLite doesn't accept connect_timeout, so it never gets one
+    def test_sqlite_has_no_connect_timeout(self):
+        db = self.load_settings(DB_CONNECT_TIMEOUT='5')
+        self.assertNotIn('connect_timeout', db.get('OPTIONS', {}))
 
     # Persistent connections are health-checked; CONN_MAX_AGE is configurable
     def test_connection_settings(self):

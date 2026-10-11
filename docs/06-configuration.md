@@ -11,6 +11,7 @@
 | `ALLOWED_HOSTS` | `127.0.0.1,localhost` | `<backend>.onrender.com` | exists |
 | `DATABASE_URL` | unset (SQLite), a local Postgres (Docker) or a Neon dev branch | Neon **direct** (non `-pooler`) connection string with `sslmode=require` | [#5](https://github.com/pirrozani/django-api/issues/5) |
 | `CONN_MAX_AGE` | unset (60 s) | unset (60 s); `0` only if you switch to Neon's pooled endpoint, which also needs `DISABLE_SERVER_SIDE_CURSORS = True` in `DATABASES['default']` | [#5](https://github.com/pirrozani/django-api/issues/5) |
+| `DB_CONNECT_TIMEOUT` | unset (10 s; ignored on SQLite) | unset (10 s); keep it between 1 and 29 (gunicorn's worker timeout is 30 s; `0` means psycopg's 130 s default). A `connect_timeout` query parameter in `DATABASE_URL` takes precedence | [#29](https://github.com/pirrozani/django-api/issues/29) |
 | `CORS_ALLOWED_ORIGINS` | `http://localhost:5173` | `https://<frontend>.<account>.workers.dev` | [#8](https://github.com/pirrozani/django-api/issues/8) |
 | `CSRF_TRUSTED_ORIGINS` | `http://localhost:8000,http://127.0.0.1:8000` | `https://<backend>.onrender.com` | [#7](https://github.com/pirrozani/django-api/issues/7) |
 | `SECURE_HSTS_SECONDS` | unset (ignored while `DEBUG=True`) | unset (3600 s); raise (e.g. `31536000`) once HTTPS is confirmed stable | [#7](https://github.com/pirrozani/django-api/issues/7) |

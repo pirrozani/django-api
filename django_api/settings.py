@@ -108,6 +108,11 @@ DATABASES = {
 DATABASES['default']['CONN_MAX_AGE'] = env.int('CONN_MAX_AGE', default=60)
 # Reconnect after Neon scales compute to zero and drops idle connections
 DATABASES['default']['CONN_HEALTH_CHECKS'] = True
+# Fail fast when the database is unreachable, well inside gunicorn's 30 s timeout
+if DATABASES['default']['ENGINE'] == 'django.db.backends.postgresql':
+    DATABASES['default'].setdefault('OPTIONS', {}).setdefault(
+        'connect_timeout', env.int('DB_CONNECT_TIMEOUT', default=10)
+    )
 
 
 # Password validation
