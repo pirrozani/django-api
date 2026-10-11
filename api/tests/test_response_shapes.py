@@ -80,13 +80,13 @@ class ResponseShapeTests(APITestCase):
         self.assertEqual(response.json()['title'], 'X')
         self.assertEqual(response.json()['content'], 'World')
 
-    # Anonymous requests are rejected (reads go public with #9)
-    def test_anonymous_requests_are_rejected(self):
+    # Anonymous writes are rejected; reads are public (#9)
+    def test_anonymous_writes_are_rejected(self):
         self.client.force_authenticate(None)
         requests = (
             ('post', reverse('blog-list')),
             ('delete', reverse('blog-detail', args=[self.blog.id])),
-            ('get', reverse('user-blogs', args=[self.user.id])),
+            ('patch', reverse('user-detail', args=[self.user.id])),
         )
         for method, url in requests:
             with self.subTest(method=method, url=url):

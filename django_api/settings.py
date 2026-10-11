@@ -52,13 +52,24 @@ INSTALLED_APPS = [
 ]
 
 REST_FRAMEWORK = {
+    # Token first, so a 401 carries `WWW-Authenticate: Token` and browsers show no
+    # Basic-auth popup. Session keeps the admin and browsable API logged in
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ),
+    # Anyone can read; writes need a login account
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ),
+    # Throttles key on REMOTE_ADDR when 0. With N trusted proxies (Render: verify, then 1)
+    # they use the Nth-from-last X-Forwarded-For entry; None would trust the whole
+    # client-supplied header, so every spoofed value would get a fresh bucket
+    'NUM_PROXIES': env.int('NUM_PROXIES', default=0),
+    # Only views that list a throttle class use these rates (POST /api/auth/token/)
+    'DEFAULT_THROTTLE_RATES': {
+        'login': env('LOGIN_THROTTLE_RATE', default='20/min'),
+    },
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
@@ -187,6 +198,10 @@ if not DEBUG:
     CSRF_COOKIE_SECURE = True
     SECURE_HSTS_SECONDS = env.int('SECURE_HSTS_SECONDS', default=3600)
     SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Demo login account, created by the create_demo_user command (also run by reset_demo)
+DEMO_USERNAME = env('DEMO_USERNAME', default='demo')
+DEMO_PASSWORD = env('DEMO_PASSWORD', default='')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
