@@ -2,15 +2,15 @@
     "openapi": "3.0.3",
     "info": {
         "title": "DjangoAPI",
-        "version": "1.0.0",
+        "version": "2.0.0",
         "description": "User and Blog API for Django project"
     },
     "paths": {
-        "/api/blogs/": {
-            "get": {
-                "operationId": "Get_Blogs",
+        "/api/auth/logout/": {
+            "post": {
+                "operationId": "Delete_Auth_Token",
                 "tags": [
-                    "api"
+                    "auth"
                 ],
                 "security": [
                     {
@@ -24,6 +24,152 @@
                             "description": "Enter your token in the format \"Token <token>\""
                         }
                     }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "Missing or invalid token"
+                    }
+                }
+            }
+        },
+        "/api/auth/me/": {
+            "get": {
+                "operationId": "Get_Auth_Me",
+                "tags": [
+                    "auth"
+                ],
+                "security": [
+                    {
+                        "tokenAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "TokenAuth": {
+                            "type": "apiKey",
+                            "in": "header",
+                            "name": "Authorization",
+                            "description": "Enter your token in the format \"Token <token>\""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Account"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "Missing or invalid token"
+                    }
+                }
+            }
+        },
+        "/api/auth/token/": {
+            "post": {
+                "operationId": "Create_Auth_Token",
+                "tags": [
+                    "auth"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthTokenRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthTokenRequest"
+                            }
+                        },
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthTokenRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Token"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LoginError"
+                                }
+                            }
+                        },
+                        "description": "Wrong or missing credentials"
+                    },
+                    "429": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "Too many login attempts"
+                    }
+                }
+            }
+        },
+        "/api/blogs/": {
+            "get": {
+                "operationId": "Get_Blogs",
+                "tags": [
+                    "blogs"
+                ],
+                "security": [
+                    {
+                        "tokenAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "TokenAuth": {
+                            "type": "apiKey",
+                            "in": "header",
+                            "name": "Authorization",
+                            "description": "Enter your token in the format \"Token <token>\""
+                        }
+                    },
+                    {}
                 ],
                 "responses": {
                     "200": {
@@ -40,7 +186,13 @@
                                         "value": [
                                             {
                                                 "id": 1,
-                                                "user_id": 1,
+                                                "user": 1,
+                                                "author": {
+                                                    "id": 1,
+                                                    "username": "lyang",
+                                                    "first_name": "Robert",
+                                                    "last_name": "Oliver"
+                                                },
                                                 "title": "Doloremque et et.",
                                                 "content": "Discuss than some debate this. Entire him certain single west rock......",
                                                 "created_at": "2021-06-11"
@@ -58,7 +210,7 @@
             "post": {
                 "operationId": "Create_Blog",
                 "tags": [
-                    "api"
+                    "blogs"
                 ],
                 "requestBody": {
                     "content": {
@@ -67,15 +219,13 @@
                                 "$ref": "#/components/schemas/BlogRequest"
                             },
                             "examples": {
-                                "ExampleResponse": {
+                                "ExampleRequest": {
                                     "value": {
-                                        "id": 1,
-                                        "user_id": 1,
+                                        "user": 1,
                                         "title": "Doloremque et et.",
-                                        "content": "Discuss than some debate this. Entire him certain single west rock......",
-                                        "created_at": "2021-06-11"
+                                        "content": "Discuss than some debate this. Entire him certain single west rock......"
                                     },
-                                    "summary": "Detailed example"
+                                    "summary": "Create or update a blog"
                                 }
                             }
                         },
@@ -95,6 +245,9 @@
                 "security": [
                     {
                         "tokenAuth": []
+                    },
+                    {
+                        "cookieAuth": []
                     },
                     {
                         "TokenAuth": {
@@ -116,7 +269,13 @@
                                     "ExampleResponse": {
                                         "value": {
                                             "id": 1,
-                                            "user_id": 1,
+                                            "user": 1,
+                                            "author": {
+                                                "id": 1,
+                                                "username": "lyang",
+                                                "first_name": "Robert",
+                                                "last_name": "Oliver"
+                                            },
                                             "title": "Doloremque et et.",
                                             "content": "Discuss than some debate this. Entire him certain single west rock......",
                                             "created_at": "2021-06-11"
@@ -127,29 +286,43 @@
                             }
                         },
                         "description": ""
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "Missing or invalid token"
                     }
                 }
             }
         },
-        "/api/blogs/{blog_id}": {
+        "/api/blogs/{id}/": {
             "get": {
                 "operationId": "Get_Blog",
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "blog_id",
+                        "name": "id",
                         "schema": {
                             "type": "integer"
                         },
+                        "description": "A unique integer value identifying this blog.",
                         "required": true
                     }
                 ],
                 "tags": [
-                    "api"
+                    "blogs"
                 ],
                 "security": [
                     {
                         "tokenAuth": []
+                    },
+                    {
+                        "cookieAuth": []
                     },
                     {
                         "TokenAuth": {
@@ -158,7 +331,8 @@
                             "name": "Authorization",
                             "description": "Enter your token in the format \"Token <token>\""
                         }
-                    }
+                    },
+                    {}
                 ],
                 "responses": {
                     "200": {
@@ -171,7 +345,13 @@
                                     "ExampleResponse": {
                                         "value": {
                                             "id": 1,
-                                            "user_id": 1,
+                                            "user": 1,
+                                            "author": {
+                                                "id": 1,
+                                                "username": "lyang",
+                                                "first_name": "Robert",
+                                                "last_name": "Oliver"
+                                            },
                                             "title": "Doloremque et et.",
                                             "content": "Discuss than some debate this. Entire him certain single west rock......",
                                             "created_at": "2021-06-11"
@@ -190,15 +370,16 @@
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "blog_id",
+                        "name": "id",
                         "schema": {
                             "type": "integer"
                         },
+                        "description": "A unique integer value identifying this blog.",
                         "required": true
                     }
                 ],
                 "tags": [
-                    "api"
+                    "blogs"
                 ],
                 "requestBody": {
                     "content": {
@@ -207,15 +388,13 @@
                                 "$ref": "#/components/schemas/BlogRequest"
                             },
                             "examples": {
-                                "ExampleResponse": {
+                                "ExampleRequest": {
                                     "value": {
-                                        "id": 1,
-                                        "user_id": 1,
+                                        "user": 1,
                                         "title": "Doloremque et et.",
-                                        "content": "Discuss than some debate this. Entire him certain single west rock......",
-                                        "created_at": "2021-06-11"
+                                        "content": "Discuss than some debate this. Entire him certain single west rock......"
                                     },
-                                    "summary": "Detailed example"
+                                    "summary": "Create or update a blog"
                                 }
                             }
                         },
@@ -237,6 +416,9 @@
                         "tokenAuth": []
                     },
                     {
+                        "cookieAuth": []
+                    },
+                    {
                         "TokenAuth": {
                             "type": "apiKey",
                             "in": "header",
@@ -256,7 +438,13 @@
                                     "ExampleResponse": {
                                         "value": {
                                             "id": 1,
-                                            "user_id": 1,
+                                            "user": 1,
+                                            "author": {
+                                                "id": 1,
+                                                "username": "lyang",
+                                                "first_name": "Robert",
+                                                "last_name": "Oliver"
+                                            },
                                             "title": "Doloremque et et.",
                                             "content": "Discuss than some debate this. Entire him certain single west rock......",
                                             "created_at": "2021-06-11"
@@ -267,63 +455,70 @@
                             }
                         },
                         "description": ""
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "Missing or invalid token"
                     }
                 }
             },
-            "delete": {
-                "operationId": "Delete_Blog",
+            "patch": {
+                "operationId": "Partial_Update_Blog",
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "blog_id",
+                        "name": "id",
                         "schema": {
                             "type": "integer"
                         },
+                        "description": "A unique integer value identifying this blog.",
                         "required": true
                     }
                 ],
                 "tags": [
-                    "api"
+                    "blogs"
                 ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedBlogRequest"
+                            },
+                            "examples": {
+                                "ExampleRequest": {
+                                    "value": {
+                                        "user": 1,
+                                        "title": "Doloremque et et.",
+                                        "content": "Discuss than some debate this. Entire him certain single west rock......"
+                                    },
+                                    "summary": "Create or update a blog"
+                                }
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedBlogRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedBlogRequest"
+                            }
+                        }
+                    }
+                },
                 "security": [
                     {
                         "tokenAuth": []
                     },
                     {
-                        "TokenAuth": {
-                            "type": "apiKey",
-                            "in": "header",
-                            "name": "Authorization",
-                            "description": "Enter your token in the format \"Token <token>\""
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No response body"
-                    }
-                }
-            }
-        },
-        "/api/blogs/user/{user_id}": {
-            "get": {
-                "operationId": "Get_User_Blogs",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "user_id",
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "required": true
-                    }
-                ],
-                "tags": [
-                    "api"
-                ],
-                "security": [
-                    {
-                        "tokenAuth": []
+                        "cookieAuth": []
                     },
                     {
                         "TokenAuth": {
@@ -339,24 +534,126 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Blog"
-                                    }
+                                    "$ref": "#/components/schemas/Blog"
                                 },
                                 "examples": {
                                     "ExampleResponse": {
-                                        "value": [
-                                            {
+                                        "value": {
+                                            "id": 1,
+                                            "user": 1,
+                                            "author": {
                                                 "id": 1,
-                                                "user_id": 1,
-                                                "title": "Doloremque et et.",
-                                                "content": "Discuss than some debate this. Entire him certain single west rock......",
-                                                "created_at": "2021-06-11"
-                                            }
-                                        ],
+                                                "username": "lyang",
+                                                "first_name": "Robert",
+                                                "last_name": "Oliver"
+                                            },
+                                            "title": "Doloremque et et.",
+                                            "content": "Discuss than some debate this. Entire him certain single west rock......",
+                                            "created_at": "2021-06-11"
+                                        },
                                         "summary": "Detailed example"
                                     }
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "Missing or invalid token"
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "Delete_Blog",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this blog.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "blogs"
+                ],
+                "security": [
+                    {
+                        "tokenAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "TokenAuth": {
+                            "type": "apiKey",
+                            "in": "header",
+                            "name": "Authorization",
+                            "description": "Enter your token in the format \"Token <token>\""
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "Missing or invalid token"
+                    }
+                }
+            }
+        },
+        "/api/health/": {
+            "get": {
+                "operationId": "Get_Health",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "db",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "1"
+                            ]
+                        },
+                        "description": "`1` also runs `SELECT 1` against the database"
+                    }
+                ],
+                "tags": [
+                    "health"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Health"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "503": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Health"
                                 }
                             }
                         },
@@ -367,7 +664,7 @@
         },
         "/api/schema/": {
             "get": {
-                "operationId": "api_schema_retrieve",
+                "operationId": "schema_retrieve",
                 "description": "OpenApi3 schema for this API. Format can be selected via content negotiation.\n\n- YAML: application/vnd.oai.openapi\n- JSON: application/vnd.oai.openapi+json",
                 "parameters": [
                     {
@@ -491,11 +788,14 @@
                     }
                 ],
                 "tags": [
-                    "api"
+                    "schema"
                 ],
                 "security": [
                     {
                         "tokenAuth": []
+                    },
+                    {
+                        "cookieAuth": []
                     },
                     {
                         "TokenAuth": {
@@ -544,11 +844,14 @@
             "get": {
                 "operationId": "Get_Users",
                 "tags": [
-                    "api"
+                    "users"
                 ],
                 "security": [
                     {
                         "tokenAuth": []
+                    },
+                    {
+                        "cookieAuth": []
                     },
                     {
                         "TokenAuth": {
@@ -557,7 +860,8 @@
                             "name": "Authorization",
                             "description": "Enter your token in the format \"Token <token>\""
                         }
-                    }
+                    },
+                    {}
                 ],
                 "responses": {
                     "200": {
@@ -578,9 +882,7 @@
                                                 "last_name": "Oliver",
                                                 "username": "lyang",
                                                 "mobile": "(482)598-4678",
-                                                "password": "139ae976ad128361d769a4605c9fea67",
-                                                "email": "breanna03@example.com",
-                                                "register_at": "2021-06-11"
+                                                "email": "breanna03@example.com"
                                             }
                                         ],
                                         "summary": "Detailed example"
@@ -595,28 +897,13 @@
             "post": {
                 "operationId": "Create_User",
                 "tags": [
-                    "api"
+                    "users"
                 ],
                 "requestBody": {
                     "content": {
                         "application/json": {
                             "schema": {
                                 "$ref": "#/components/schemas/UserRequest"
-                            },
-                            "examples": {
-                                "ExampleResponse": {
-                                    "value": {
-                                        "id": 1,
-                                        "first_name": "Robert",
-                                        "last_name": "Oliver",
-                                        "username": "lyang",
-                                        "mobile": "(482)598-4678",
-                                        "password": "139ae976ad128361d769a4605c9fea67",
-                                        "email": "breanna03@example.com",
-                                        "register_at": "2021-06-11"
-                                    },
-                                    "summary": "Detailed example"
-                                }
                             }
                         },
                         "application/x-www-form-urlencoded": {
@@ -635,6 +922,9 @@
                 "security": [
                     {
                         "tokenAuth": []
+                    },
+                    {
+                        "cookieAuth": []
                     },
                     {
                         "TokenAuth": {
@@ -660,9 +950,7 @@
                                             "last_name": "Oliver",
                                             "username": "lyang",
                                             "mobile": "(482)598-4678",
-                                            "password": "139ae976ad128361d769a4605c9fea67",
-                                            "email": "breanna03@example.com",
-                                            "register_at": "2021-06-11"
+                                            "email": "breanna03@example.com"
                                         },
                                         "summary": "Detailed example"
                                     }
@@ -670,29 +958,43 @@
                             }
                         },
                         "description": ""
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "Missing or invalid token"
                     }
                 }
             }
         },
-        "/api/users/{user_id}": {
+        "/api/users/{id}/": {
             "get": {
                 "operationId": "Get_User",
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "user_id",
+                        "name": "id",
                         "schema": {
                             "type": "integer"
                         },
+                        "description": "A unique integer value identifying this user.",
                         "required": true
                     }
                 ],
                 "tags": [
-                    "api"
+                    "users"
                 ],
                 "security": [
                     {
                         "tokenAuth": []
+                    },
+                    {
+                        "cookieAuth": []
                     },
                     {
                         "TokenAuth": {
@@ -701,7 +1003,8 @@
                             "name": "Authorization",
                             "description": "Enter your token in the format \"Token <token>\""
                         }
-                    }
+                    },
+                    {}
                 ],
                 "responses": {
                     "200": {
@@ -718,9 +1021,7 @@
                                             "last_name": "Oliver",
                                             "username": "lyang",
                                             "mobile": "(482)598-4678",
-                                            "password": "139ae976ad128361d769a4605c9fea67",
-                                            "email": "breanna03@example.com",
-                                            "register_at": "2021-06-11"
+                                            "email": "breanna03@example.com"
                                         },
                                         "summary": "Detailed example"
                                     }
@@ -736,46 +1037,32 @@
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "user_id",
+                        "name": "id",
                         "schema": {
                             "type": "integer"
                         },
+                        "description": "A unique integer value identifying this user.",
                         "required": true
                     }
                 ],
                 "tags": [
-                    "api"
+                    "users"
                 ],
                 "requestBody": {
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/UserRequest"
-                            },
-                            "examples": {
-                                "ExampleResponse": {
-                                    "value": {
-                                        "id": 1,
-                                        "first_name": "Robert",
-                                        "last_name": "Oliver",
-                                        "username": "lyang",
-                                        "mobile": "(482)598-4678",
-                                        "password": "139ae976ad128361d769a4605c9fea67",
-                                        "email": "breanna03@example.com",
-                                        "register_at": "2021-06-11"
-                                    },
-                                    "summary": "Detailed example"
-                                }
+                                "$ref": "#/components/schemas/UserUpdateRequest"
                             }
                         },
                         "application/x-www-form-urlencoded": {
                             "schema": {
-                                "$ref": "#/components/schemas/UserRequest"
+                                "$ref": "#/components/schemas/UserUpdateRequest"
                             }
                         },
                         "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/UserRequest"
+                                "$ref": "#/components/schemas/UserUpdateRequest"
                             }
                         }
                     },
@@ -784,6 +1071,9 @@
                 "security": [
                     {
                         "tokenAuth": []
+                    },
+                    {
+                        "cookieAuth": []
                     },
                     {
                         "TokenAuth": {
@@ -809,9 +1099,7 @@
                                             "last_name": "Oliver",
                                             "username": "lyang",
                                             "mobile": "(482)598-4678",
-                                            "password": "139ae976ad128361d769a4605c9fea67",
-                                            "email": "breanna03@example.com",
-                                            "register_at": "2021-06-11"
+                                            "email": "breanna03@example.com"
                                         },
                                         "summary": "Detailed example"
                                     }
@@ -819,6 +1107,103 @@
                             }
                         },
                         "description": ""
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "Missing or invalid token"
+                    }
+                }
+            },
+            "patch": {
+                "operationId": "Partial_Update_User",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this user.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "users"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedUserUpdateRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedUserUpdateRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedUserUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "tokenAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "TokenAuth": {
+                            "type": "apiKey",
+                            "in": "header",
+                            "name": "Authorization",
+                            "description": "Enter your token in the format \"Token <token>\""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                },
+                                "examples": {
+                                    "ExampleResponse": {
+                                        "value": {
+                                            "id": 1,
+                                            "first_name": "Robert",
+                                            "last_name": "Oliver",
+                                            "username": "lyang",
+                                            "mobile": "(482)598-4678",
+                                            "email": "breanna03@example.com"
+                                        },
+                                        "summary": "Detailed example"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "Missing or invalid token"
                     }
                 }
             },
@@ -827,19 +1212,23 @@
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "user_id",
+                        "name": "id",
                         "schema": {
                             "type": "integer"
                         },
+                        "description": "A unique integer value identifying this user.",
                         "required": true
                     }
                 ],
                 "tags": [
-                    "api"
+                    "users"
                 ],
                 "security": [
                     {
                         "tokenAuth": []
+                    },
+                    {
+                        "cookieAuth": []
                     },
                     {
                         "TokenAuth": {
@@ -853,6 +1242,87 @@
                 "responses": {
                     "204": {
                         "description": "No response body"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "Missing or invalid token"
+                    }
+                }
+            }
+        },
+        "/api/users/{id}/blogs/": {
+            "get": {
+                "operationId": "Get_User_Blogs",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this user.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "users"
+                ],
+                "security": [
+                    {
+                        "tokenAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "TokenAuth": {
+                            "type": "apiKey",
+                            "in": "header",
+                            "name": "Authorization",
+                            "description": "Enter your token in the format \"Token <token>\""
+                        }
+                    },
+                    {}
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Blog"
+                                    }
+                                },
+                                "examples": {
+                                    "ExampleResponse": {
+                                        "value": [
+                                            {
+                                                "id": 1,
+                                                "user": 1,
+                                                "author": {
+                                                    "id": 1,
+                                                    "username": "lyang",
+                                                    "first_name": "Robert",
+                                                    "last_name": "Oliver"
+                                                },
+                                                "title": "Doloremque et et.",
+                                                "content": "Discuss than some debate this. Entire him certain single west rock......",
+                                                "created_at": "2021-06-11"
+                                            }
+                                        ],
+                                        "summary": "Detailed example"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
                     }
                 }
             }
@@ -860,11 +1330,93 @@
     },
     "components": {
         "schemas": {
+            "Account": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "username": {
+                        "type": "string",
+                        "readOnly": true,
+                        "description": "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."
+                    },
+                    "is_staff": {
+                        "type": "boolean",
+                        "readOnly": true,
+                        "title": "Staff status",
+                        "description": "Designates whether the user can log into this admin site."
+                    }
+                },
+                "required": [
+                    "id",
+                    "is_staff",
+                    "username"
+                ]
+            },
+            "AuthTokenRequest": {
+                "type": "object",
+                "properties": {
+                    "username": {
+                        "type": "string",
+                        "writeOnly": true,
+                        "minLength": 1
+                    },
+                    "password": {
+                        "type": "string",
+                        "writeOnly": true,
+                        "minLength": 1
+                    }
+                },
+                "required": [
+                    "password",
+                    "username"
+                ]
+            },
+            "AuthorSummary": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "username": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "first_name": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "first_name",
+                    "id",
+                    "last_name",
+                    "username"
+                ]
+            },
             "Blog": {
                 "type": "object",
                 "properties": {
                     "id": {
                         "type": "integer",
+                        "readOnly": true
+                    },
+                    "user": {
+                        "type": "integer"
+                    },
+                    "author": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/AuthorSummary"
+                            }
+                        ],
                         "readOnly": true
                     },
                     "title": {
@@ -878,12 +1430,10 @@
                         "type": "string",
                         "format": "date",
                         "readOnly": true
-                    },
-                    "user": {
-                        "type": "integer"
                     }
                 },
                 "required": [
+                    "author",
                     "content",
                     "created_at",
                     "id",
@@ -894,6 +1444,9 @@
             "BlogRequest": {
                 "type": "object",
                 "properties": {
+                    "user": {
+                        "type": "integer"
+                    },
                     "title": {
                         "type": "string",
                         "minLength": 1,
@@ -902,15 +1455,132 @@
                     "content": {
                         "type": "string",
                         "minLength": 1
-                    },
-                    "user": {
-                        "type": "integer"
                     }
                 },
                 "required": [
                     "content",
                     "title",
                     "user"
+                ]
+            },
+            "DbEnum": {
+                "enum": [
+                    "ok",
+                    "unavailable"
+                ],
+                "type": "string",
+                "description": "* `ok` - ok\n* `unavailable` - unavailable"
+            },
+            "Detail": {
+                "type": "object",
+                "properties": {
+                    "detail": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "detail"
+                ]
+            },
+            "Health": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "$ref": "#/components/schemas/StatusEnum"
+                    },
+                    "db": {
+                        "$ref": "#/components/schemas/DbEnum"
+                    }
+                },
+                "required": [
+                    "status"
+                ]
+            },
+            "LoginError": {
+                "type": "object",
+                "properties": {
+                    "non_field_errors": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "non_field_errors"
+                ]
+            },
+            "PatchedBlogRequest": {
+                "type": "object",
+                "properties": {
+                    "user": {
+                        "type": "integer"
+                    },
+                    "title": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 200
+                    },
+                    "content": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                }
+            },
+            "PatchedUserUpdateRequest": {
+                "type": "object",
+                "properties": {
+                    "first_name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 200
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 200
+                    },
+                    "username": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 200
+                    },
+                    "mobile": {
+                        "type": "string",
+                        "nullable": true,
+                        "maxLength": 20
+                    },
+                    "password": {
+                        "type": "string",
+                        "writeOnly": true,
+                        "minLength": 6,
+                        "maxLength": 256
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "minLength": 1,
+                        "maxLength": 254
+                    }
+                }
+            },
+            "StatusEnum": {
+                "enum": [
+                    "ok",
+                    "error"
+                ],
+                "type": "string",
+                "description": "* `ok` - ok\n* `error` - error"
+            },
+            "Token": {
+                "type": "object",
+                "properties": {
+                    "token": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "token"
                 ]
             },
             "User": {
@@ -937,11 +1607,6 @@
                         "nullable": true,
                         "maxLength": 20
                     },
-                    "password": {
-                        "type": "string",
-                        "maxLength": 256,
-                        "minLength": 6
-                    },
                     "email": {
                         "type": "string",
                         "format": "email",
@@ -958,7 +1623,6 @@
                     "first_name",
                     "id",
                     "last_name",
-                    "password",
                     "register_at",
                     "username"
                 ]
@@ -988,6 +1652,7 @@
                     },
                     "password": {
                         "type": "string",
+                        "writeOnly": true,
                         "minLength": 6,
                         "maxLength": 256
                     },
@@ -1005,9 +1670,57 @@
                     "password",
                     "username"
                 ]
+            },
+            "UserUpdateRequest": {
+                "type": "object",
+                "properties": {
+                    "first_name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 200
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 200
+                    },
+                    "username": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 200
+                    },
+                    "mobile": {
+                        "type": "string",
+                        "nullable": true,
+                        "maxLength": 20
+                    },
+                    "password": {
+                        "type": "string",
+                        "writeOnly": true,
+                        "minLength": 6,
+                        "maxLength": 256
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "minLength": 1,
+                        "maxLength": 254
+                    }
+                },
+                "required": [
+                    "email",
+                    "first_name",
+                    "last_name",
+                    "username"
+                ]
             }
         },
         "securitySchemes": {
+            "cookieAuth": {
+                "type": "apiKey",
+                "in": "cookie",
+                "name": "sessionid"
+            },
             "tokenAuth": {
                 "type": "apiKey",
                 "in": "header",

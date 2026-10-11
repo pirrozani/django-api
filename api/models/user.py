@@ -4,8 +4,6 @@ from django.db import models
 
 
 class User(models.Model):
-    DoesNotExist = None
-    objects = None
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
     username = models.CharField(max_length=200)

@@ -10,15 +10,19 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 import os
+import re
 import environ
+from django.core.exceptions import ImproperlyConfigured
 from pathlib import Path
-env = environ.Env(
-    DEBUG=(bool, False)
-)
-environ.Env.read_env(env_file=".env")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Read .env by absolute path so settings load from any working directory
+env = environ.Env(
+    DEBUG=(bool, False)
+)
+environ.Env.read_env(BASE_DIR / '.env')
 
 
 # Quick-start development settings - unsuitable for production
@@ -44,17 +48,39 @@ INSTALLED_APPS = [
     'django_api',
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders',
     'api',
     'drf_spectacular'
 ]
 
+# '<count>/<period>'. DRF parses it on the first login, so a bad value would turn every
+# login into a 500; fail at startup instead
+LOGIN_THROTTLE_RATE = env('LOGIN_THROTTLE_RATE', default='20/min')
+if not re.fullmatch(r'\d+/(s|sec|second|m|min|minute|h|hour|d|day)', LOGIN_THROTTLE_RATE):
+    raise ImproperlyConfigured(
+        f'LOGIN_THROTTLE_RATE must look like "20/min", got {LOGIN_THROTTLE_RATE!r}'
+    )
+
 REST_FRAMEWORK = {
+    # Token first, so a 401 carries `WWW-Authenticate: Token` and browsers show no
+    # Basic-auth popup. Session lets an admin logged in at /admin/ use Swagger UI's
+    # "Try it out" and /api/auth/me/ (session writes also need the CSRF token)
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ),
+    # Anyone can read; writes need a login account
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ),
+    # Throttles key on REMOTE_ADDR when 0. With N trusted proxies (Render: verify, then 1)
+    # they use the Nth-from-last X-Forwarded-For entry; None would trust the whole
+    # client-supplied header, so every spoofed value would get a fresh bucket
+    'NUM_PROXIES': env.int('NUM_PROXIES', default=0),
+    # Only views that list a throttle class use these rates (POST /api/auth/token/)
+    'DEFAULT_THROTTLE_RATES': {
+        'login': LOGIN_THROTTLE_RATE,
+    },
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
@@ -64,6 +90,9 @@ REST_FRAMEWORK = {
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    # Must run before CommonMiddleware so preflight and redirect responses get headers
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -97,12 +126,18 @@ WSGI_APPLICATION = 'django_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# DATABASE_URL selects the database (Postgres in production); SQLite without it
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': env.db('DATABASE_URL', default=f'sqlite:///{BASE_DIR / "db.sqlite3"}'),
 }
+DATABASES['default']['CONN_MAX_AGE'] = env.int('CONN_MAX_AGE', default=60)
+# Reconnect after Neon scales compute to zero and drops idle connections
+DATABASES['default']['CONN_HEALTH_CHECKS'] = True
+# Fail fast when the database is unreachable, well inside gunicorn's 30 s timeout
+if DATABASES['default']['ENGINE'] == 'django.db.backends.postgresql':
+    DATABASES['default'].setdefault('OPTIONS', {}).setdefault(
+        'connect_timeout', env.int('DB_CONNECT_TIMEOUT', default=10)
+    )
 
 
 # Password validation
@@ -140,6 +175,44 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+# collectstatic target; WhiteNoise serves it compressed with hashed names
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STORAGES = {
+    'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+    },
+}
+
+
+# CORS for the React SPA on another origin
+# https://github.com/adamchainz/django-cors-headers
+
+# Exact origins only (scheme + host, no trailing slash). Token auth needs no cookies,
+# so CORS_ALLOW_CREDENTIALS stays False
+CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=[])
+
+
+# Security behind Render's HTTPS proxy
+# https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
+
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[])
+if not DEBUG:
+    # Render terminates TLS and forwards the original scheme in X-Forwarded-Proto
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    # Tests/CI with DEBUG=False set this to False; the test client sends plain HTTP
+    SECURE_SSL_REDIRECT = env.bool('SECURE_SSL_REDIRECT', default=True)
+    # Render's health check probes over plain HTTP; a 301 would pass it unchecked.
+    # SecurityMiddleware matches the path without its leading slash
+    SECURE_REDIRECT_EXEMPT = [r'^api/health/$']
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = env.int('SECURE_HSTS_SECONDS', default=3600)
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Demo login account, created by the create_demo_user command (also run by reset_demo)
+DEMO_USERNAME = env('DEMO_USERNAME', default='demo')
+DEMO_PASSWORD = env('DEMO_PASSWORD', default='')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -169,7 +242,7 @@ LOGGING = {
 SPECTACULAR_SETTINGS = {
     'TITLE': 'DjangoAPI',
     'DESCRIPTION': 'User and Blog API for Django project',
-    'VERSION': '1.0.1',
+    'VERSION': '0.1.0',
     'SECURITY': [
         {
             'TokenAuth': {
