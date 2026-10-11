@@ -2,7 +2,9 @@
 
 > Part of the [project docs](README.md). Status: **target**. The current API still differs (see [02-current-state.md](02-current-state.md)). Update this file whenever an endpoint changes.
 
-The frontend has no consumers yet, so it is safe to standardize the contract now. Bump `SPECTACULAR_SETTINGS['VERSION']` to `2.0.0` when this lands.
+The frontend has no consumers yet, so it is safe to standardize the contract now. `SPECTACULAR_SETTINGS['VERSION']` is `2.0.0`.
+
+**Landed:** routes, response shapes and status codes ([#10](https://github.com/pirrozani/django-api/issues/10)): `ModelViewSet` + `DefaultRouter`, trailing slashes, unwrapped `POST` bodies, empty `204`s, `{"detail"}` 404s, `PATCH` on users and blogs, `/api/users/<id>/blogs/` (200 on empty). **Still pending:** pagination and ordering ([#11](https://github.com/pirrozani/django-api/issues/11); lists are plain arrays until then), public reads and auth routes ([#9](https://github.com/pirrozani/django-api/issues/9)), `author` ([#12](https://github.com/pirrozani/django-api/issues/12)), search/`?author=` filters.
 
 ## Conventions
 

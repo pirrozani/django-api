@@ -31,13 +31,14 @@ With the environment rebuilt ([#1](https://github.com/pirrozani/django-api/issue
 
 | Method | Path | Current response | Auth |
 |---|---|---|---|
-| GET | `/api/users/` | `{"Total": n, "Users": [...]}` | required |
-| POST | `/api/users/` | `{"Users": {...}}` (201) | required |
-| GET/PUT/DELETE | `/api/users/<id>` | object / object / `{"message": ...}` with 204 | required |
-| GET | `/api/blogs/` | `{"Total": n, "Blogs": [...]}` | required |
-| POST | `/api/blogs/` | `{"Blogs": {...}}` (201) | required |
-| GET/PUT/DELETE | `/api/blogs/<id>` | object / object / empty 204 | required |
-| GET | `/api/blogs/user/<user_id>` | `{"Total", "Blogs"}`, or **404 when the user has no blogs** | required |
+| GET | `/api/users/` | plain array (pagination: #11) | required |
+| POST | `/api/users/` | created object (201) | required |
+| GET/PUT/PATCH/DELETE | `/api/users/<id>/` | object / object / object / empty 204 | required |
+| GET | `/api/users/<id>/blogs/` | plain array, **200 when empty**; 404 `{"detail"}` if the user doesn't exist | required |
+| GET | `/api/blogs/` | plain array (pagination: #11) | required |
+| POST | `/api/blogs/` | created object (201) | required |
+| GET/PUT/PATCH/DELETE | `/api/blogs/<id>/` | object / object / object / empty 204 | required |
+| GET | `/api/health/` | `{"status": "ok"}` (`?db=1` checks the database) | public |
 | GET | `/api/schema/`, `/api/schema/swagger-ui/`, `/api/schema/redoc/` | OpenAPI | public |
 | — | `/admin/` | Django admin | session |
 

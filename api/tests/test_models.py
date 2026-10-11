@@ -27,9 +27,9 @@ class ModelStubRemovalTests(APITestCase):
     def test_detail_views_return_404_for_missing_ids(self):
         self.client.force_authenticate(AuthUser.objects.create_user('reader'))
         for name, kwargs in (
-            ('blog-detail', {'blog_id': 999}),
-            ('user-detail', {'user_id': 999}),
-            ('user-blogs', {'user_id': 999}),
+            ('blog-detail', {'pk': 999}),
+            ('user-detail', {'pk': 999}),
+            ('user-blogs', {'pk': 999}),
         ):
             with self.subTest(url=name):
                 response = self.client.get(reverse(name, kwargs=kwargs))

@@ -10,7 +10,7 @@ from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
             summary='Detailed example',
             value={
                 'id': 1,
-                'user_id': 1,
+                'user': 1,
                 'title': 'Doloremque et et.',
                 'content': 'Discuss than some debate this. Entire him certain single west rock......',
                 'created_at': '2021-06-11'

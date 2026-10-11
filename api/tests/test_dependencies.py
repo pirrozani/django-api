@@ -21,13 +21,12 @@ NEW_USER = {
 }
 
 # Mirrors the current URLconf; update together with docs/03-api-contract.md
-# when the v2 paths land (#10, #12)
 API_PATHS = {
     '/api/users/': {'get', 'post'},
-    '/api/users/{user_id}': {'get', 'put', 'patch', 'delete'},
+    '/api/users/{id}/': {'get', 'put', 'patch', 'delete'},
+    '/api/users/{id}/blogs/': {'get'},
     '/api/blogs/': {'get', 'post'},
-    '/api/blogs/{blog_id}': {'get', 'put', 'delete'},
-    '/api/blogs/user/{user_id}': {'get'},
+    '/api/blogs/{id}/': {'get', 'put', 'patch', 'delete'},
 }
 
 
