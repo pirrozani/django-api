@@ -21,6 +21,12 @@ class HealthViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {'status': 'ok'})
 
+    # Only the exact value 1 triggers the database check
+    def test_other_db_values_skip_database(self):
+        with self.assertNumQueries(0):
+            response = self.client.get(HEALTH_URL, {'db': 'true'})
+        self.assertEqual(response.json(), {'status': 'ok'})
+
     # ?db=1 runs SELECT 1 and reports the database
     def test_db_check_ok(self):
         with self.assertNumQueries(1):
@@ -33,7 +39,7 @@ class HealthViewTests(TestCase):
         with patch(
             'api.views.health_views.connection.cursor',
             side_effect=DatabaseError('connection refused'),
-        ):
+        ), self.assertLogs('api.views.health_views', 'WARNING'):
             response = self.client.get(HEALTH_URL, {'db': '1'})
         self.assertEqual(response.status_code, 503)
         self.assertEqual(response.json(), {'status': 'error', 'db': 'unavailable'})
@@ -43,7 +49,7 @@ class HealthViewTests(TestCase):
         with patch(
             'api.views.health_views.connection.cursor',
             side_effect=InterfaceError('connection already closed'),
-        ):
+        ), self.assertLogs('api.views.health_views', 'WARNING'):
             response = self.client.get(HEALTH_URL, {'db': '1'})
         self.assertEqual(response.status_code, 503)
 

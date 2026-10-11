@@ -1,3 +1,5 @@
+import logging
+
 from django.db import Error, connection
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema, inline_serializer
@@ -7,11 +9,13 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+logger = logging.getLogger(__name__)
+
 HealthSerializer = inline_serializer(
     name='Health',
     fields={
-        'status': serializers.CharField(),
-        'db': serializers.CharField(required=False),
+        'status': serializers.ChoiceField(choices=['ok', 'error']),
+        'db': serializers.ChoiceField(choices=['ok', 'unavailable'], required=False),
     },
 )
 
@@ -46,6 +50,7 @@ class HealthView(APIView):
                 cursor.fetchone()
         # Error also covers InterfaceError, which isn't a DatabaseError
         except Error:
+            logger.warning('Health check: database unavailable', exc_info=True)
             return Response(
                 {'status': 'error', 'db': 'unavailable'},
                 status=status.HTTP_503_SERVICE_UNAVAILABLE,

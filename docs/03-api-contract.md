@@ -6,7 +6,7 @@ The frontend has no consumers yet, so it is safe to standardize the contract now
 
 ## Conventions
 
-- JSON only. Errors use DRF's default shape: `{"detail": "..."}` or field errors `{"field": ["msg"]}`.
+- JSON only. Errors use DRF's default shape: `{"detail": "..."}` or field errors `{"field": ["msg"]}` (the one exception is the `/api/health/` 503 below).
 - Lists are paginated: `{"count", "next", "previous", "results": [...]}` · `?page=N` · page size 10, configurable with `?page_size=` up to 50.
 - `POST` returns **201 + the created object** (unwrapped). `DELETE` returns **204 with empty body**.
 - `PATCH` supported for partial updates; `PUT` stays as a full replace.
