@@ -4,19 +4,103 @@ info:
   version: 2.0.0
   description: User and Blog API for Django project
 paths:
-  /api/blogs/:
-    get:
-      operationId: Get_Blogs
+  /api/auth/logout/:
+    post:
+      operationId: Delete_Auth_Token
       tags:
-      - blogs
+      - auth
       security:
-      - basicAuth: []
       - tokenAuth: []
       - TokenAuth:
           type: apiKey
           in: header
           name: Authorization
           description: Enter your token in the format "Token <token>"
+      responses:
+        '204':
+          description: No response body
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: Missing or invalid token
+  /api/auth/me/:
+    get:
+      operationId: Get_Auth_Me
+      tags:
+      - auth
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - TokenAuth:
+          type: apiKey
+          in: header
+          name: Authorization
+          description: Enter your token in the format "Token <token>"
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: Missing or invalid token
+  /api/auth/token/:
+    post:
+      operationId: Create_Auth_Token
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AuthTokenRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AuthTokenRequest'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthTokenRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginError'
+          description: Wrong or missing credentials
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: Too many login attempts
+  /api/blogs/:
+    get:
+      operationId: Get_Blogs
+      tags:
+      - blogs
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - TokenAuth:
+          type: apiKey
+          in: header
+          name: Authorization
+          description: Enter your token in the format "Token <token>"
+      - {}
       responses:
         '200':
           content:
@@ -63,8 +147,8 @@ paths:
               $ref: '#/components/schemas/BlogRequest'
         required: true
       security:
-      - basicAuth: []
       - tokenAuth: []
+      - cookieAuth: []
       - TokenAuth:
           type: apiKey
           in: header
@@ -87,6 +171,12 @@ paths:
                     created_at: '2021-06-11'
                   summary: Detailed example
           description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: Missing or invalid token
   /api/blogs/{id}/:
     get:
       operationId: Get_Blog
@@ -100,13 +190,14 @@ paths:
       tags:
       - blogs
       security:
-      - basicAuth: []
       - tokenAuth: []
+      - cookieAuth: []
       - TokenAuth:
           type: apiKey
           in: header
           name: Authorization
           description: Enter your token in the format "Token <token>"
+      - {}
       responses:
         '200':
           content:
@@ -158,8 +249,8 @@ paths:
               $ref: '#/components/schemas/BlogRequest'
         required: true
       security:
-      - basicAuth: []
       - tokenAuth: []
+      - cookieAuth: []
       - TokenAuth:
           type: apiKey
           in: header
@@ -182,6 +273,12 @@ paths:
                     created_at: '2021-06-11'
                   summary: Detailed example
           description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: Missing or invalid token
     patch:
       operationId: Partial_Update_Blog
       parameters:
@@ -215,8 +312,8 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedBlogRequest'
       security:
-      - basicAuth: []
       - tokenAuth: []
+      - cookieAuth: []
       - TokenAuth:
           type: apiKey
           in: header
@@ -239,6 +336,12 @@ paths:
                     created_at: '2021-06-11'
                   summary: Detailed example
           description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: Missing or invalid token
     delete:
       operationId: Delete_Blog
       parameters:
@@ -251,8 +354,8 @@ paths:
       tags:
       - blogs
       security:
-      - basicAuth: []
       - tokenAuth: []
+      - cookieAuth: []
       - TokenAuth:
           type: apiKey
           in: header
@@ -261,6 +364,12 @@ paths:
       responses:
         '204':
           description: No response body
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: Missing or invalid token
   /api/health/:
     get:
       operationId: Get_Health
@@ -410,8 +519,8 @@ paths:
       tags:
       - schema
       security:
-      - basicAuth: []
       - tokenAuth: []
+      - cookieAuth: []
       - TokenAuth:
           type: apiKey
           in: header
@@ -444,13 +553,14 @@ paths:
       tags:
       - users
       security:
-      - basicAuth: []
       - tokenAuth: []
+      - cookieAuth: []
       - TokenAuth:
           type: apiKey
           in: header
           name: Authorization
           description: Enter your token in the format "Token <token>"
+      - {}
       responses:
         '200':
           content:
@@ -487,8 +597,8 @@ paths:
               $ref: '#/components/schemas/UserRequest'
         required: true
       security:
-      - basicAuth: []
       - tokenAuth: []
+      - cookieAuth: []
       - TokenAuth:
           type: apiKey
           in: header
@@ -511,6 +621,12 @@ paths:
                     email: breanna03@example.com
                   summary: Detailed example
           description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: Missing or invalid token
   /api/users/{id}/:
     get:
       operationId: Get_User
@@ -524,13 +640,14 @@ paths:
       tags:
       - users
       security:
-      - basicAuth: []
       - tokenAuth: []
+      - cookieAuth: []
       - TokenAuth:
           type: apiKey
           in: header
           name: Authorization
           description: Enter your token in the format "Token <token>"
+      - {}
       responses:
         '200':
           content:
@@ -572,8 +689,8 @@ paths:
               $ref: '#/components/schemas/UserUpdateRequest'
         required: true
       security:
-      - basicAuth: []
       - tokenAuth: []
+      - cookieAuth: []
       - TokenAuth:
           type: apiKey
           in: header
@@ -596,6 +713,12 @@ paths:
                     email: breanna03@example.com
                   summary: Detailed example
           description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: Missing or invalid token
     patch:
       operationId: Partial_Update_User
       parameters:
@@ -619,8 +742,8 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedUserUpdateRequest'
       security:
-      - basicAuth: []
       - tokenAuth: []
+      - cookieAuth: []
       - TokenAuth:
           type: apiKey
           in: header
@@ -643,6 +766,12 @@ paths:
                     email: breanna03@example.com
                   summary: Detailed example
           description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: Missing or invalid token
     delete:
       operationId: Delete_User
       parameters:
@@ -655,8 +784,8 @@ paths:
       tags:
       - users
       security:
-      - basicAuth: []
       - tokenAuth: []
+      - cookieAuth: []
       - TokenAuth:
           type: apiKey
           in: header
@@ -665,6 +794,12 @@ paths:
       responses:
         '204':
           description: No response body
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: Missing or invalid token
   /api/users/{id}/blogs/:
     get:
       operationId: Get_User_Blogs
@@ -678,13 +813,14 @@ paths:
       tags:
       - users
       security:
-      - basicAuth: []
       - tokenAuth: []
+      - cookieAuth: []
       - TokenAuth:
           type: apiKey
           in: header
           name: Authorization
           description: Enter your token in the format "Token <token>"
+      - {}
       responses:
         '200':
           content:
@@ -706,6 +842,40 @@ paths:
           description: ''
 components:
   schemas:
+    Account:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          readOnly: true
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+        is_staff:
+          type: boolean
+          readOnly: true
+          title: Staff status
+          description: Designates whether the user can log into this admin site.
+      required:
+      - id
+      - is_staff
+      - username
+    AuthTokenRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+          minLength: 1
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - password
+      - username
     Blog:
       type: object
       properties:
@@ -753,6 +923,13 @@ components:
       description: |-
         * `ok` - ok
         * `unavailable` - unavailable
+    Detail:
+      type: object
+      properties:
+        detail:
+          type: string
+      required:
+      - detail
     Health:
       type: object
       properties:
@@ -762,6 +939,15 @@ components:
           $ref: '#/components/schemas/DbEnum'
       required:
       - status
+    LoginError:
+      type: object
+      properties:
+        non_field_errors:
+          type: array
+          items:
+            type: string
+      required:
+      - non_field_errors
     PatchedBlogRequest:
       type: object
       properties:
@@ -811,6 +997,13 @@ components:
       description: |-
         * `ok` - ok
         * `error` - error
+    Token:
+      type: object
+      properties:
+        token:
+          type: string
+      required:
+      - token
     User:
       type: object
       properties:
@@ -915,9 +1108,10 @@ components:
       - last_name
       - username
   securitySchemes:
-    basicAuth:
-      type: http
-      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
     tokenAuth:
       type: apiKey
       in: header

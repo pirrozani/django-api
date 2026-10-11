@@ -4,7 +4,7 @@
 
 The frontend has no consumers yet, so it is safe to standardize the contract now. `SPECTACULAR_SETTINGS['VERSION']` is `2.0.0`.
 
-**Landed:** routes, response shapes and status codes ([#10](https://github.com/pirrozani/django-api/issues/10)): `ModelViewSet` + `DefaultRouter`, trailing slashes, unwrapped `POST` bodies, empty `204`s, `{"detail"}` 404s, `PATCH` on users and blogs, `/api/users/<id>/blogs/` (200 on empty). **Still pending:** pagination and ordering ([#11](https://github.com/pirrozani/django-api/issues/11); lists are plain arrays until then), public reads and auth routes ([#9](https://github.com/pirrozani/django-api/issues/9)), `author` ([#12](https://github.com/pirrozani/django-api/issues/12)), search/`?author=` filters.
+**Landed:** routes, response shapes and status codes ([#10](https://github.com/pirrozani/django-api/issues/10)): `ModelViewSet` + `DefaultRouter`, trailing slashes, unwrapped `POST` bodies, empty `204`s, `{"detail"}` 404s, `PATCH` on users and blogs, `/api/users/<id>/blogs/` (200 on empty). Public reads and auth routes ([#9](https://github.com/pirrozani/django-api/issues/9)): `GET` needs no token, writes return **401** with `WWW-Authenticate: Token` (no Basic-auth popup), `/api/auth/token/`, `/api/auth/logout/`, `/api/auth/me/`. **Still pending:** pagination and ordering ([#11](https://github.com/pirrozani/django-api/issues/11); lists are plain arrays until then), `author` ([#12](https://github.com/pirrozani/django-api/issues/12)), search/`?author=` filters.
 
 ## Conventions
 
@@ -14,7 +14,8 @@ The frontend has no consumers yet, so it is safe to standardize the contract now
 - `PATCH` supported for partial updates; `PUT` stays as a full replace.
 - Default ordering: newest first (`-created_at`, `-id`).
 - Trailing slashes on every route (`/api/blogs/<id>/`).
-- Auth header: `Authorization: Token <token>`.
+- Auth header: `Authorization: Token <token>`. Without it, reads work and writes return **401** with `WWW-Authenticate: Token`.
+- Login account: Django's `auth.User` (e.g. the demo account), **not** an `/api/users/` author. One token per account: logging out revokes it for every session that shares the account.
 - Cross-origin: only the origins in `CORS_ALLOWED_ORIGINS` get `Access-Control-Allow-Origin` (preflight allows `Authorization`). No cookies or credentials, since token auth doesn't need them.
 
 ## Endpoints
@@ -22,8 +23,8 @@ The frontend has no consumers yet, so it is safe to standardize the contract now
 | Method | Path | Auth | Notes |
 |---|---|---|---|
 | GET | `/api/health/` | public | `{"status": "ok"}`, no DB access. `?db=1` runs `SELECT 1` → `{"status": "ok", "db": "ok"}`, or **503** `{"status": "error", "db": "unavailable"}`. Unthrottled, ignores credentials, not redirected to HTTPS. Render health check + frontend wake-up. |
-| POST | `/api/auth/token/` | public | body `{username, password}` → `{"token": "..."}` |
-| POST | `/api/auth/logout/` | token | Deletes the token → 204 |
+| POST | `/api/auth/token/` | public | body `{username, password}` (JSON or form) → `{"token": "..."}`; wrong credentials → **400** `{"non_field_errors": [...]}`. Ignores any `Authorization` header. Throttled per client IP (20/min, `LOGIN_THROTTLE_RATE`; IP from `NUM_PROXIES`) → **429** |
+| POST | `/api/auth/logout/` | token | Deletes the token → 204 (empty body); the token then gets 401 |
 | GET | `/api/auth/me/` | token | `{id, username, is_staff}` of the logged-in account |
 | GET | `/api/users/` | public | paginated; `?search=` on name/username/email (optional) |
 | POST | `/api/users/` | token | password required, write-only, hashed |

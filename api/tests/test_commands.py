@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 from django.core.management import call_command
 from django.core.management.base import CommandError
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from faker.proxy import UniqueProxy
 
 from api.models import Blog, User
@@ -81,6 +81,7 @@ class ManagementCommandTests(TestCase):
         self.assertFalse(Blog.objects.exists())
 
     # reset_demo leaves exactly the demo row counts, with ids from 1
+    @override_settings(DEMO_PASSWORD='demo-pass')
     def test_reset_demo_leaves_30_users_and_80_blogs(self):
         self.run_command('populate', users=5, articles=5)
         self.run_command('reset_demo')

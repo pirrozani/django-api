@@ -10,7 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 import os
+import re
 import environ
+from django.core.exceptions import ImproperlyConfigured
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -51,14 +53,34 @@ INSTALLED_APPS = [
     'drf_spectacular'
 ]
 
+# '<count>/<period>'. DRF parses it on the first login, so a bad value would turn every
+# login into a 500; fail at startup instead
+LOGIN_THROTTLE_RATE = env('LOGIN_THROTTLE_RATE', default='20/min')
+if not re.fullmatch(r'\d+/(s|sec|second|m|min|minute|h|hour|d|day)', LOGIN_THROTTLE_RATE):
+    raise ImproperlyConfigured(
+        f'LOGIN_THROTTLE_RATE must look like "20/min", got {LOGIN_THROTTLE_RATE!r}'
+    )
+
 REST_FRAMEWORK = {
+    # Token first, so a 401 carries `WWW-Authenticate: Token` and browsers show no
+    # Basic-auth popup. Session lets an admin logged in at /admin/ use Swagger UI's
+    # "Try it out" and /api/auth/me/ (session writes also need the CSRF token)
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ),
+    # Anyone can read; writes need a login account
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ),
+    # Throttles key on REMOTE_ADDR when 0. With N trusted proxies (Render: verify, then 1)
+    # they use the Nth-from-last X-Forwarded-For entry; None would trust the whole
+    # client-supplied header, so every spoofed value would get a fresh bucket
+    'NUM_PROXIES': env.int('NUM_PROXIES', default=0),
+    # Only views that list a throttle class use these rates (POST /api/auth/token/)
+    'DEFAULT_THROTTLE_RATES': {
+        'login': LOGIN_THROTTLE_RATE,
+    },
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
@@ -187,6 +209,10 @@ if not DEBUG:
     CSRF_COOKIE_SECURE = True
     SECURE_HSTS_SECONDS = env.int('SECURE_HSTS_SECONDS', default=3600)
     SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Demo login account, created by the create_demo_user command (also run by reset_demo)
+DEMO_USERNAME = env('DEMO_USERNAME', default='demo')
+DEMO_PASSWORD = env('DEMO_PASSWORD', default='')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

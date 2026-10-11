@@ -5,10 +5,10 @@
 | ID | Item | Steps |
 |---|---|---|
 | OPS-01 | **Neon** database | Create a project + database and copy the connection string (`sslmode=require`). Optionally create a `dev` branch for local use. |
-| OPS-02 | **Render** web service | New Web Service from this repo, branch `main`, free plan, region close to the Neon region. Set the env vars from [06-configuration.md](06-configuration.md). Health check path `/api/health/`. |
-| OPS-03 | **Seed production data (locally)** | With `DATABASE_URL` pointed at Neon in your shell, run `uv run python manage.py migrate` then `uv run python manage.py reset_demo` (or `populate` + `create_demo_user`). Never commit the Neon URL. |
+| OPS-02 | **Render** web service | New Web Service from this repo, branch `main`, free plan, region close to the Neon region. Set the env vars from [06-configuration.md](06-configuration.md), including `NUM_PROXIES` for the login throttle. Health check path `/api/health/`. |
+| OPS-03 | **Seed production data (locally)** | With `DATABASE_URL` pointed at Neon in your shell, run `uv run python manage.py migrate` then `uv run python manage.py reset_demo` (or `populate` + `create_demo_user`). Both need `DEMO_PASSWORD` in that shell, and that value becomes the production demo password (re-running with a new one revokes the old token). Never commit the Neon URL. |
 | OPS-04 | **CI (GitHub Actions)** | Backend: install → `ruff check` → `ruff format --check` → `check --deploy` (dummy prod env) → `test` (Postgres service container). Frontend: install → lint → typecheck → test → build. |
-| OPS-05 | **Nightly demo reset** (optional) | Scheduled GitHub Action runs `reset_demo` against Neon with `DATABASE_URL` stored as an Actions secret. Render cron jobs are not free. |
+| OPS-05 | **Nightly demo reset** (optional) | Scheduled GitHub Action runs `reset_demo` against Neon with `DATABASE_URL`, `DEMO_USERNAME` and `DEMO_PASSWORD` stored as Actions secrets. Without `DEMO_PASSWORD` the whole reset rolls back. Render cron jobs are not free. |
 | OPS-06 | **Branching** | `feature/*` → PR into `develop` → PR `develop` → `main` triggers deploys (Render auto-deploy, Cloudflare Workers Builds). |
 
 ## Render settings (OPS-02)

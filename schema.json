@@ -6,16 +6,13 @@
         "description": "User and Blog API for Django project"
     },
     "paths": {
-        "/api/blogs/": {
-            "get": {
-                "operationId": "Get_Blogs",
+        "/api/auth/logout/": {
+            "post": {
+                "operationId": "Delete_Auth_Token",
                 "tags": [
-                    "blogs"
+                    "auth"
                 ],
                 "security": [
-                    {
-                        "basicAuth": []
-                    },
                     {
                         "tokenAuth": []
                     },
@@ -27,6 +24,152 @@
                             "description": "Enter your token in the format \"Token <token>\""
                         }
                     }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "Missing or invalid token"
+                    }
+                }
+            }
+        },
+        "/api/auth/me/": {
+            "get": {
+                "operationId": "Get_Auth_Me",
+                "tags": [
+                    "auth"
+                ],
+                "security": [
+                    {
+                        "tokenAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "TokenAuth": {
+                            "type": "apiKey",
+                            "in": "header",
+                            "name": "Authorization",
+                            "description": "Enter your token in the format \"Token <token>\""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Account"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "Missing or invalid token"
+                    }
+                }
+            }
+        },
+        "/api/auth/token/": {
+            "post": {
+                "operationId": "Create_Auth_Token",
+                "tags": [
+                    "auth"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthTokenRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthTokenRequest"
+                            }
+                        },
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthTokenRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Token"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LoginError"
+                                }
+                            }
+                        },
+                        "description": "Wrong or missing credentials"
+                    },
+                    "429": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "Too many login attempts"
+                    }
+                }
+            }
+        },
+        "/api/blogs/": {
+            "get": {
+                "operationId": "Get_Blogs",
+                "tags": [
+                    "blogs"
+                ],
+                "security": [
+                    {
+                        "tokenAuth": []
+                    },
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "TokenAuth": {
+                            "type": "apiKey",
+                            "in": "header",
+                            "name": "Authorization",
+                            "description": "Enter your token in the format \"Token <token>\""
+                        }
+                    },
+                    {}
                 ],
                 "responses": {
                     "200": {
@@ -97,10 +240,10 @@
                 },
                 "security": [
                     {
-                        "basicAuth": []
+                        "tokenAuth": []
                     },
                     {
-                        "tokenAuth": []
+                        "cookieAuth": []
                     },
                     {
                         "TokenAuth": {
@@ -133,6 +276,16 @@
                             }
                         },
                         "description": ""
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "Missing or invalid token"
                     }
                 }
             }
@@ -156,10 +309,10 @@
                 ],
                 "security": [
                     {
-                        "basicAuth": []
+                        "tokenAuth": []
                     },
                     {
-                        "tokenAuth": []
+                        "cookieAuth": []
                     },
                     {
                         "TokenAuth": {
@@ -168,7 +321,8 @@
                             "name": "Authorization",
                             "description": "Enter your token in the format \"Token <token>\""
                         }
-                    }
+                    },
+                    {}
                 ],
                 "responses": {
                     "200": {
@@ -245,10 +399,10 @@
                 },
                 "security": [
                     {
-                        "basicAuth": []
+                        "tokenAuth": []
                     },
                     {
-                        "tokenAuth": []
+                        "cookieAuth": []
                     },
                     {
                         "TokenAuth": {
@@ -281,6 +435,16 @@
                             }
                         },
                         "description": ""
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "Missing or invalid token"
                     }
                 }
             },
@@ -333,10 +497,10 @@
                 },
                 "security": [
                     {
-                        "basicAuth": []
+                        "tokenAuth": []
                     },
                     {
-                        "tokenAuth": []
+                        "cookieAuth": []
                     },
                     {
                         "TokenAuth": {
@@ -369,6 +533,16 @@
                             }
                         },
                         "description": ""
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "Missing or invalid token"
                     }
                 }
             },
@@ -390,10 +564,10 @@
                 ],
                 "security": [
                     {
-                        "basicAuth": []
+                        "tokenAuth": []
                     },
                     {
-                        "tokenAuth": []
+                        "cookieAuth": []
                     },
                     {
                         "TokenAuth": {
@@ -407,6 +581,16 @@
                 "responses": {
                     "204": {
                         "description": "No response body"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "Missing or invalid token"
                     }
                 }
             }
@@ -584,10 +768,10 @@
                 ],
                 "security": [
                     {
-                        "basicAuth": []
+                        "tokenAuth": []
                     },
                     {
-                        "tokenAuth": []
+                        "cookieAuth": []
                     },
                     {
                         "TokenAuth": {
@@ -640,10 +824,10 @@
                 ],
                 "security": [
                     {
-                        "basicAuth": []
+                        "tokenAuth": []
                     },
                     {
-                        "tokenAuth": []
+                        "cookieAuth": []
                     },
                     {
                         "TokenAuth": {
@@ -652,7 +836,8 @@
                             "name": "Authorization",
                             "description": "Enter your token in the format \"Token <token>\""
                         }
-                    }
+                    },
+                    {}
                 ],
                 "responses": {
                     "200": {
@@ -712,10 +897,10 @@
                 },
                 "security": [
                     {
-                        "basicAuth": []
+                        "tokenAuth": []
                     },
                     {
-                        "tokenAuth": []
+                        "cookieAuth": []
                     },
                     {
                         "TokenAuth": {
@@ -749,6 +934,16 @@
                             }
                         },
                         "description": ""
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "Missing or invalid token"
                     }
                 }
             }
@@ -772,10 +967,10 @@
                 ],
                 "security": [
                     {
-                        "basicAuth": []
+                        "tokenAuth": []
                     },
                     {
-                        "tokenAuth": []
+                        "cookieAuth": []
                     },
                     {
                         "TokenAuth": {
@@ -784,7 +979,8 @@
                             "name": "Authorization",
                             "description": "Enter your token in the format \"Token <token>\""
                         }
-                    }
+                    },
+                    {}
                 ],
                 "responses": {
                     "200": {
@@ -850,10 +1046,10 @@
                 },
                 "security": [
                     {
-                        "basicAuth": []
+                        "tokenAuth": []
                     },
                     {
-                        "tokenAuth": []
+                        "cookieAuth": []
                     },
                     {
                         "TokenAuth": {
@@ -887,6 +1083,16 @@
                             }
                         },
                         "description": ""
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "Missing or invalid token"
                     }
                 }
             },
@@ -927,10 +1133,10 @@
                 },
                 "security": [
                     {
-                        "basicAuth": []
+                        "tokenAuth": []
                     },
                     {
-                        "tokenAuth": []
+                        "cookieAuth": []
                     },
                     {
                         "TokenAuth": {
@@ -964,6 +1170,16 @@
                             }
                         },
                         "description": ""
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "Missing or invalid token"
                     }
                 }
             },
@@ -985,10 +1201,10 @@
                 ],
                 "security": [
                     {
-                        "basicAuth": []
+                        "tokenAuth": []
                     },
                     {
-                        "tokenAuth": []
+                        "cookieAuth": []
                     },
                     {
                         "TokenAuth": {
@@ -1002,6 +1218,16 @@
                 "responses": {
                     "204": {
                         "description": "No response body"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "Missing or invalid token"
                     }
                 }
             }
@@ -1025,10 +1251,10 @@
                 ],
                 "security": [
                     {
-                        "basicAuth": []
+                        "tokenAuth": []
                     },
                     {
-                        "tokenAuth": []
+                        "cookieAuth": []
                     },
                     {
                         "TokenAuth": {
@@ -1037,7 +1263,8 @@
                             "name": "Authorization",
                             "description": "Enter your token in the format \"Token <token>\""
                         }
-                    }
+                    },
+                    {}
                 ],
                 "responses": {
                     "200": {
@@ -1073,6 +1300,50 @@
     },
     "components": {
         "schemas": {
+            "Account": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "username": {
+                        "type": "string",
+                        "readOnly": true,
+                        "description": "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."
+                    },
+                    "is_staff": {
+                        "type": "boolean",
+                        "readOnly": true,
+                        "title": "Staff status",
+                        "description": "Designates whether the user can log into this admin site."
+                    }
+                },
+                "required": [
+                    "id",
+                    "is_staff",
+                    "username"
+                ]
+            },
+            "AuthTokenRequest": {
+                "type": "object",
+                "properties": {
+                    "username": {
+                        "type": "string",
+                        "writeOnly": true,
+                        "minLength": 1
+                    },
+                    "password": {
+                        "type": "string",
+                        "writeOnly": true,
+                        "minLength": 1
+                    }
+                },
+                "required": [
+                    "password",
+                    "username"
+                ]
+            },
             "Blog": {
                 "type": "object",
                 "properties": {
@@ -1134,6 +1405,17 @@
                 "type": "string",
                 "description": "* `ok` - ok\n* `unavailable` - unavailable"
             },
+            "Detail": {
+                "type": "object",
+                "properties": {
+                    "detail": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "detail"
+                ]
+            },
             "Health": {
                 "type": "object",
                 "properties": {
@@ -1146,6 +1428,20 @@
                 },
                 "required": [
                     "status"
+                ]
+            },
+            "LoginError": {
+                "type": "object",
+                "properties": {
+                    "non_field_errors": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "non_field_errors"
                 ]
             },
             "PatchedBlogRequest": {
@@ -1209,6 +1505,17 @@
                 ],
                 "type": "string",
                 "description": "* `ok` - ok\n* `error` - error"
+            },
+            "Token": {
+                "type": "object",
+                "properties": {
+                    "token": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "token"
+                ]
             },
             "User": {
                 "type": "object",
@@ -1343,9 +1650,10 @@
             }
         },
         "securitySchemes": {
-            "basicAuth": {
-                "type": "http",
-                "scheme": "basic"
+            "cookieAuth": {
+                "type": "apiKey",
+                "in": "cookie",
+                "name": "sessionid"
             },
             "tokenAuth": {
                 "type": "apiKey",
