@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django_api',
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders',
     'api',
     'drf_spectacular'
 ]
@@ -68,6 +69,8 @@ REST_FRAMEWORK = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    # Must run before CommonMiddleware so preflight and redirect responses get headers
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -158,6 +161,14 @@ STORAGES = {
         'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
     },
 }
+
+
+# CORS for the React SPA on another origin
+# https://github.com/adamchainz/django-cors-headers
+
+# Exact origins only (scheme + host, no trailing slash). Token auth needs no cookies,
+# so CORS_ALLOW_CREDENTIALS stays False
+CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=[])
 
 
 # Security behind Render's HTTPS proxy

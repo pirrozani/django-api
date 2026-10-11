@@ -15,6 +15,7 @@ The frontend has no consumers yet, so it is safe to standardize the contract now
 - Default ordering: newest first (`-created_at`, `-id`).
 - Trailing slashes on every route (`/api/blogs/<id>/`).
 - Auth header: `Authorization: Token <token>`.
+- Cross-origin: only the origins in `CORS_ALLOWED_ORIGINS` get `Access-Control-Allow-Origin` (preflight allows `Authorization`). No cookies or credentials, since token auth doesn't need them.
 
 ## Endpoints
 
