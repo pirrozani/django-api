@@ -2,7 +2,7 @@
     "openapi": "3.0.3",
     "info": {
         "title": "DjangoAPI",
-        "version": "1.0.0",
+        "version": "2.0.0",
         "description": "User and Blog API for Django project"
     },
     "paths": {
@@ -10,9 +10,12 @@
             "get": {
                 "operationId": "Get_Blogs",
                 "tags": [
-                    "api"
+                    "blogs"
                 ],
                 "security": [
+                    {
+                        "basicAuth": []
+                    },
                     {
                         "tokenAuth": []
                     },
@@ -40,7 +43,7 @@
                                         "value": [
                                             {
                                                 "id": 1,
-                                                "user_id": 1,
+                                                "user": 1,
                                                 "title": "Doloremque et et.",
                                                 "content": "Discuss than some debate this. Entire him certain single west rock......",
                                                 "created_at": "2021-06-11"
@@ -58,7 +61,7 @@
             "post": {
                 "operationId": "Create_Blog",
                 "tags": [
-                    "api"
+                    "blogs"
                 ],
                 "requestBody": {
                     "content": {
@@ -70,7 +73,7 @@
                                 "ExampleResponse": {
                                     "value": {
                                         "id": 1,
-                                        "user_id": 1,
+                                        "user": 1,
                                         "title": "Doloremque et et.",
                                         "content": "Discuss than some debate this. Entire him certain single west rock......",
                                         "created_at": "2021-06-11"
@@ -93,6 +96,9 @@
                     "required": true
                 },
                 "security": [
+                    {
+                        "basicAuth": []
+                    },
                     {
                         "tokenAuth": []
                     },
@@ -116,7 +122,7 @@
                                     "ExampleResponse": {
                                         "value": {
                                             "id": 1,
-                                            "user_id": 1,
+                                            "user": 1,
                                             "title": "Doloremque et et.",
                                             "content": "Discuss than some debate this. Entire him certain single west rock......",
                                             "created_at": "2021-06-11"
@@ -131,23 +137,27 @@
                 }
             }
         },
-        "/api/blogs/{blog_id}": {
+        "/api/blogs/{id}/": {
             "get": {
                 "operationId": "Get_Blog",
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "blog_id",
+                        "name": "id",
                         "schema": {
                             "type": "integer"
                         },
+                        "description": "A unique integer value identifying this blog.",
                         "required": true
                     }
                 ],
                 "tags": [
-                    "api"
+                    "blogs"
                 ],
                 "security": [
+                    {
+                        "basicAuth": []
+                    },
                     {
                         "tokenAuth": []
                     },
@@ -171,7 +181,7 @@
                                     "ExampleResponse": {
                                         "value": {
                                             "id": 1,
-                                            "user_id": 1,
+                                            "user": 1,
                                             "title": "Doloremque et et.",
                                             "content": "Discuss than some debate this. Entire him certain single west rock......",
                                             "created_at": "2021-06-11"
@@ -190,15 +200,16 @@
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "blog_id",
+                        "name": "id",
                         "schema": {
                             "type": "integer"
                         },
+                        "description": "A unique integer value identifying this blog.",
                         "required": true
                     }
                 ],
                 "tags": [
-                    "api"
+                    "blogs"
                 ],
                 "requestBody": {
                     "content": {
@@ -210,7 +221,7 @@
                                 "ExampleResponse": {
                                     "value": {
                                         "id": 1,
-                                        "user_id": 1,
+                                        "user": 1,
                                         "title": "Doloremque et et.",
                                         "content": "Discuss than some debate this. Entire him certain single west rock......",
                                         "created_at": "2021-06-11"
@@ -234,6 +245,9 @@
                 },
                 "security": [
                     {
+                        "basicAuth": []
+                    },
+                    {
                         "tokenAuth": []
                     },
                     {
@@ -256,7 +270,95 @@
                                     "ExampleResponse": {
                                         "value": {
                                             "id": 1,
-                                            "user_id": 1,
+                                            "user": 1,
+                                            "title": "Doloremque et et.",
+                                            "content": "Discuss than some debate this. Entire him certain single west rock......",
+                                            "created_at": "2021-06-11"
+                                        },
+                                        "summary": "Detailed example"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "patch": {
+                "operationId": "Partial_Update_Blog",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this blog.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "blogs"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedBlogRequest"
+                            },
+                            "examples": {
+                                "ExampleResponse": {
+                                    "value": {
+                                        "id": 1,
+                                        "user": 1,
+                                        "title": "Doloremque et et.",
+                                        "content": "Discuss than some debate this. Entire him certain single west rock......",
+                                        "created_at": "2021-06-11"
+                                    },
+                                    "summary": "Detailed example"
+                                }
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedBlogRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedBlogRequest"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    },
+                    {
+                        "TokenAuth": {
+                            "type": "apiKey",
+                            "in": "header",
+                            "name": "Authorization",
+                            "description": "Enter your token in the format \"Token <token>\""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Blog"
+                                },
+                                "examples": {
+                                    "ExampleResponse": {
+                                        "value": {
+                                            "id": 1,
+                                            "user": 1,
                                             "title": "Doloremque et et.",
                                             "content": "Discuss than some debate this. Entire him certain single west rock......",
                                             "created_at": "2021-06-11"
@@ -275,17 +377,21 @@
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "blog_id",
+                        "name": "id",
                         "schema": {
                             "type": "integer"
                         },
+                        "description": "A unique integer value identifying this blog.",
                         "required": true
                     }
                 ],
                 "tags": [
-                    "api"
+                    "blogs"
                 ],
                 "security": [
+                    {
+                        "basicAuth": []
+                    },
                     {
                         "tokenAuth": []
                     },
@@ -305,58 +411,41 @@
                 }
             }
         },
-        "/api/blogs/user/{user_id}": {
+        "/api/health/": {
             "get": {
-                "operationId": "Get_User_Blogs",
+                "operationId": "Get_Health",
                 "parameters": [
                     {
-                        "in": "path",
-                        "name": "user_id",
+                        "in": "query",
+                        "name": "db",
                         "schema": {
-                            "type": "integer"
+                            "type": "string",
+                            "enum": [
+                                "1"
+                            ]
                         },
-                        "required": true
+                        "description": "`1` also runs `SELECT 1` against the database"
                     }
                 ],
                 "tags": [
-                    "api"
-                ],
-                "security": [
-                    {
-                        "tokenAuth": []
-                    },
-                    {
-                        "TokenAuth": {
-                            "type": "apiKey",
-                            "in": "header",
-                            "name": "Authorization",
-                            "description": "Enter your token in the format \"Token <token>\""
-                        }
-                    }
+                    "health"
                 ],
                 "responses": {
                     "200": {
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Blog"
-                                    }
-                                },
-                                "examples": {
-                                    "ExampleResponse": {
-                                        "value": [
-                                            {
-                                                "id": 1,
-                                                "user_id": 1,
-                                                "title": "Doloremque et et.",
-                                                "content": "Discuss than some debate this. Entire him certain single west rock......",
-                                                "created_at": "2021-06-11"
-                                            }
-                                        ],
-                                        "summary": "Detailed example"
-                                    }
+                                    "$ref": "#/components/schemas/Health"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "503": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Health"
                                 }
                             }
                         },
@@ -367,7 +456,7 @@
         },
         "/api/schema/": {
             "get": {
-                "operationId": "api_schema_retrieve",
+                "operationId": "schema_retrieve",
                 "description": "OpenApi3 schema for this API. Format can be selected via content negotiation.\n\n- YAML: application/vnd.oai.openapi\n- JSON: application/vnd.oai.openapi+json",
                 "parameters": [
                     {
@@ -491,9 +580,12 @@
                     }
                 ],
                 "tags": [
-                    "api"
+                    "schema"
                 ],
                 "security": [
+                    {
+                        "basicAuth": []
+                    },
                     {
                         "tokenAuth": []
                     },
@@ -544,9 +636,12 @@
             "get": {
                 "operationId": "Get_Users",
                 "tags": [
-                    "api"
+                    "users"
                 ],
                 "security": [
+                    {
+                        "basicAuth": []
+                    },
                     {
                         "tokenAuth": []
                     },
@@ -578,9 +673,7 @@
                                                 "last_name": "Oliver",
                                                 "username": "lyang",
                                                 "mobile": "(482)598-4678",
-                                                "password": "139ae976ad128361d769a4605c9fea67",
-                                                "email": "breanna03@example.com",
-                                                "register_at": "2021-06-11"
+                                                "email": "breanna03@example.com"
                                             }
                                         ],
                                         "summary": "Detailed example"
@@ -595,28 +688,13 @@
             "post": {
                 "operationId": "Create_User",
                 "tags": [
-                    "api"
+                    "users"
                 ],
                 "requestBody": {
                     "content": {
                         "application/json": {
                             "schema": {
                                 "$ref": "#/components/schemas/UserRequest"
-                            },
-                            "examples": {
-                                "ExampleResponse": {
-                                    "value": {
-                                        "id": 1,
-                                        "first_name": "Robert",
-                                        "last_name": "Oliver",
-                                        "username": "lyang",
-                                        "mobile": "(482)598-4678",
-                                        "password": "139ae976ad128361d769a4605c9fea67",
-                                        "email": "breanna03@example.com",
-                                        "register_at": "2021-06-11"
-                                    },
-                                    "summary": "Detailed example"
-                                }
                             }
                         },
                         "application/x-www-form-urlencoded": {
@@ -633,6 +711,9 @@
                     "required": true
                 },
                 "security": [
+                    {
+                        "basicAuth": []
+                    },
                     {
                         "tokenAuth": []
                     },
@@ -660,9 +741,7 @@
                                             "last_name": "Oliver",
                                             "username": "lyang",
                                             "mobile": "(482)598-4678",
-                                            "password": "139ae976ad128361d769a4605c9fea67",
-                                            "email": "breanna03@example.com",
-                                            "register_at": "2021-06-11"
+                                            "email": "breanna03@example.com"
                                         },
                                         "summary": "Detailed example"
                                     }
@@ -674,23 +753,27 @@
                 }
             }
         },
-        "/api/users/{user_id}": {
+        "/api/users/{id}/": {
             "get": {
                 "operationId": "Get_User",
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "user_id",
+                        "name": "id",
                         "schema": {
                             "type": "integer"
                         },
+                        "description": "A unique integer value identifying this user.",
                         "required": true
                     }
                 ],
                 "tags": [
-                    "api"
+                    "users"
                 ],
                 "security": [
+                    {
+                        "basicAuth": []
+                    },
                     {
                         "tokenAuth": []
                     },
@@ -718,9 +801,7 @@
                                             "last_name": "Oliver",
                                             "username": "lyang",
                                             "mobile": "(482)598-4678",
-                                            "password": "139ae976ad128361d769a4605c9fea67",
-                                            "email": "breanna03@example.com",
-                                            "register_at": "2021-06-11"
+                                            "email": "breanna03@example.com"
                                         },
                                         "summary": "Detailed example"
                                     }
@@ -736,52 +817,41 @@
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "user_id",
+                        "name": "id",
                         "schema": {
                             "type": "integer"
                         },
+                        "description": "A unique integer value identifying this user.",
                         "required": true
                     }
                 ],
                 "tags": [
-                    "api"
+                    "users"
                 ],
                 "requestBody": {
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/UserRequest"
-                            },
-                            "examples": {
-                                "ExampleResponse": {
-                                    "value": {
-                                        "id": 1,
-                                        "first_name": "Robert",
-                                        "last_name": "Oliver",
-                                        "username": "lyang",
-                                        "mobile": "(482)598-4678",
-                                        "password": "139ae976ad128361d769a4605c9fea67",
-                                        "email": "breanna03@example.com",
-                                        "register_at": "2021-06-11"
-                                    },
-                                    "summary": "Detailed example"
-                                }
+                                "$ref": "#/components/schemas/UserUpdateRequest"
                             }
                         },
                         "application/x-www-form-urlencoded": {
                             "schema": {
-                                "$ref": "#/components/schemas/UserRequest"
+                                "$ref": "#/components/schemas/UserUpdateRequest"
                             }
                         },
                         "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/UserRequest"
+                                "$ref": "#/components/schemas/UserUpdateRequest"
                             }
                         }
                     },
                     "required": true
                 },
                 "security": [
+                    {
+                        "basicAuth": []
+                    },
                     {
                         "tokenAuth": []
                     },
@@ -799,7 +869,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/User"
+                                    "$ref": "#/components/schemas/UserUpdate"
                                 },
                                 "examples": {
                                     "ExampleResponse": {
@@ -809,9 +879,84 @@
                                             "last_name": "Oliver",
                                             "username": "lyang",
                                             "mobile": "(482)598-4678",
-                                            "password": "139ae976ad128361d769a4605c9fea67",
-                                            "email": "breanna03@example.com",
-                                            "register_at": "2021-06-11"
+                                            "email": "breanna03@example.com"
+                                        },
+                                        "summary": "Detailed example"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "patch": {
+                "operationId": "Partial_Update_User",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this user.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "users"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedUserUpdateRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedUserUpdateRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedUserUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    },
+                    {
+                        "TokenAuth": {
+                            "type": "apiKey",
+                            "in": "header",
+                            "name": "Authorization",
+                            "description": "Enter your token in the format \"Token <token>\""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserUpdate"
+                                },
+                                "examples": {
+                                    "ExampleResponse": {
+                                        "value": {
+                                            "id": 1,
+                                            "first_name": "Robert",
+                                            "last_name": "Oliver",
+                                            "username": "lyang",
+                                            "mobile": "(482)598-4678",
+                                            "email": "breanna03@example.com"
                                         },
                                         "summary": "Detailed example"
                                     }
@@ -827,17 +972,21 @@
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "user_id",
+                        "name": "id",
                         "schema": {
                             "type": "integer"
                         },
+                        "description": "A unique integer value identifying this user.",
                         "required": true
                     }
                 ],
                 "tags": [
-                    "api"
+                    "users"
                 ],
                 "security": [
+                    {
+                        "basicAuth": []
+                    },
                     {
                         "tokenAuth": []
                     },
@@ -853,6 +1002,70 @@
                 "responses": {
                     "204": {
                         "description": "No response body"
+                    }
+                }
+            }
+        },
+        "/api/users/{id}/blogs/": {
+            "get": {
+                "operationId": "Get_User_Blogs",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "A unique integer value identifying this user.",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "users"
+                ],
+                "security": [
+                    {
+                        "basicAuth": []
+                    },
+                    {
+                        "tokenAuth": []
+                    },
+                    {
+                        "TokenAuth": {
+                            "type": "apiKey",
+                            "in": "header",
+                            "name": "Authorization",
+                            "description": "Enter your token in the format \"Token <token>\""
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Blog"
+                                    }
+                                },
+                                "examples": {
+                                    "ExampleResponse": {
+                                        "value": [
+                                            {
+                                                "id": 1,
+                                                "user": 1,
+                                                "title": "Doloremque et et.",
+                                                "content": "Discuss than some debate this. Entire him certain single west rock......",
+                                                "created_at": "2021-06-11"
+                                            }
+                                        ],
+                                        "summary": "Detailed example"
+                                    }
+                                }
+                            }
+                        },
+                        "description": ""
                     }
                 }
             }
@@ -913,6 +1126,90 @@
                     "user"
                 ]
             },
+            "DbEnum": {
+                "enum": [
+                    "ok",
+                    "unavailable"
+                ],
+                "type": "string",
+                "description": "* `ok` - ok\n* `unavailable` - unavailable"
+            },
+            "Health": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "$ref": "#/components/schemas/StatusEnum"
+                    },
+                    "db": {
+                        "$ref": "#/components/schemas/DbEnum"
+                    }
+                },
+                "required": [
+                    "status"
+                ]
+            },
+            "PatchedBlogRequest": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 200
+                    },
+                    "content": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "user": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "PatchedUserUpdateRequest": {
+                "type": "object",
+                "properties": {
+                    "first_name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 200
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 200
+                    },
+                    "username": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 200
+                    },
+                    "mobile": {
+                        "type": "string",
+                        "nullable": true,
+                        "maxLength": 20
+                    },
+                    "password": {
+                        "type": "string",
+                        "writeOnly": true,
+                        "minLength": 6,
+                        "maxLength": 256
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "minLength": 1,
+                        "maxLength": 254
+                    }
+                }
+            },
+            "StatusEnum": {
+                "enum": [
+                    "ok",
+                    "error"
+                ],
+                "type": "string",
+                "description": "* `ok` - ok\n* `error` - error"
+            },
             "User": {
                 "type": "object",
                 "properties": {
@@ -937,11 +1234,6 @@
                         "nullable": true,
                         "maxLength": 20
                     },
-                    "password": {
-                        "type": "string",
-                        "maxLength": 256,
-                        "minLength": 6
-                    },
                     "email": {
                         "type": "string",
                         "format": "email",
@@ -958,7 +1250,6 @@
                     "first_name",
                     "id",
                     "last_name",
-                    "password",
                     "register_at",
                     "username"
                 ]
@@ -988,6 +1279,7 @@
                     },
                     "password": {
                         "type": "string",
+                        "writeOnly": true,
                         "minLength": 6,
                         "maxLength": 256
                     },
@@ -1005,9 +1297,100 @@
                     "password",
                     "username"
                 ]
+            },
+            "UserUpdate": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "first_name": {
+                        "type": "string",
+                        "maxLength": 200
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "maxLength": 200
+                    },
+                    "username": {
+                        "type": "string",
+                        "maxLength": 200
+                    },
+                    "mobile": {
+                        "type": "string",
+                        "nullable": true,
+                        "maxLength": 20
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "maxLength": 254
+                    },
+                    "register_at": {
+                        "type": "string",
+                        "format": "date",
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "email",
+                    "first_name",
+                    "id",
+                    "last_name",
+                    "register_at",
+                    "username"
+                ]
+            },
+            "UserUpdateRequest": {
+                "type": "object",
+                "properties": {
+                    "first_name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 200
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 200
+                    },
+                    "username": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 200
+                    },
+                    "mobile": {
+                        "type": "string",
+                        "nullable": true,
+                        "maxLength": 20
+                    },
+                    "password": {
+                        "type": "string",
+                        "writeOnly": true,
+                        "minLength": 6,
+                        "maxLength": 256
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "minLength": 1,
+                        "maxLength": 254
+                    }
+                },
+                "required": [
+                    "email",
+                    "first_name",
+                    "last_name",
+                    "username"
+                ]
             }
         },
         "securitySchemes": {
+            "basicAuth": {
+                "type": "http",
+                "scheme": "basic"
+            },
             "tokenAuth": {
                 "type": "apiKey",
                 "in": "header",

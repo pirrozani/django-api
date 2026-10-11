@@ -1,83 +1,40 @@
-from api.models import User
-from api.serializers import UserSerializer, UserUpdateSerializer
-from drf_spectacular.utils import extend_schema
-from rest_framework import status
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.renderers import JSONRenderer
+from api.models import Blog, User
+from api.serializers import BlogSerializer, UserSerializer, UserUpdateSerializer
+from drf_spectacular.utils import extend_schema, extend_schema_view
+from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.renderers import JSONRenderer
+from rest_framework.response import Response
 
 
-class UserListView(APIView):
+@extend_schema_view(
+    list=extend_schema(operation_id='Get_Users'),
+    create=extend_schema(operation_id='Create_User'),
+    retrieve=extend_schema(operation_id='Get_User'),
+    update=extend_schema(operation_id='Update_User', request=UserUpdateSerializer),
+    partial_update=extend_schema(operation_id='Partial_Update_User', request=UserUpdateSerializer),
+    destroy=extend_schema(operation_id='Delete_User'),
+)
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
     renderer_classes = [JSONRenderer]
 
-    @extend_schema(operation_id='Get_Users', responses={200: UserSerializer(many=True)})
-    # The get method is used to get all users
-    def get(self, request) -> Response:
-        users = User.objects.all()
-        serializer = UserSerializer(users, many=True)
-        return Response({
-            "Total": len(serializer.data),
-            "Users": serializer.data
-        })
+    # PUT/PATCH use the serializer where the password is optional
+    def get_serializer_class(self):
+        if self.action in ('update', 'partial_update'):
+            return UserUpdateSerializer
+        return super().get_serializer_class()
 
-    @extend_schema(operation_id='Create_User', request=UserSerializer, responses={201: UserSerializer})
-    # The post method is used to create a new user
-    def post(self, request) -> Response:
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"Users": serializer.data}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class UserDetailView(APIView):
-    permission_classes = [IsAuthenticated]
-    renderer_classes = [JSONRenderer]
-
-    @extend_schema(operation_id='Get_User', responses={200: UserSerializer})
-    # The get method is used to get a single user
-    def get(self, request, user_id) -> Response:
-        try:
-            user = User.objects.get(pk=user_id)
-        except User.DoesNotExist:
-            return Response({"message": "User id %d not found" % user_id}, status=status.HTTP_404_NOT_FOUND)
-        serializer = UserSerializer(user)
-        return Response(serializer.data)
-
-    @extend_schema(operation_id='Update_User', request=UserUpdateSerializer, responses={200: UserSerializer})
-    # The put method is used to update a single user
-    def put(self, request, user_id) -> Response:
-        try:
-            user = User.objects.get(pk=user_id)
-        except User.DoesNotExist:
-            return Response({"message": "User id %d not found" % user_id}, status=status.HTTP_404_NOT_FOUND)
-        serializer = UserUpdateSerializer(user, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    @extend_schema(operation_id='Partial_Update_User', request=UserUpdateSerializer, responses={200: UserSerializer})
-    # The patch method is used to update only the fields sent for a single user
-    def patch(self, request, user_id) -> Response:
-        try:
-            user = User.objects.get(pk=user_id)
-        except User.DoesNotExist:
-            return Response({"message": "User id %d not found" % user_id}, status=status.HTTP_404_NOT_FOUND)
-        serializer = UserUpdateSerializer(user, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    @extend_schema(operation_id='Delete_User', responses={204: None})
-    # The delete method is used to delete a single user
-    def delete(self, request, user_id) -> Response:
-        try:
-            user = User.objects.get(pk=user_id)
-        except User.DoesNotExist:
-            return Response({"message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
-        user.delete()
-        return Response({"message": "User deleted"}, status=status.HTTP_204_NO_CONTENT)
+    @extend_schema(operation_id='Get_User_Blogs', responses={200: BlogSerializer(many=True)})
+    @action(detail=True, methods=['get'], serializer_class=BlogSerializer)
+    # The blogs action lists a user's blogs: 404 only if the user doesn't exist
+    def blogs(self, request, pk=None) -> Response:
+        user = self.get_object()
+        blogs = Blog.objects.filter(user=user)
+        page = self.paginate_queryset(blogs)
+        if page is not None:
+            return self.get_paginated_response(self.get_serializer(page, many=True).data)
+        return Response(self.get_serializer(blogs, many=True).data)
