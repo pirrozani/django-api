@@ -1,5 +1,6 @@
 from .user_views import UserListView, UserDetailView
 from .blog_views import BlogListView, BlogDetailView, UserBlogView
+from .health_views import HealthView
 
 __all__ = [
     "UserListView",
@@ -7,4 +8,5 @@ __all__ = [
     "BlogListView",
     "BlogDetailView",
     "UserBlogView",
+    "HealthView",
 ]

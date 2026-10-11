@@ -6,7 +6,7 @@ The frontend has no consumers yet, so it is safe to standardize the contract now
 
 ## Conventions
 
-- JSON only. Errors use DRF's default shape: `{"detail": "..."}` or field errors `{"field": ["msg"]}`.
+- JSON only. Errors use DRF's default shape: `{"detail": "..."}` or field errors `{"field": ["msg"]}` (the one exception is the `/api/health/` 503 below).
 - Lists are paginated: `{"count", "next", "previous", "results": [...]}` · `?page=N` · page size 10, configurable with `?page_size=` up to 50.
 - `POST` returns **201 + the created object** (unwrapped). `DELETE` returns **204 with empty body**.
 - `PATCH` supported for partial updates; `PUT` stays as a full replace.
@@ -18,7 +18,7 @@ The frontend has no consumers yet, so it is safe to standardize the contract now
 
 | Method | Path | Auth | Notes |
 |---|---|---|---|
-| GET | `/api/health/` | public | `{"status": "ok"}`. Optional `?db=1` runs `SELECT 1`. Used for wake-up. |
+| GET | `/api/health/` | public | `{"status": "ok"}`, no DB access. `?db=1` runs `SELECT 1` → `{"status": "ok", "db": "ok"}`, or **503** `{"status": "error", "db": "unavailable"}`. Unthrottled, ignores credentials, not redirected to HTTPS. Render health check + frontend wake-up. |
 | POST | `/api/auth/token/` | public | body `{username, password}` → `{"token": "..."}` |
 | POST | `/api/auth/logout/` | token | Deletes the token → 204 |
 | GET | `/api/auth/me/` | token | `{id, username, is_staff}` of the logged-in account |
