@@ -16,6 +16,7 @@ SETTINGS_FILE = Path(settings.BASE_DIR) / 'django_api' / 'settings.py'
 SECURITY_SETTINGS = [
     'SECURE_PROXY_SSL_HEADER',
     'SECURE_SSL_REDIRECT',
+    'SECURE_REDIRECT_EXEMPT',
     'SESSION_COOKIE_SECURE',
     'CSRF_COOKIE_SECURE',
     'SECURE_HSTS_SECONDS',
@@ -68,6 +69,7 @@ class SecuritySettingsTests(SimpleTestCase):
             config['SECURE_PROXY_SSL_HEADER'], ('HTTP_X_FORWARDED_PROTO', 'https')
         )
         self.assertTrue(config['SECURE_SSL_REDIRECT'])
+        self.assertEqual(config['SECURE_REDIRECT_EXEMPT'], [r'^api/health/$'])
         self.assertTrue(config['SESSION_COOKIE_SECURE'])
         self.assertTrue(config['CSRF_COOKIE_SECURE'])
         self.assertEqual(config['SECURE_HSTS_SECONDS'], 3600)

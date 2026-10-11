@@ -164,6 +164,9 @@ if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     # Tests/CI with DEBUG=False set this to False; the test client sends plain HTTP
     SECURE_SSL_REDIRECT = env.bool('SECURE_SSL_REDIRECT', default=True)
+    # Render's health check probes over plain HTTP; a 301 would pass it unchecked.
+    # SecurityMiddleware matches the path without its leading slash
+    SECURE_REDIRECT_EXEMPT = [r'^api/health/$']
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_HSTS_SECONDS = env.int('SECURE_HSTS_SECONDS', default=3600)

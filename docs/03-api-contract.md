@@ -18,7 +18,7 @@ The frontend has no consumers yet, so it is safe to standardize the contract now
 
 | Method | Path | Auth | Notes |
 |---|---|---|---|
-| GET | `/api/health/` | public | `{"status": "ok"}`. Optional `?db=1` runs `SELECT 1`. Used for wake-up. |
+| GET | `/api/health/` | public | `{"status": "ok"}`, no DB access. `?db=1` runs `SELECT 1` → `{"status": "ok", "db": "ok"}`, or **503** `{"status": "error", "db": "unavailable"}`. Unthrottled, ignores credentials, not redirected to HTTPS. Render health check + frontend wake-up. |
 | POST | `/api/auth/token/` | public | body `{username, password}` → `{"token": "..."}` |
 | POST | `/api/auth/logout/` | token | Deletes the token → 204 |
 | GET | `/api/auth/me/` | token | `{id, username, is_staff}` of the logged-in account |
