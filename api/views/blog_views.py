@@ -18,6 +18,6 @@ from rest_framework.renderers import JSONRenderer
     destroy=extend_schema(operation_id='Delete_Blog', responses={204: None, 401: UNAUTHORIZED}),
 )
 class BlogViewSet(viewsets.ModelViewSet):
-    queryset = Blog.objects.all()
+    queryset = Blog.objects.select_related('user')
     serializer_class = BlogSerializer
     renderer_classes = [JSONRenderer]

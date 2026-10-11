@@ -41,7 +41,7 @@ class UserViewSet(viewsets.ModelViewSet):
     # The blogs action lists a user's blogs: 404 only if the user doesn't exist
     def blogs(self, request, pk=None) -> Response:
         user = self.get_object()
-        blogs = Blog.objects.filter(user=user)
+        blogs = Blog.objects.filter(user=user).select_related('user')
         page = self.paginate_queryset(blogs)
         if page is not None:
             return self.get_paginated_response(self.get_serializer(page, many=True).data)
