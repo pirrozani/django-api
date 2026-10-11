@@ -1,5 +1,6 @@
 from api.models import Blog, User
 from api.serializers import BlogSerializer, UserSerializer, UserUpdateSerializer
+from api.views.schema_responses import UNAUTHORIZED
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -9,13 +10,20 @@ from rest_framework.response import Response
 
 @extend_schema_view(
     list=extend_schema(operation_id='Get_Users'),
-    create=extend_schema(operation_id='Create_User'),
+    # Writes need a token, so they also document the anonymous 401
+    create=extend_schema(operation_id='Create_User', responses={201: UserSerializer, 401: UNAUTHORIZED}),
     retrieve=extend_schema(operation_id='Get_User'),
-    update=extend_schema(operation_id='Update_User', request=UserUpdateSerializer, responses={200: UserSerializer}),
-    partial_update=extend_schema(
-        operation_id='Partial_Update_User', request=UserUpdateSerializer, responses={200: UserSerializer},
+    update=extend_schema(
+        operation_id='Update_User',
+        request=UserUpdateSerializer,
+        responses={200: UserSerializer, 401: UNAUTHORIZED},
     ),
-    destroy=extend_schema(operation_id='Delete_User'),
+    partial_update=extend_schema(
+        operation_id='Partial_Update_User',
+        request=UserUpdateSerializer,
+        responses={200: UserSerializer, 401: UNAUTHORIZED},
+    ),
+    destroy=extend_schema(operation_id='Delete_User', responses={204: None, 401: UNAUTHORIZED}),
 )
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()

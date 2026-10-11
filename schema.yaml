@@ -76,7 +76,11 @@ paths:
                 $ref: '#/components/schemas/Token'
           description: ''
         '400':
-          description: 'Wrong credentials: `{"non_field_errors": [...]}`'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginError'
+          description: Wrong or missing credentials
         '429':
           content:
             application/json:
@@ -167,6 +171,12 @@ paths:
                     created_at: '2021-06-11'
                   summary: Detailed example
           description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: Missing or invalid token
   /api/blogs/{id}/:
     get:
       operationId: Get_Blog
@@ -263,6 +273,12 @@ paths:
                     created_at: '2021-06-11'
                   summary: Detailed example
           description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: Missing or invalid token
     patch:
       operationId: Partial_Update_Blog
       parameters:
@@ -320,6 +336,12 @@ paths:
                     created_at: '2021-06-11'
                   summary: Detailed example
           description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: Missing or invalid token
     delete:
       operationId: Delete_Blog
       parameters:
@@ -342,6 +364,12 @@ paths:
       responses:
         '204':
           description: No response body
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: Missing or invalid token
   /api/health/:
     get:
       operationId: Get_Health
@@ -593,6 +621,12 @@ paths:
                     email: breanna03@example.com
                   summary: Detailed example
           description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: Missing or invalid token
   /api/users/{id}/:
     get:
       operationId: Get_User
@@ -679,6 +713,12 @@ paths:
                     email: breanna03@example.com
                   summary: Detailed example
           description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: Missing or invalid token
     patch:
       operationId: Partial_Update_User
       parameters:
@@ -726,6 +766,12 @@ paths:
                     email: breanna03@example.com
                   summary: Detailed example
           description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: Missing or invalid token
     delete:
       operationId: Delete_User
       parameters:
@@ -748,6 +794,12 @@ paths:
       responses:
         '204':
           description: No response body
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: Missing or invalid token
   /api/users/{id}/blogs/:
     get:
       operationId: Get_User_Blogs
@@ -887,6 +939,15 @@ components:
           $ref: '#/components/schemas/DbEnum'
       required:
       - status
+    LoginError:
+      type: object
+      properties:
+        non_field_errors:
+          type: array
+          items:
+            type: string
+      required:
+      - non_field_errors
     PatchedBlogRequest:
       type: object
       properties:

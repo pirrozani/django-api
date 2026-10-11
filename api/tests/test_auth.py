@@ -1,11 +1,16 @@
+import os
+import runpy
 from io import StringIO
+from pathlib import Path
 from unittest.mock import patch
 
+from django.conf import settings
 from django.contrib.auth.models import User as Account
 from django.core.cache import cache
+from django.core.exceptions import ImproperlyConfigured
 from django.core.management import call_command
 from django.core.management.base import CommandError
-from django.test import override_settings
+from django.test import SimpleTestCase, override_settings
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.authtoken.models import Token
@@ -16,6 +21,8 @@ from api.models import Blog, User
 from api.views.auth_views import LoginRateThrottle
 
 DEMO = {'DEMO_USERNAME': 'demo', 'DEMO_PASSWORD': 'demo-pass'}
+
+SETTINGS_FILE = Path(settings.BASE_DIR) / 'django_api' / 'settings.py'
 
 
 @override_settings(**DEMO)
@@ -127,6 +134,7 @@ class AuthTests(APITestCase):
             self.assertEqual(self.login(password='wrong').status_code, status.HTTP_400_BAD_REQUEST)
         response = self.login()
         self.assertEqual(response.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
+        self.assertIn('detail', response.json())
 
     # A spoofed X-Forwarded-For doesn't open a fresh bucket, with or without a trusted proxy
     @patch.object(LoginRateThrottle, 'rate', '2/min', create=True)
@@ -142,6 +150,17 @@ class AuthTests(APITestCase):
                     for i in range(3)
                 ]
                 self.assertEqual(codes[-1], status.HTTP_429_TOO_MANY_REQUESTS)
+
+    # Behind one trusted proxy, different real client IPs get separate buckets
+    @patch.object(LoginRateThrottle, 'rate', '1/min', create=True)
+    @patch.object(api_settings, 'NUM_PROXIES', 1)
+    def test_real_client_ips_get_separate_buckets(self):
+        first = self.login(password='wrong', HTTP_X_FORWARDED_FOR='203.0.113.7')
+        second = self.login(password='wrong', HTTP_X_FORWARDED_FOR='198.51.100.9')
+        self.assertEqual(first.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(second.status_code, status.HTTP_400_BAD_REQUEST)
+        again = self.login(password='wrong', HTTP_X_FORWARDED_FOR='203.0.113.7')
+        self.assertEqual(again.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
 
     # The admin's session still works for reads of the logged-in account
     def test_session_login_reads_me(self):
@@ -164,6 +183,17 @@ class AuthTests(APITestCase):
         self.assertIn('post', paths['/api/auth/token/'])
         self.assertIn('post', paths['/api/auth/logout/'])
         self.assertIn('get', paths['/api/auth/me/'])
+
+    # Every write operation documents the anonymous 401
+    def test_schema_documents_401_on_writes(self):
+        paths = self.client.get(reverse('schema'), {'format': 'json'}).json()['paths']
+        writes = {'post', 'put', 'patch', 'delete'}
+        for path, operations in paths.items():
+            if not path.startswith(('/api/users/', '/api/blogs/', '/api/auth/logout/')):
+                continue
+            for method in writes & set(operations):
+                with self.subTest(method=method, path=path):
+                    self.assertIn('401', operations[method]['responses'])
 
 
 @override_settings(**DEMO)
@@ -202,6 +232,19 @@ class CreateDemoUserTests(APITestCase):
             self.run_command('create_demo_user')
         self.assertFalse(Account.objects.exists())
 
+    # A deactivated demo account is switched back on, so the demo login works again
+    def test_reactivates_inactive_account(self):
+        self.run_command('create_demo_user')
+        Account.objects.filter(username='demo').update(is_active=False)
+        out = StringIO()
+        call_command('create_demo_user', stdout=out)
+        self.assertIn('Updated', out.getvalue())
+        self.assertTrue(Account.objects.get(username='demo').is_active)
+        response = self.client.post(
+            reverse('auth-token'), {'username': 'demo', 'password': 'demo-pass'}
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
     # The command never resets a staff account's password
     def test_refuses_staff_account(self):
         Account.objects.create_superuser('demo', password='admin-pass')
@@ -218,3 +261,27 @@ class CreateDemoUserTests(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('token', response.json())
+
+
+class LoginThrottleRateSettingTests(SimpleTestCase):
+    # Evaluate settings.py with only the given environment, ignoring the local settings file
+    def load_settings(self, **environ):
+        with patch.dict(os.environ, {'SECRET_KEY': 'test', **environ}, clear=True):
+            with patch('environ.Env.read_env'):
+                return runpy.run_path(str(SETTINGS_FILE))
+
+    # Unset falls back to 20/min, and a valid value is passed to DRF
+    def test_default_and_custom_rate(self):
+        rates = self.load_settings()['REST_FRAMEWORK']['DEFAULT_THROTTLE_RATES']
+        self.assertEqual(rates['login'], '20/min')
+        rates = self.load_settings(LOGIN_THROTTLE_RATE='5/hour')['REST_FRAMEWORK'][
+            'DEFAULT_THROTTLE_RATES'
+        ]
+        self.assertEqual(rates['login'], '5/hour')
+
+    # An empty or malformed rate stops startup instead of making every login a 500
+    def test_invalid_rate_raises(self):
+        for value in ('', '20', 'twenty/min', '20/week', '20 / min'):
+            with self.subTest(value=value):
+                with self.assertRaises(ImproperlyConfigured):
+                    self.load_settings(LOGIN_THROTTLE_RATE=value)

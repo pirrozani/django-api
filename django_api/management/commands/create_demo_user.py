@@ -25,13 +25,16 @@ class Command(BaseCommand):
                 raise CommandError(
                     f'"{username}" is a staff account; pick another DEMO_USERNAME.'
                 )
-            changed = created or not account.check_password(password)
+            password_changed = created or not account.check_password(password)
+            # An account deactivated in the admin can't log in, so the demo login would 400
+            changed = password_changed or not account.is_active
             if changed:
+                account.is_active = True
                 account.set_password(password)
                 account.save()
             # A new password revokes the old token, so its holders lose write access.
             # An unchanged password keeps it, so nightly resets don't log visitors out
-            if changed and not created:
+            if password_changed and not created:
                 Token.objects.filter(user=account).delete()
                 Token.objects.create(user=account)
 

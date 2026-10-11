@@ -1,4 +1,5 @@
 from api.serializers import AccountSerializer
+from api.views.schema_responses import UNAUTHORIZED, DetailSerializer
 from drf_spectacular.utils import OpenApiResponse, extend_schema, inline_serializer
 from rest_framework import serializers, status
 from rest_framework.authentication import TokenAuthentication
@@ -14,12 +15,10 @@ TokenSerializer = inline_serializer(
     fields={'token': serializers.CharField()},
 )
 
-DetailSerializer = inline_serializer(
-    name='Detail',
-    fields={'detail': serializers.CharField()},
+LoginErrorSerializer = inline_serializer(
+    name='LoginError',
+    fields={'non_field_errors': serializers.ListField(child=serializers.CharField())},
 )
-
-UNAUTHORIZED = OpenApiResponse(DetailSerializer, description='Missing or invalid token')
 
 
 # Per-IP limit on login attempts, with its own rate (settings DEFAULT_THROTTLE_RATES['login'])
@@ -39,7 +38,7 @@ class LoginView(ObtainAuthToken):
         request=ObtainAuthToken.serializer_class,
         responses={
             200: TokenSerializer,
-            400: OpenApiResponse(description='Wrong credentials: `{"non_field_errors": [...]}`'),
+            400: OpenApiResponse(LoginErrorSerializer, description='Wrong or missing credentials'),
             429: OpenApiResponse(DetailSerializer, description='Too many login attempts'),
         },
     )

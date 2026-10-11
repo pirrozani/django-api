@@ -126,7 +126,14 @@
                         "description": ""
                     },
                     "400": {
-                        "description": "Wrong credentials: `{\"non_field_errors\": [...]}`"
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LoginError"
+                                }
+                            }
+                        },
+                        "description": "Wrong or missing credentials"
                     },
                     "429": {
                         "content": {
@@ -269,6 +276,16 @@
                             }
                         },
                         "description": ""
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "Missing or invalid token"
                     }
                 }
             }
@@ -418,6 +435,16 @@
                             }
                         },
                         "description": ""
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "Missing or invalid token"
                     }
                 }
             },
@@ -506,6 +533,16 @@
                             }
                         },
                         "description": ""
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "Missing or invalid token"
                     }
                 }
             },
@@ -544,6 +581,16 @@
                 "responses": {
                     "204": {
                         "description": "No response body"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "Missing or invalid token"
                     }
                 }
             }
@@ -887,6 +934,16 @@
                             }
                         },
                         "description": ""
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "Missing or invalid token"
                     }
                 }
             }
@@ -1026,6 +1083,16 @@
                             }
                         },
                         "description": ""
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "Missing or invalid token"
                     }
                 }
             },
@@ -1103,6 +1170,16 @@
                             }
                         },
                         "description": ""
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "Missing or invalid token"
                     }
                 }
             },
@@ -1141,6 +1218,16 @@
                 "responses": {
                     "204": {
                         "description": "No response body"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "Missing or invalid token"
                     }
                 }
             }
@@ -1341,6 +1428,20 @@
                 },
                 "required": [
                     "status"
+                ]
+            },
+            "LoginError": {
+                "type": "object",
+                "properties": {
+                    "non_field_errors": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "non_field_errors"
                 ]
             },
             "PatchedBlogRequest": {
