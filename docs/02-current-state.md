@@ -53,7 +53,7 @@ Every finding maps to a GitHub issue; status lives in the [issue tracker](https:
 | L1 | Edited/corrupted packages in `venv/`, so nothing starts (**resolved**: rebuilt with uv) | [#1](https://github.com/pirrozani/django-api/issues/1) |
 | L2 | `.env.example` has empty `SECRET_KEY`; `.env` path is relative to the CWD; `DEBUG=False` locally (**resolved**: absolute path, working local defaults) | [#2](https://github.com/pirrozani/django-api/issues/2) |
 | A1 | No token-issuing endpoint, so the SPA can't log in | [#9](https://github.com/pirrozani/django-api/issues/9) |
-| A2 | No CORS | [#8](https://github.com/pirrozani/django-api/issues/8) |
+| A2 | No CORS (**resolved**: `django-cors-headers`, origins from `CORS_ALLOWED_ORIGINS`, no credentials) | [#8](https://github.com/pirrozani/django-api/issues/8) |
 | A3 | SQLite only, so data is lost on Render | [#5](https://github.com/pirrozani/django-api/issues/5) |
 | A4 | No gunicorn / whitenoise / `STATIC_ROOT` / security settings | [#7](https://github.com/pirrozani/django-api/issues/7) |
 | A5 | `clear` uses `sqlite_sequence`, so it fails on Postgres (**resolved**: backend-agnostic flush SQL, new `reset_demo` command) | [#6](https://github.com/pirrozani/django-api/issues/6) |
