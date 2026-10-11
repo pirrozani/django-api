@@ -31,7 +31,17 @@ class AuthorSummarySerializer(serializers.ModelSerializer):
                 'created_at': '2021-06-11'
             },
             response_only=True,
-        )
+        ),
+        OpenApiExample(
+            name='Example request',
+            summary='Create or update a blog',
+            value={
+                'user': 1,
+                'title': 'Doloremque et et.',
+                'content': 'Discuss than some debate this. Entire him certain single west rock......',
+            },
+            request_only=True,
+        ),
     ],
 )
 # The BlogSerializer class serializes Blog: `user` is the writable id, `author` a read-only summary

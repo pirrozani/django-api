@@ -217,6 +217,16 @@
                         "application/json": {
                             "schema": {
                                 "$ref": "#/components/schemas/BlogRequest"
+                            },
+                            "examples": {
+                                "ExampleRequest": {
+                                    "value": {
+                                        "user": 1,
+                                        "title": "Doloremque et et.",
+                                        "content": "Discuss than some debate this. Entire him certain single west rock......"
+                                    },
+                                    "summary": "Create or update a blog"
+                                }
                             }
                         },
                         "application/x-www-form-urlencoded": {
@@ -376,6 +386,16 @@
                         "application/json": {
                             "schema": {
                                 "$ref": "#/components/schemas/BlogRequest"
+                            },
+                            "examples": {
+                                "ExampleRequest": {
+                                    "value": {
+                                        "user": 1,
+                                        "title": "Doloremque et et.",
+                                        "content": "Discuss than some debate this. Entire him certain single west rock......"
+                                    },
+                                    "summary": "Create or update a blog"
+                                }
                             }
                         },
                         "application/x-www-form-urlencoded": {
@@ -469,6 +489,16 @@
                         "application/json": {
                             "schema": {
                                 "$ref": "#/components/schemas/PatchedBlogRequest"
+                            },
+                            "examples": {
+                                "ExampleRequest": {
+                                    "value": {
+                                        "user": 1,
+                                        "title": "Doloremque et et.",
+                                        "content": "Discuss than some debate this. Entire him certain single west rock......"
+                                    },
+                                    "summary": "Create or update a blog"
+                                }
                             }
                         },
                         "application/x-www-form-urlencoded": {
