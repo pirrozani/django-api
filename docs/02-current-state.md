@@ -76,6 +76,7 @@ Every finding maps to a GitHub issue; status lives in the [issue tracker](https:
 | A19 | `SPECTACULAR_SETTINGS['SECURITY']` holds a scheme definition, adding an invalid `TokenAuth` requirement to every operation in the OpenAPI schema | [#27](https://github.com/pirrozani/django-api/issues/27) |
 | A20 | No database connect timeout: an unreachable Postgres hangs requests until gunicorn kills the worker (502), so `?db=1` can't return 503 | [#29](https://github.com/pirrozani/django-api/issues/29) |
 | A21 | `env.list` keeps spaces after commas, so `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS` and `CORS_ALLOWED_ORIGINS` entries after the first silently never match | [#33](https://github.com/pirrozani/django-api/issues/33) |
+| A22 | `NUM_PROXIES` can't be verified on Render: the request log records the client-controlled leftmost `X-Forwarded-For` entry, never `REMOTE_ADDR` or the full chain | [#36](https://github.com/pirrozani/django-api/issues/36) |
 
 ## Unmerged branches
 
