@@ -80,6 +80,7 @@ Every finding maps to a GitHub issue; status lives in the [issue tracker](https:
 | A23 | No blog ownership: any account can edit/delete any blog or post as any author (no `auth.User` ↔ author link) (**resolved** for `/api/blogs/`: `api.User.account` links an author to a login account; blog writes are owner-or-staff, `user` is read-only. `/api/users/` writes, including the cascading author `DELETE`, are still open to any account: [#40](https://github.com/pirrozani/django-api/issues/40)) | [#39](https://github.com/pirrozani/django-api/issues/39) |
 | A24 | Any account can edit or delete any author via `/api/users/`; author `DELETE` cascades to its blogs, bypassing blog ownership | [#40](https://github.com/pirrozani/django-api/issues/40) |
 | A25 | `/api/auth/me/` has no author id, so the SPA can't tell which blogs the caller may change | [#41](https://github.com/pirrozani/django-api/issues/41) |
+| A26 | No `/release` skill: the `develop` → `main` release (merge commit, version bump, tag, back-merge) is done by hand | [#43](https://github.com/pirrozani/django-api/issues/43) |
 
 ## Unmerged branches
 
