@@ -51,9 +51,10 @@ class DependencyUpgradeTests(TestCase):
                 self.assertIn(path, paths)
                 self.assertTrue(methods <= set(paths[path]))
 
-    # Creating a login account issues a token that authorizes writes
+    # Creating a login account issues a token that authorizes writes (staff, since
+    # creating authors is staff-only since #40)
     def test_token_authentication(self):
-        account = Account.objects.create_user('writer', password='secret-123')
+        account = Account.objects.create_user('writer', password='secret-123', is_staff=True)
         token = Token.objects.get(user=account)
         url = reverse('user-list')
         response = self.client.post(url, NEW_USER, content_type='application/json')

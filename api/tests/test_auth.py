@@ -92,15 +92,26 @@ class AuthTests(APITestCase):
         demo_author = User.objects.get(account__username='demo')
         self.assertEqual(response.json()['user'], demo_author.id)
 
-    # GET /api/auth/me/ returns the logged-in account
+    # GET /api/auth/me/ returns the logged-in account and the author it writes as (#41)
     def test_me_returns_demo_account(self):
         token = self.login().json()['token']
-        response = self.client.get(reverse('auth-me'), HTTP_AUTHORIZATION=f'Token {token}')
+        auth = {'HTTP_AUTHORIZATION': f'Token {token}'}
+        # Token lookup (with its account) + the author lookup
+        with self.assertNumQueries(2):
+            response = self.client.get(reverse('auth-me'), **auth)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         account = Account.objects.get(username='demo')
-        self.assertEqual(
-            response.json(), {'id': account.id, 'username': 'demo', 'is_staff': False}
-        )
+        self.assertEqual(response.json(), {
+            'id': account.id, 'username': 'demo', 'is_staff': False,
+            'author_id': account.author.id,
+        })
+
+    # An account without an author profile gets author_id null
+    def test_me_without_author_returns_null_author_id(self):
+        self.client.force_login(Account.objects.create_user('admin', is_staff=True))
+        response = self.client.get(reverse('auth-me'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsNone(response.json()['author_id'])
 
     # /api/auth/me/ needs a login
     def test_me_without_token_returns_401(self):

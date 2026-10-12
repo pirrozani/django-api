@@ -1,36 +1,50 @@
 from api.models import Blog, User
+from api.permissions import IsAuthorAccountOrReadOnly, IsStaff
 from api.serializers import BlogSerializer, UserSerializer, UserUpdateSerializer
-from api.views.schema_responses import UNAUTHORIZED
+from api.views.schema_responses import FORBIDDEN, UNAUTHORIZED
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import filters, viewsets
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
+
+# Writes need a token (401) and the author's own account, or staff for create/delete (403)
+WRITE_ERRORS = {401: UNAUTHORIZED, 403: FORBIDDEN}
 
 
 @extend_schema_view(
     list=extend_schema(operation_id='Get_Users'),
-    # Writes need a token, so they also document the anonymous 401
-    create=extend_schema(operation_id='Create_User', responses={201: UserSerializer, 401: UNAUTHORIZED}),
+    create=extend_schema(
+        operation_id='Create_User', responses={201: UserSerializer, **WRITE_ERRORS},
+    ),
     retrieve=extend_schema(operation_id='Get_User'),
     update=extend_schema(
         operation_id='Update_User',
         request=UserUpdateSerializer,
-        responses={200: UserSerializer, 401: UNAUTHORIZED},
+        responses={200: UserSerializer, **WRITE_ERRORS},
     ),
     partial_update=extend_schema(
         operation_id='Partial_Update_User',
         request=UserUpdateSerializer,
-        responses={200: UserSerializer, 401: UNAUTHORIZED},
+        responses={200: UserSerializer, **WRITE_ERRORS},
     ),
-    destroy=extend_schema(operation_id='Delete_User', responses={204: None, 401: UNAUTHORIZED}),
+    destroy=extend_schema(operation_id='Delete_User', responses={204: None, **WRITE_ERRORS}),
 )
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     renderer_classes = [JSONRenderer]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsAuthorAccountOrReadOnly]
     filter_backends = [filters.SearchFilter]
     search_fields = ['first_name', 'last_name', 'username', 'email']
+
+    # POST and DELETE are staff-only on top of the usual rules
+    def get_permissions(self):
+        permissions = super().get_permissions()
+        if self.action in ('create', 'destroy'):
+            permissions.append(IsStaff())
+        return permissions
 
     # PUT/PATCH use the serializer where the password is optional
     def get_serializer_class(self):

@@ -666,6 +666,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Detail'
           description: Missing or invalid token
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: The account may not change this resource
   /api/users/{id}/:
     get:
       operationId: Get_User
@@ -748,6 +754,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Detail'
           description: Missing or invalid token
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: The account may not change this resource
     patch:
       operationId: Partial_Update_User
       parameters:
@@ -796,6 +808,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Detail'
           description: Missing or invalid token
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: The account may not change this resource
     delete:
       operationId: Delete_User
       parameters:
@@ -819,6 +837,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Detail'
           description: Missing or invalid token
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: The account may not change this resource
   /api/users/{id}/blogs/:
     get:
       operationId: Get_User_Blogs
@@ -891,7 +915,14 @@ components:
           readOnly: true
           title: Staff status
           description: Designates whether the user can log into this admin site.
+        author_id:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: Id of the author this account writes as, or null if it has
+            none.
       required:
+      - author_id
       - id
       - is_staff
       - username
