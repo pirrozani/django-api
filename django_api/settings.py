@@ -81,6 +81,8 @@ REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_RATES': {
         'login': LOGIN_THROTTLE_RATE,
     },
+    # Lists return {count, next, previous, results}: 10 per page, ?page_size= up to 50
+    'DEFAULT_PAGINATION_CLASS': 'api.pagination.DefaultPagination',
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
@@ -241,17 +243,12 @@ LOGGING = {
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'DjangoAPI',
-    'DESCRIPTION': 'User and Blog API for Django project',
+    'DESCRIPTION': (
+        'User and Blog API for Django project. '
+        'Authorize with tokenAuth using the format "Token <token>".'
+    ),
     'VERSION': '0.1.0',
-    'SECURITY': [
-        {
-            'TokenAuth': {
-                'type': 'apiKey',
-                'in': 'header',
-                'name': 'Authorization',
-                'description': 'Enter your token in the format "Token <token>"'
-            }
-        }
-    ],
+    # Security schemes and per-operation requirements are generated from
+    # DEFAULT_AUTHENTICATION_CLASSES; don't hand-write SECURITY.
     'COMPONENT_SPLIT_REQUEST': True,
 }

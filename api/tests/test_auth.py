@@ -75,20 +75,22 @@ class AuthTests(APITestCase):
 
     # Writes without a token are 401 with a Token challenge, never Basic
     def test_anonymous_write_returns_401_with_token_challenge(self):
-        data = {'user': self.author.id, 'title': 'New', 'content': 'Body'}
+        data = {'title': 'New', 'content': 'Body'}
         response = self.client.post(reverse('blog-list'), data, format='json')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(response['WWW-Authenticate'], 'Token')
         self.assertFalse(Blog.objects.filter(title='New').exists())
 
-    # A token from the login endpoint authorizes writes
+    # A token from the login endpoint authorizes writes, as the account's own author (#39)
     def test_token_authorizes_writes(self):
         token = self.login().json()['token']
-        data = {'user': self.author.id, 'title': 'New', 'content': 'Body'}
+        data = {'title': 'New', 'content': 'Body'}
         response = self.client.post(
             reverse('blog-list'), data, format='json', HTTP_AUTHORIZATION=f'Token {token}'
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        demo_author = User.objects.get(account__username='demo')
+        self.assertEqual(response.json()['user'], demo_author.id)
 
     # GET /api/auth/me/ returns the logged-in account
     def test_me_returns_demo_account(self):
@@ -173,7 +175,7 @@ class AuthTests(APITestCase):
     def test_session_write_without_csrf_returns_403(self):
         client = APIClient(enforce_csrf_checks=True)
         client.force_login(Account.objects.get(username='demo'))
-        data = {'user': self.author.id, 'title': 'New', 'content': 'Body'}
+        data = {'title': 'New', 'content': 'Body'}
         response = client.post(reverse('blog-list'), data, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 

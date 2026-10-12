@@ -80,13 +80,16 @@ class ManagementCommandTests(TestCase):
         self.assertFalse(User.objects.exists())
         self.assertFalse(Blog.objects.exists())
 
-    # reset_demo leaves exactly the demo row counts, with ids from 1
+    # reset_demo leaves exactly the demo row counts, with ids from 1: 30 seeded authors
+    # plus the demo account's own author, which owns none of the 80 blogs (#39)
     @override_settings(DEMO_PASSWORD='demo-pass')
     def test_reset_demo_leaves_30_users_and_80_blogs(self):
         self.run_command('populate', users=5, articles=5)
         self.run_command('reset_demo')
-        self.assertEqual(User.objects.count(), 30)
+        self.assertEqual(User.objects.filter(account__isnull=True).count(), 30)
+        self.assertEqual(User.objects.filter(account__username='demo').count(), 1)
         self.assertEqual(Blog.objects.count(), 80)
+        self.assertFalse(Blog.objects.filter(user__account__isnull=False).exists())
         self.assertEqual(User.objects.order_by('id').first().id, 1)
 
     # A failing reset_demo rolls back the clear, and new rows still get fresh ids

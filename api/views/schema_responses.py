@@ -8,3 +8,10 @@ DetailSerializer = inline_serializer(
 )
 
 UNAUTHORIZED = OpenApiResponse(DetailSerializer, description='Missing or invalid token')
+
+FORBIDDEN = OpenApiResponse(DetailSerializer, description='The account may not change this resource')
+
+AUTHOR_FILTER_ERROR = OpenApiResponse(
+    inline_serializer(name='AuthorFilterError', fields={'author': serializers.ListField(child=serializers.CharField())}),
+    description='`author` is not an integer',
+)

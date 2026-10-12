@@ -17,7 +17,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         user_count = options.get('users', 100)
         blog_count = options.get('articles', 200)
-        if blog_count > 0 and user_count <= 0 and not User.objects.exists():
+        if blog_count > 0 and user_count <= 0 and not self.seeded_authors().exists():
             raise CommandError(
                 'Cannot create articles without users: '
                 'pass --users N or populate users first.'
@@ -27,6 +27,11 @@ class Command(BaseCommand):
         with transaction.atomic():
             self.populate_fake_user_data(user_count)
             self.populate_fake_blog_data(blog_count)
+
+    # Authors not linked to a login account; only these own seeded blogs, so the demo
+    # account can't change them
+    def seeded_authors(self):
+        return User.objects.filter(account__isnull=True)
 
     # Populate the User table with fake data
     def populate_fake_user_data(self, count):
@@ -53,7 +58,7 @@ class Command(BaseCommand):
     def populate_fake_blog_data(self, count):
         faker = Faker()
         for _ in range(count):
-            user = User.objects.order_by('?').first()
+            user = self.seeded_authors().order_by('?').first()
             Blog.objects.create(
                 title=faker.sentence(),
                 content=faker.text(),

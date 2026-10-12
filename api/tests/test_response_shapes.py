@@ -15,12 +15,13 @@ NEW_USER = {
 
 
 class ResponseShapeTests(APITestCase):
-    # Create an author with one blog and log the client in with an auth account
+    # Create an author with one blog and log the client in as the author's account
     def setUp(self):
-        self.client.force_authenticate(Account.objects.create_user('demo', password='x'))
+        account = Account.objects.create_user('demo', password='x')
+        self.client.force_authenticate(account)
         self.user = User.objects.create(
             first_name='Ann', last_name='Lee', username='alee', email='ann@example.com',
-            password='pbkdf2_sha256$1$salt$hash',
+            password='pbkdf2_sha256$1$salt$hash', account=account,
         )
         self.blog = Blog.objects.create(user=self.user, title='Hello', content='World')
 
@@ -31,7 +32,7 @@ class ResponseShapeTests(APITestCase):
         self.assertEqual(response.json()['email'], NEW_USER['email'])
         self.assertNotIn('Users', response.json())
 
-        data = {'user': self.user.id, 'title': 'New', 'content': 'Body'}
+        data = {'title': 'New', 'content': 'Body'}
         response = self.client.post(reverse('blog-list'), data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.json()['title'], 'New')
@@ -59,11 +60,11 @@ class ResponseShapeTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Blog.objects.filter(pk=self.blog.id).exists())
 
-    # A user's blogs are listed; a user without blogs gets 200 and an empty list
+    # A user's blogs are listed; a user without blogs gets 200 and an empty page
     def test_user_blogs_lists_and_allows_empty(self):
         response = self.client.get(reverse('user-blogs', args=[self.user.id]))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual([b['id'] for b in response.json()], [self.blog.id])
+        self.assertEqual([b['id'] for b in response.json()['results']], [self.blog.id])
 
         empty = User.objects.create(
             first_name='No', last_name='Blogs', username='nb', email='nb@example.com',
@@ -71,7 +72,7 @@ class ResponseShapeTests(APITestCase):
         )
         response = self.client.get(reverse('user-blogs', args=[empty.id]))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json(), [])
+        self.assertEqual(response.json()['results'], [])
 
     # PATCH on a blog changes only the fields sent
     def test_patch_blog_is_partial(self):
