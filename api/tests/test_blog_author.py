@@ -32,7 +32,7 @@ class BlogAuthorTests(APITestCase):
 
     # Blog list items embed the author summary with exactly four fields
     def test_list_embeds_author_summary(self):
-        item = self.client.get(reverse('blog-list')).json()[0]
+        item = self.client.get(reverse('blog-list')).json()['results'][0]
         self.assertEqual(item['user'], self.user.id)
         self.assertEqual(set(item['author']), AUTHOR_FIELDS)
         self.assertEqual(item['author'], {
@@ -45,7 +45,7 @@ class BlogAuthorTests(APITestCase):
         for url in (reverse('blog-detail', args=[blog.id]), reverse('user-blogs', args=[self.user.id])):
             with self.subTest(url=url):
                 data = self.client.get(url).json()
-                item = data[0] if isinstance(data, list) else data
+                item = data['results'][0] if 'results' in data else data
                 self.assertEqual(item['author']['id'], self.user.id)
 
     # POST still takes the author as a plain `user` id and ignores a posted `author`

@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: DjangoAPI
-  version: 2.0.0
+  version: 0.1.0
   description: User and Blog API for Django project
 paths:
   /api/auth/logout/:
@@ -90,6 +90,30 @@ paths:
   /api/blogs/:
     get:
       operationId: Get_Blogs
+      parameters:
+      - in: query
+        name: author
+        schema:
+          type: integer
+        description: Only blogs by this author id
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
       tags:
       - blogs
       security:
@@ -106,25 +130,33 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Blog'
+                $ref: '#/components/schemas/PaginatedBlogList'
               examples:
                 ExampleResponse:
                   value:
-                  - id: 1
-                    user: 1
-                    author:
-                      id: 1
-                      username: lyang
-                      first_name: Robert
-                      last_name: Oliver
-                    title: Doloremque et et.
-                    content: Discuss than some debate this. Entire him certain single
-                      west rock......
-                    created_at: '2021-06-11'
+                    count: 123
+                    next: http://api.example.org/accounts/?page=4
+                    previous: http://api.example.org/accounts/?page=2
+                    results:
+                    - id: 1
+                      user: 1
+                      author:
+                        id: 1
+                        username: lyang
+                        first_name: Robert
+                        last_name: Oliver
+                      title: Doloremque et et.
+                      content: Discuss than some debate this. Entire him certain single
+                        west rock......
+                      created_at: '2021-06-11'
                   summary: Detailed example
           description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorFilterError'
+          description: '`author` is not an integer'
     post:
       operationId: Create_Blog
       tags:
@@ -569,6 +601,25 @@ paths:
   /api/users/:
     get:
       operationId: Get_Users
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
       tags:
       - users
       security:
@@ -585,18 +636,20 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/PaginatedUserList'
               examples:
                 ExampleResponse:
                   value:
-                  - id: 1
-                    first_name: Robert
-                    last_name: Oliver
-                    username: lyang
-                    mobile: (482)598-4678
-                    email: breanna03@example.com
+                    count: 123
+                    next: http://api.example.org/accounts/?page=4
+                    previous: http://api.example.org/accounts/?page=2
+                    results:
+                    - id: 1
+                      first_name: Robert
+                      last_name: Oliver
+                      username: lyang
+                      mobile: (482)598-4678
+                      email: breanna03@example.com
                   summary: Detailed example
           description: ''
     post:
@@ -829,6 +882,18 @@ paths:
           type: integer
         description: A unique integer value identifying this user.
         required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
       tags:
       - users
       security:
@@ -845,23 +910,25 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Blog'
+                $ref: '#/components/schemas/PaginatedBlogList'
               examples:
                 ExampleResponse:
                   value:
-                  - id: 1
-                    user: 1
-                    author:
-                      id: 1
-                      username: lyang
-                      first_name: Robert
-                      last_name: Oliver
-                    title: Doloremque et et.
-                    content: Discuss than some debate this. Entire him certain single
-                      west rock......
-                    created_at: '2021-06-11'
+                    count: 123
+                    next: http://api.example.org/accounts/?page=4
+                    previous: http://api.example.org/accounts/?page=2
+                    results:
+                    - id: 1
+                      user: 1
+                      author:
+                        id: 1
+                        username: lyang
+                        first_name: Robert
+                        last_name: Oliver
+                      title: Doloremque et et.
+                      content: Discuss than some debate this. Entire him certain single
+                        west rock......
+                      created_at: '2021-06-11'
                   summary: Detailed example
           description: ''
 components:
@@ -900,6 +967,15 @@ components:
       required:
       - password
       - username
+    AuthorFilterError:
+      type: object
+      properties:
+        author:
+          type: array
+          items:
+            type: string
+      required:
+      - author
     AuthorSummary:
       type: object
       properties:
@@ -997,6 +1073,52 @@ components:
             type: string
       required:
       - non_field_errors
+    PaginatedBlogList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Blog'
+    PaginatedUserList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
     PatchedBlogRequest:
       type: object
       properties:

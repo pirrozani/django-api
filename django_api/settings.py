@@ -81,6 +81,8 @@ REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_RATES': {
         'login': LOGIN_THROTTLE_RATE,
     },
+    # Lists return {count, next, previous, results}: 10 per page, ?page_size= up to 50
+    'DEFAULT_PAGINATION_CLASS': 'api.pagination.DefaultPagination',
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
