@@ -11,3 +11,23 @@ class IsBlogAuthorOrReadOnly(BasePermission):
             return True
         account_id = obj.user.account_id
         return account_id is not None and account_id == request.user.id
+
+
+# Anyone can read an author; only the author's own login account, or staff, can edit it
+class IsAuthorAccountOrReadOnly(BasePermission):
+    message = 'You can only change your own author profile.'
+
+    # Reads pass; edits need the author to be linked to the caller's account
+    def has_object_permission(self, request, view, obj):
+        if request.method in SAFE_METHODS or request.user.is_staff:
+            return True
+        return obj.account_id is not None and obj.account_id == request.user.id
+
+
+# Creating or deleting authors is staff-only: a delete cascades to the author's blogs
+class IsStaff(BasePermission):
+    message = 'Only staff accounts can create or delete authors.'
+
+    # Pass only for staff accounts
+    def has_permission(self, request, view):
+        return bool(request.user and request.user.is_staff)

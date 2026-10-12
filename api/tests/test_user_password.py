@@ -23,13 +23,15 @@ NEW_USER = {
 
 
 class UserPasswordTests(TestCase):
-    # Create an author and log the client in with an auth account
+    # Create an author linked to a staff account and log the client in with it, so it
+    # may create authors and edit this one (#40)
     def setUp(self):
         self.client = APIClient()
-        self.client.force_authenticate(Account.objects.create_user('demo', password='x'))
+        account = Account.objects.create_user('demo', password='x', is_staff=True)
+        self.client.force_authenticate(account)
         self.user = User.objects.create(
             first_name='Ann', last_name='Lee', username='alee', email='ann@example.com',
-            password='pbkdf2_sha256$1$salt$hash',
+            password='pbkdf2_sha256$1$salt$hash', account=account,
         )
         self.detail_url = reverse('user-detail', args=[self.user.id])
 
