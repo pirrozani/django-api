@@ -915,7 +915,14 @@ components:
           readOnly: true
           title: Staff status
           description: Designates whether the user can log into this admin site.
+        author_id:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: Id of the author this account writes as, or null if it has
+            none.
       required:
+      - author_id
       - id
       - is_staff
       - username
