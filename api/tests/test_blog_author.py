@@ -48,11 +48,13 @@ class BlogAuthorTests(APITestCase):
                 item = data['results'][0] if 'results' in data else data
                 self.assertEqual(item['author']['id'], self.user.id)
 
-    # POST still takes the author as a plain `user` id and ignores a posted `author`
-    def test_post_accepts_user_id(self):
-        self.client.force_authenticate(Account.objects.create_user('demo', password='x'))
+    # POST takes the author from the caller's account and ignores a posted `user`/`author` (#39)
+    def test_post_ignores_user_and_author(self):
+        self.user.account = Account.objects.create_user('demo', password='x')
+        self.user.save()
+        self.client.force_authenticate(self.user.account)
         other = self.make_author('other')
-        data = {'user': self.user.id, 'author': {'id': other.id}, 'title': 'New', 'content': 'Body'}
+        data = {'user': other.id, 'author': {'id': other.id}, 'title': 'New', 'content': 'Body'}
         response = self.client.post(reverse('blog-list'), data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.json()['user'], self.user.id)

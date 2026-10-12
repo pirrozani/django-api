@@ -15,12 +15,13 @@ NEW_USER = {
 
 
 class ResponseShapeTests(APITestCase):
-    # Create an author with one blog and log the client in with an auth account
+    # Create an author with one blog and log the client in as the author's account
     def setUp(self):
-        self.client.force_authenticate(Account.objects.create_user('demo', password='x'))
+        account = Account.objects.create_user('demo', password='x')
+        self.client.force_authenticate(account)
         self.user = User.objects.create(
             first_name='Ann', last_name='Lee', username='alee', email='ann@example.com',
-            password='pbkdf2_sha256$1$salt$hash',
+            password='pbkdf2_sha256$1$salt$hash', account=account,
         )
         self.blog = Blog.objects.create(user=self.user, title='Hello', content='World')
 
@@ -31,7 +32,7 @@ class ResponseShapeTests(APITestCase):
         self.assertEqual(response.json()['email'], NEW_USER['email'])
         self.assertNotIn('Users', response.json())
 
-        data = {'user': self.user.id, 'title': 'New', 'content': 'Body'}
+        data = {'title': 'New', 'content': 'Body'}
         response = self.client.post(reverse('blog-list'), data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.json()['title'], 'New')

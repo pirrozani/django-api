@@ -36,7 +36,6 @@ class AuthorSummarySerializer(serializers.ModelSerializer):
             name='Example request',
             summary='Create or update a blog',
             value={
-                'user': 1,
                 'title': 'Doloremque et et.',
                 'content': 'Discuss than some debate this. Entire him certain single west rock......',
             },
@@ -44,10 +43,12 @@ class AuthorSummarySerializer(serializers.ModelSerializer):
         ),
     ],
 )
-# The BlogSerializer class serializes Blog: `user` is the writable id, `author` a read-only summary
+# The BlogSerializer class serializes Blog: `user` (id) and `author` (summary) are read-only,
+# since the author comes from the caller's token
 class BlogSerializer(serializers.ModelSerializer):
     author = AuthorSummarySerializer(source='user', read_only=True)
 
     class Meta:
         model = Blog
         fields = ['id', 'user', 'author', 'title', 'content', 'created_at']
+        read_only_fields = ['user']
