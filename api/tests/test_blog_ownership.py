@@ -104,9 +104,10 @@ class BlogOwnershipTests(APITestCase):
         response = self.client.post(reverse('blog-list'), {}, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    # The author ↔ account link can't be set through /api/users/
+    # The author ↔ account link can't be set through /api/users/, even by the author's
+    # own account
     def test_account_link_is_not_writable(self):
-        self.use_token(self.other)
+        self.use_token(self.owner)
         url = reverse('user-detail', args=[self.author.id])
         response = self.client.patch(url, {'account': self.other.id}, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)

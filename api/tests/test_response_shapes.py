@@ -15,9 +15,10 @@ NEW_USER = {
 
 
 class ResponseShapeTests(APITestCase):
-    # Create an author with one blog and log the client in as the author's account
+    # Create an author with one blog and log the client in as the author's account,
+    # which is staff so it may also create and delete authors (#40)
     def setUp(self):
-        account = Account.objects.create_user('demo', password='x')
+        account = Account.objects.create_user('demo', password='x', is_staff=True)
         self.client.force_authenticate(account)
         self.user = User.objects.create(
             first_name='Ann', last_name='Lee', username='alee', email='ann@example.com',
