@@ -4,7 +4,7 @@
 
 The frontend has no consumers yet, so it is safe to standardize the contract now. `SPECTACULAR_SETTINGS['VERSION']` is `2.0.0`.
 
-**Landed:** routes, response shapes and status codes ([#10](https://github.com/pirrozani/django-api/issues/10)): `ModelViewSet` + `DefaultRouter`, trailing slashes, unwrapped `POST` bodies, empty `204`s, `{"detail"}` 404s, `PATCH` on users and blogs, `/api/users/<id>/blogs/` (200 on empty). Public reads and auth routes ([#9](https://github.com/pirrozani/django-api/issues/9)): `GET` needs no token, writes return **401** with `WWW-Authenticate: Token` (no Basic-auth popup), `/api/auth/token/`, `/api/auth/logout/`, `/api/auth/me/`. Blog `author` summary ([#12](https://github.com/pirrozani/django-api/issues/12)): every blog response embeds `author` (read-only, no per-row author queries thanks to `select_related`); writes still take `user`. **Still pending:** pagination and ordering ([#11](https://github.com/pirrozani/django-api/issues/11); lists are plain arrays until then), search/`?author=` filters.
+**Landed:** routes, response shapes and status codes ([#10](https://github.com/pirrozani/django-api/issues/10)): `ModelViewSet` + `DefaultRouter`, trailing slashes, unwrapped `POST` bodies, empty `204`s, `{"detail"}` 404s, `PATCH` on users and blogs, `/api/users/<id>/blogs/` (200 on empty). Public reads and auth routes ([#9](https://github.com/pirrozani/django-api/issues/9)): `GET` needs no token, writes return **401** with `WWW-Authenticate: Token` (no Basic-auth popup), `/api/auth/token/`, `/api/auth/logout/`, `/api/auth/me/`. Blog `author` summary ([#12](https://github.com/pirrozani/django-api/issues/12)): every blog response embeds `author` (read-only, no per-row author queries thanks to `select_related`); writes still take `user`. Pagination, ordering and filters ([#11](https://github.com/pirrozani/django-api/issues/11)): every list (`/api/users/`, `/api/blogs/`, `/api/users/<id>/blogs/`) is paginated and newest first; `?search=` on users and blogs, `?author=<id>` on blogs.
 
 ## Conventions
 
@@ -12,7 +12,7 @@ The frontend has no consumers yet, so it is safe to standardize the contract now
 - Lists are paginated: `{"count", "next", "previous", "results": [...]}` · `?page=N` · page size 10, configurable with `?page_size=` up to 50.
 - `POST` returns **201 + the created object** (unwrapped). `DELETE` returns **204 with empty body**.
 - `PATCH` supported for partial updates; `PUT` stays as a full replace.
-- Default ordering: newest first (`-created_at`, `-id`).
+- Default ordering: newest first, `id` breaking ties. Blogs: `-created_at, -id`; users: `-register_at, -id`.
 - Trailing slashes on every route (`/api/blogs/<id>/`).
 - Auth header: `Authorization: Token <token>`. Without it, reads work and writes return **401** with `WWW-Authenticate: Token`.
 - Login account: Django's `auth.User` (e.g. the demo account), **not** an `/api/users/` author. One token per account: logging out revokes it for every session that shares the account.
@@ -26,13 +26,13 @@ The frontend has no consumers yet, so it is safe to standardize the contract now
 | POST | `/api/auth/token/` | public | body `{username, password}` (JSON or form) → `{"token": "..."}`; wrong credentials → **400** `{"non_field_errors": [...]}`. Ignores any `Authorization` header. Throttled per client IP (20/min, `LOGIN_THROTTLE_RATE`; IP from `NUM_PROXIES`) → **429** |
 | POST | `/api/auth/logout/` | token | Deletes the token → 204 (empty body); the token then gets 401 |
 | GET | `/api/auth/me/` | token | `{id, username, is_staff}` of the logged-in account |
-| GET | `/api/users/` | public | paginated; `?search=` on name/username/email (optional) |
+| GET | `/api/users/` | public | paginated; `?search=` on first/last name, username, email (case-insensitive, contains) |
 | POST | `/api/users/` | token | password required, write-only, hashed |
 | GET | `/api/users/<id>/` | public | |
 | PUT/PATCH | `/api/users/<id>/` | token | password optional on both (omitted → stored one kept); hashed if present |
 | DELETE | `/api/users/<id>/` | token | 204, cascades blogs |
 | GET | `/api/users/<id>/blogs/` | public | paginated. **Empty list → 200** with `results: []`. 404 only if the user doesn't exist. |
-| GET | `/api/blogs/` | public | paginated; `?search=` on title (optional); `?author=<id>` filter |
+| GET | `/api/blogs/` | public | paginated; `?search=` on title; `?author=<id>` filter (empty → no filter; non-integer → **400** `{"author": [...]}`) |
 | POST | `/api/blogs/` | token | body `{user, title, content}` |
 | GET | `/api/blogs/<id>/` | public | |
 | PUT/PATCH | `/api/blogs/<id>/` | token | |

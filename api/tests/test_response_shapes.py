@@ -59,11 +59,11 @@ class ResponseShapeTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Blog.objects.filter(pk=self.blog.id).exists())
 
-    # A user's blogs are listed; a user without blogs gets 200 and an empty list
+    # A user's blogs are listed; a user without blogs gets 200 and an empty page
     def test_user_blogs_lists_and_allows_empty(self):
         response = self.client.get(reverse('user-blogs', args=[self.user.id]))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual([b['id'] for b in response.json()], [self.blog.id])
+        self.assertEqual([b['id'] for b in response.json()['results']], [self.blog.id])
 
         empty = User.objects.create(
             first_name='No', last_name='Blogs', username='nb', email='nb@example.com',
@@ -71,7 +71,7 @@ class ResponseShapeTests(APITestCase):
         )
         response = self.client.get(reverse('user-blogs', args=[empty.id]))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json(), [])
+        self.assertEqual(response.json()['results'], [])
 
     # PATCH on a blog changes only the fields sent
     def test_patch_blog_is_partial(self):

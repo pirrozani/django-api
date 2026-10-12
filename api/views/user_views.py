@@ -2,7 +2,7 @@ from api.models import Blog, User
 from api.serializers import BlogSerializer, UserSerializer, UserUpdateSerializer
 from api.views.schema_responses import UNAUTHORIZED
 from drf_spectacular.utils import extend_schema, extend_schema_view
-from rest_framework import viewsets
+from rest_framework import filters, viewsets
 from rest_framework.decorators import action
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
@@ -29,6 +29,8 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     renderer_classes = [JSONRenderer]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['first_name', 'last_name', 'username', 'email']
 
     # PUT/PATCH use the serializer where the password is optional
     def get_serializer_class(self):
@@ -37,7 +39,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return super().get_serializer_class()
 
     @extend_schema(operation_id='Get_User_Blogs', responses={200: BlogSerializer(many=True)})
-    @action(detail=True, methods=['get'], serializer_class=BlogSerializer)
+    @action(detail=True, methods=['get'], serializer_class=BlogSerializer, filter_backends=[])
     # The blogs action lists a user's blogs: 404 only if the user doesn't exist
     def blogs(self, request, pk=None) -> Response:
         user = self.get_object()

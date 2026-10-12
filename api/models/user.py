@@ -12,5 +12,9 @@ class User(models.Model):
     email = models.EmailField(max_length=254, unique=True)
     register_at = models.DateField(default=datetime.date.today, editable=False)
 
+    class Meta:
+        # Newest first; id breaks ties between users registered on the same day
+        ordering = ['-register_at', '-id']
+
     def __str__(self):
         return self.first_name + ' ' + self.last_name
