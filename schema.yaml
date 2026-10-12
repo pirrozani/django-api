@@ -2,7 +2,8 @@ openapi: 3.0.3
 info:
   title: DjangoAPI
   version: 0.1.0
-  description: User and Blog API for Django project
+  description: User and Blog API for Django project. Authorize with tokenAuth using
+    the format "Token <token>".
 paths:
   /api/auth/logout/:
     post:
@@ -11,11 +12,6 @@ paths:
       - auth
       security:
       - tokenAuth: []
-      - TokenAuth:
-          type: apiKey
-          in: header
-          name: Authorization
-          description: Enter your token in the format "Token <token>"
       responses:
         '204':
           description: No response body
@@ -33,11 +29,6 @@ paths:
       security:
       - tokenAuth: []
       - cookieAuth: []
-      - TokenAuth:
-          type: apiKey
-          in: header
-          name: Authorization
-          description: Enter your token in the format "Token <token>"
       responses:
         '200':
           content:
@@ -119,11 +110,6 @@ paths:
       security:
       - tokenAuth: []
       - cookieAuth: []
-      - TokenAuth:
-          type: apiKey
-          in: header
-          name: Authorization
-          description: Enter your token in the format "Token <token>"
       - {}
       responses:
         '200':
@@ -184,11 +170,6 @@ paths:
       security:
       - tokenAuth: []
       - cookieAuth: []
-      - TokenAuth:
-          type: apiKey
-          in: header
-          name: Authorization
-          description: Enter your token in the format "Token <token>"
       responses:
         '201':
           content:
@@ -232,11 +213,6 @@ paths:
       security:
       - tokenAuth: []
       - cookieAuth: []
-      - TokenAuth:
-          type: apiKey
-          in: header
-          name: Authorization
-          description: Enter your token in the format "Token <token>"
       - {}
       responses:
         '200':
@@ -294,11 +270,6 @@ paths:
       security:
       - tokenAuth: []
       - cookieAuth: []
-      - TokenAuth:
-          type: apiKey
-          in: header
-          name: Authorization
-          description: Enter your token in the format "Token <token>"
       responses:
         '200':
           content:
@@ -360,11 +331,6 @@ paths:
       security:
       - tokenAuth: []
       - cookieAuth: []
-      - TokenAuth:
-          type: apiKey
-          in: header
-          name: Authorization
-          description: Enter your token in the format "Token <token>"
       responses:
         '200':
           content:
@@ -407,11 +373,6 @@ paths:
       security:
       - tokenAuth: []
       - cookieAuth: []
-      - TokenAuth:
-          type: apiKey
-          in: header
-          name: Authorization
-          description: Enter your token in the format "Token <token>"
       responses:
         '204':
           description: No response body
@@ -572,11 +533,6 @@ paths:
       security:
       - tokenAuth: []
       - cookieAuth: []
-      - TokenAuth:
-          type: apiKey
-          in: header
-          name: Authorization
-          description: Enter your token in the format "Token <token>"
       - {}
       responses:
         '200':
@@ -625,11 +581,6 @@ paths:
       security:
       - tokenAuth: []
       - cookieAuth: []
-      - TokenAuth:
-          type: apiKey
-          in: header
-          name: Authorization
-          description: Enter your token in the format "Token <token>"
       - {}
       responses:
         '200':
@@ -671,11 +622,6 @@ paths:
       security:
       - tokenAuth: []
       - cookieAuth: []
-      - TokenAuth:
-          type: apiKey
-          in: header
-          name: Authorization
-          description: Enter your token in the format "Token <token>"
       responses:
         '201':
           content:
@@ -714,11 +660,6 @@ paths:
       security:
       - tokenAuth: []
       - cookieAuth: []
-      - TokenAuth:
-          type: apiKey
-          in: header
-          name: Authorization
-          description: Enter your token in the format "Token <token>"
       - {}
       responses:
         '200':
@@ -763,11 +704,6 @@ paths:
       security:
       - tokenAuth: []
       - cookieAuth: []
-      - TokenAuth:
-          type: apiKey
-          in: header
-          name: Authorization
-          description: Enter your token in the format "Token <token>"
       responses:
         '200':
           content:
@@ -816,11 +752,6 @@ paths:
       security:
       - tokenAuth: []
       - cookieAuth: []
-      - TokenAuth:
-          type: apiKey
-          in: header
-          name: Authorization
-          description: Enter your token in the format "Token <token>"
       responses:
         '200':
           content:
@@ -858,11 +789,6 @@ paths:
       security:
       - tokenAuth: []
       - cookieAuth: []
-      - TokenAuth:
-          type: apiKey
-          in: header
-          name: Authorization
-          description: Enter your token in the format "Token <token>"
       responses:
         '204':
           description: No response body
@@ -899,11 +825,6 @@ paths:
       security:
       - tokenAuth: []
       - cookieAuth: []
-      - TokenAuth:
-          type: apiKey
-          in: header
-          name: Authorization
-          description: Enter your token in the format "Token <token>"
       - {}
       responses:
         '200':
