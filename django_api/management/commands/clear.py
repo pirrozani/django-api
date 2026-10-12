@@ -21,7 +21,10 @@ def flush_tables(*models):
 
 
 class Command(BaseCommand):
-    help = 'Clear the User and Blog tables and reset their id sequences'
+    help = (
+        'Clear the User and Blog tables and reset their id sequences. This also removes '
+        "the demo account's author profile: run create_demo_user (or use reset_demo) after"
+    )
 
     # Clear every demo table
     def handle(self, *args, **options):

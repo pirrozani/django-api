@@ -77,7 +77,10 @@ Every finding maps to a GitHub issue; status lives in the [issue tracker](https:
 | A20 | No database connect timeout: an unreachable Postgres hangs requests until gunicorn kills the worker (502), so `?db=1` can't return 503 | [#29](https://github.com/pirrozani/django-api/issues/29) |
 | A21 | `env.list` keeps spaces after commas, so `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS` and `CORS_ALLOWED_ORIGINS` entries after the first silently never match | [#33](https://github.com/pirrozani/django-api/issues/33) |
 | A22 | `NUM_PROXIES` can't be verified on Render: the request log records the client-controlled leftmost `X-Forwarded-For` entry, never `REMOTE_ADDR` or the full chain | [#36](https://github.com/pirrozani/django-api/issues/36) |
-| A23 | No blog ownership: any account can edit/delete any blog or post as any author (no `auth.User` ↔ author link) | [#39](https://github.com/pirrozani/django-api/issues/39) |
+| A23 | No blog ownership: any account can edit/delete any blog or post as any author (no `auth.User` ↔ author link) (**resolved** for `/api/blogs/`: `api.User.account` links an author to a login account; blog writes are owner-or-staff, `user` is read-only. `/api/users/` writes, including the cascading author `DELETE`, are still open to any account: [#40](https://github.com/pirrozani/django-api/issues/40)) | [#39](https://github.com/pirrozani/django-api/issues/39) |
+| A24 | Any account can edit or delete any author via `/api/users/`; author `DELETE` cascades to its blogs, bypassing blog ownership | [#40](https://github.com/pirrozani/django-api/issues/40) |
+| A25 | `/api/auth/me/` has no author id, so the SPA can't tell which blogs the caller may change | [#41](https://github.com/pirrozani/django-api/issues/41) |
+| A26 | No `/release` skill: the `develop` → `main` release (merge commit, version bump, tag, back-merge) is done by hand | [#43](https://github.com/pirrozani/django-api/issues/43) |
 
 ## Unmerged branches
 

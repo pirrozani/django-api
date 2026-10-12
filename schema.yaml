@@ -155,7 +155,6 @@ paths:
             examples:
               ExampleRequest:
                 value:
-                  user: 1
                   title: Doloremque et et.
                   content: Discuss than some debate this. Entire him certain single
                     west rock......
@@ -198,6 +197,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Detail'
           description: Missing or invalid token
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: The account may not change this resource
   /api/blogs/{id}/:
     get:
       operationId: Get_Blog
@@ -255,7 +260,6 @@ paths:
             examples:
               ExampleRequest:
                 value:
-                  user: 1
                   title: Doloremque et et.
                   content: Discuss than some debate this. Entire him certain single
                     west rock......
@@ -298,6 +302,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Detail'
           description: Missing or invalid token
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: The account may not change this resource
     patch:
       operationId: Partial_Update_Blog
       parameters:
@@ -317,7 +327,6 @@ paths:
             examples:
               ExampleRequest:
                 value:
-                  user: 1
                   title: Doloremque et et.
                   content: Discuss than some debate this. Entire him certain single
                     west rock......
@@ -359,6 +368,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Detail'
           description: Missing or invalid token
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: The account may not change this resource
     delete:
       operationId: Delete_Blog
       parameters:
@@ -382,6 +397,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Detail'
           description: Missing or invalid token
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: The account may not change this resource
   /api/health/:
     get:
       operationId: Get_Health
@@ -925,6 +946,7 @@ components:
           readOnly: true
         user:
           type: integer
+          readOnly: true
         author:
           allOf:
           - $ref: '#/components/schemas/AuthorSummary'
@@ -948,8 +970,6 @@ components:
     BlogRequest:
       type: object
       properties:
-        user:
-          type: integer
         title:
           type: string
           minLength: 1
@@ -960,7 +980,6 @@ components:
       required:
       - content
       - title
-      - user
     DbEnum:
       enum:
       - ok
@@ -1043,8 +1062,6 @@ components:
     PatchedBlogRequest:
       type: object
       properties:
-        user:
-          type: integer
         title:
           type: string
           minLength: 1

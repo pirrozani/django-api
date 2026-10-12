@@ -246,7 +246,6 @@
                             "examples": {
                                 "ExampleRequest": {
                                     "value": {
-                                        "user": 1,
                                         "title": "Doloremque et et.",
                                         "content": "Discuss than some debate this. Entire him certain single west rock......"
                                     },
@@ -313,6 +312,16 @@
                             }
                         },
                         "description": "Missing or invalid token"
+                    },
+                    "403": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "The account may not change this resource"
                     }
                 }
             }
@@ -399,7 +408,6 @@
                             "examples": {
                                 "ExampleRequest": {
                                     "value": {
-                                        "user": 1,
                                         "title": "Doloremque et et.",
                                         "content": "Discuss than some debate this. Entire him certain single west rock......"
                                     },
@@ -466,6 +474,16 @@
                             }
                         },
                         "description": "Missing or invalid token"
+                    },
+                    "403": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "The account may not change this resource"
                     }
                 }
             },
@@ -494,7 +512,6 @@
                             "examples": {
                                 "ExampleRequest": {
                                     "value": {
-                                        "user": 1,
                                         "title": "Doloremque et et.",
                                         "content": "Discuss than some debate this. Entire him certain single west rock......"
                                     },
@@ -560,6 +577,16 @@
                             }
                         },
                         "description": "Missing or invalid token"
+                    },
+                    "403": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "The account may not change this resource"
                     }
                 }
             },
@@ -600,6 +627,16 @@
                             }
                         },
                         "description": "Missing or invalid token"
+                    },
+                    "403": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Detail"
+                                }
+                            }
+                        },
+                        "description": "The account may not change this resource"
                     }
                 }
             }
@@ -1395,7 +1432,8 @@
                         "readOnly": true
                     },
                     "user": {
-                        "type": "integer"
+                        "type": "integer",
+                        "readOnly": true
                     },
                     "author": {
                         "allOf": [
@@ -1430,9 +1468,6 @@
             "BlogRequest": {
                 "type": "object",
                 "properties": {
-                    "user": {
-                        "type": "integer"
-                    },
                     "title": {
                         "type": "string",
                         "minLength": 1,
@@ -1445,8 +1480,7 @@
                 },
                 "required": [
                     "content",
-                    "title",
-                    "user"
+                    "title"
                 ]
             },
             "DbEnum": {
@@ -1561,9 +1595,6 @@
             "PatchedBlogRequest": {
                 "type": "object",
                 "properties": {
-                    "user": {
-                        "type": "integer"
-                    },
                     "title": {
                         "type": "string",
                         "minLength": 1,
