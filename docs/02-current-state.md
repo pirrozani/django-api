@@ -73,7 +73,7 @@ Every finding maps to a GitHub issue; status lives in the [issue tracker](https:
 | A16 | App starts with a placeholder or weak `SECRET_KEY` when `DEBUG` is off | [#17](https://github.com/pirrozani/django-api/issues/17) |
 | A17 | `populate` writes phone numbers longer than `User.mobile` (20 chars), so seeding fails on Postgres | [#20](https://github.com/pirrozani/django-api/issues/20) |
 | A18 | No `/api/health/` endpoint for Render's health check; the HTTPS redirect would also hide it from plain-HTTP probes | [#26](https://github.com/pirrozani/django-api/issues/26) |
-| A19 | `SPECTACULAR_SETTINGS['SECURITY']` holds a scheme definition, adding an invalid `TokenAuth` requirement to every operation in the OpenAPI schema | [#27](https://github.com/pirrozani/django-api/issues/27) |
+| A19 | `SPECTACULAR_SETTINGS['SECURITY']` holds a scheme definition, adding an invalid `TokenAuth` requirement to every operation in the OpenAPI schema (**resolved**: `SECURITY` removed; schemes come from `DEFAULT_AUTHENTICATION_CLASSES`, hint moved to `DESCRIPTION`) | [#27](https://github.com/pirrozani/django-api/issues/27) |
 | A20 | No database connect timeout: an unreachable Postgres hangs requests until gunicorn kills the worker (502), so `?db=1` can't return 503 | [#29](https://github.com/pirrozani/django-api/issues/29) |
 | A21 | `env.list` keeps spaces after commas, so `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS` and `CORS_ALLOWED_ORIGINS` entries after the first silently never match | [#33](https://github.com/pirrozani/django-api/issues/33) |
 | A22 | `NUM_PROXIES` can't be verified on Render: the request log records the client-controlled leftmost `X-Forwarded-For` entry, never `REMOTE_ADDR` or the full chain | [#36](https://github.com/pirrozani/django-api/issues/36) |
