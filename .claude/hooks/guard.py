@@ -3,6 +3,7 @@
 Reads the hook payload (JSON) from stdin. Exit 2 blocks the tool call and
 shows the stderr message to Claude; exit 0 lets it through.
 """
+
 import json
 import os
 import re

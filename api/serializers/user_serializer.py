@@ -1,7 +1,8 @@
-from rest_framework import serializers
-from api.models.user import User
-from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
 from django.contrib.auth.hashers import make_password
+from drf_spectacular.utils import OpenApiExample, extend_schema_serializer
+from rest_framework import serializers
+
+from api.models.user import User
 
 
 @extend_schema_serializer(
@@ -16,7 +17,7 @@ from django.contrib.auth.hashers import make_password
                 'username': 'lyang',
                 'mobile': '(482)598-4678',
                 'email': 'breanna03@example.com',
-                },
+            },
             response_only=True,
         )
     ]

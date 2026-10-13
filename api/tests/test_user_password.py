@@ -30,8 +30,12 @@ class UserPasswordTests(TestCase):
         account = Account.objects.create_user('demo', password='x', is_staff=True)
         self.client.force_authenticate(account)
         self.user = User.objects.create(
-            first_name='Ann', last_name='Lee', username='alee', email='ann@example.com',
-            password='pbkdf2_sha256$1$salt$hash', account=account,
+            first_name='Ann',
+            last_name='Lee',
+            username='alee',
+            email='ann@example.com',
+            password='pbkdf2_sha256$1$salt$hash',
+            account=account,
         )
         self.detail_url = reverse('user-detail', args=[self.user.id])
 
@@ -110,7 +114,10 @@ class UserPasswordTests(TestCase):
     # The data migration hashes plain text and skips existing hashes
     def test_migration_hashes_only_plain_text(self):
         plain = User.objects.create(
-            first_name='P', last_name='T', username='pt', email='pt@example.com',
+            first_name='P',
+            last_name='T',
+            username='pt',
+            email='pt@example.com',
             password='plain-text',
         )
         hashed_before = self.user.password

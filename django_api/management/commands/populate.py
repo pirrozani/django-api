@@ -1,8 +1,9 @@
-from django.core.management.base import BaseCommand, CommandError
 from django.contrib.auth.hashers import make_password
+from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from faker import Faker
-from api.models import User, Blog
+
+from api.models import Blog, User
 
 
 class Command(BaseCommand):
@@ -18,10 +19,7 @@ class Command(BaseCommand):
         user_count = options.get('users', 100)
         blog_count = options.get('articles', 200)
         if blog_count > 0 and user_count <= 0 and not self.seeded_authors().exists():
-            raise CommandError(
-                'Cannot create articles without users: '
-                'pass --users N or populate users first.'
-            )
+            raise CommandError('Cannot create articles without users: pass --users N or populate users first.')
 
         # One transaction, so a failure part-way leaves no partial data behind
         with transaction.atomic():
@@ -50,7 +48,7 @@ class Command(BaseCommand):
                 username=faker.user_name(),
                 email=email,
                 password=make_password(faker.password(), None, 'pbkdf2_sha256'),
-                register_at=faker.date()
+                register_at=faker.date(),
             )
         self.stdout.write(self.style.SUCCESS(f'Successfully created {count} fake users.'))
 
@@ -59,10 +57,5 @@ class Command(BaseCommand):
         faker = Faker()
         for _ in range(count):
             user = self.seeded_authors().order_by('?').first()
-            Blog.objects.create(
-                title=faker.sentence(),
-                content=faker.text(),
-                user_id=user.id,
-                created_at=faker.date()
-            )
+            Blog.objects.create(title=faker.sentence(), content=faker.text(), user_id=user.id, created_at=faker.date())
         self.stdout.write(self.style.SUCCESS(f'Successfully created {count} fake Articles.'))

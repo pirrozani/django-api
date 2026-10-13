@@ -26,9 +26,7 @@ class Command(BaseCommand):
             account, created = Account.objects.get_or_create(username=username)
             # Never reset an admin's password through the demo settings
             if account.is_staff or account.is_superuser:
-                raise CommandError(
-                    f'"{username}" is a staff account; pick another DEMO_USERNAME.'
-                )
+                raise CommandError(f'"{username}" is a staff account; pick another DEMO_USERNAME.')
             password_changed = created or not account.check_password(password)
             # An account deactivated in the admin can't log in, so the demo login would 400
             changed = password_changed or not account.is_active
@@ -49,8 +47,7 @@ class Command(BaseCommand):
                 # email is unique; refuse rather than take over another author's profile
                 if Author.objects.filter(email=email).exists():
                     raise CommandError(
-                        f'An author with email "{email}" already exists; delete it or '
-                        'pick another DEMO_USERNAME.'
+                        f'An author with email "{email}" already exists; delete it or pick another DEMO_USERNAME.'
                     )
                 Author.objects.create(
                     account=account,

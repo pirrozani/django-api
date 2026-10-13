@@ -71,9 +71,7 @@ class ManagementCommandTests(TestCase):
 
     # A failure part-way through populate leaves no users or blogs behind (#20)
     def test_populate_failure_leaves_no_partial_data(self):
-        with patch.object(
-            PopulateCommand, 'populate_fake_blog_data', side_effect=RuntimeError('boom')
-        ):
+        with patch.object(PopulateCommand, 'populate_fake_blog_data', side_effect=RuntimeError('boom')):
             with self.assertRaises(RuntimeError):
                 self.run_command('populate', users=3, articles=4)
 
@@ -98,9 +96,7 @@ class ManagementCommandTests(TestCase):
         user_ids = sorted(User.objects.values_list('id', flat=True))
         blog_ids = sorted(Blog.objects.values_list('id', flat=True))
 
-        with patch.object(
-            PopulateCommand, 'populate_fake_blog_data', side_effect=RuntimeError('boom')
-        ):
+        with patch.object(PopulateCommand, 'populate_fake_blog_data', side_effect=RuntimeError('boom')):
             with self.assertRaises(RuntimeError):
                 self.run_command('reset_demo')
 

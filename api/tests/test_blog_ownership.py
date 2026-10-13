@@ -18,8 +18,12 @@ DEMO = {'DEMO_USERNAME': 'demo', 'DEMO_PASSWORD': 'demo-pass'}
 # Create an author, optionally linked to a login account
 def make_author(username, account=None):
     return User.objects.create(
-        first_name='Ann', last_name='Lee', username=username, email=f'{username}@example.com',
-        password='pbkdf2_sha256$1$salt$hash', account=account,
+        first_name='Ann',
+        last_name='Lee',
+        username=username,
+        email=f'{username}@example.com',
+        password='pbkdf2_sha256$1$salt$hash',
+        account=account,
     )
 
 
@@ -135,9 +139,7 @@ class DemoAccountOwnershipTests(APITestCase):
     def setUp(self):
         cache.clear()
         call_command('reset_demo', stdout=StringIO())
-        token = self.client.post(
-            reverse('auth-token'), {'username': 'demo', 'password': 'demo-pass'}
-        ).json()['token']
+        token = self.client.post(reverse('auth-token'), {'username': 'demo', 'password': 'demo-pass'}).json()['token']
         self.client.credentials(HTTP_AUTHORIZATION=f'Token {token}')
 
     # The demo account owns no seeded blogs and gets 403 changing them
@@ -155,9 +157,7 @@ class DemoAccountOwnershipTests(APITestCase):
 
     # The demo account can create a blog, then edit and delete it
     def test_demo_can_manage_its_own_blog(self):
-        response = self.client.post(
-            reverse('blog-list'), {'title': 'Mine', 'content': 'Body'}, format='json'
-        )
+        response = self.client.post(reverse('blog-list'), {'title': 'Mine', 'content': 'Body'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         url = reverse('blog-detail', args=[response.json()['id']])
         response = self.client.patch(url, {'title': 'Edited'}, format='json')

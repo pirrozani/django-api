@@ -70,17 +70,18 @@ Every finding maps to a GitHub issue; status lives in the [issue tracker](https:
 | A13 | Django 5.0 no longer receives security fixes (**resolved**: Django 5.2 LTS, DRF 3.18, drf-spectacular 0.30; transitive pins dropped from `pyproject.toml`) | [#4](https://github.com/pirrozani/django-api/issues/4) |
 | A14 | `DoesNotExist = None` / `objects = None` on models (**resolved**: removed IDE stub attributes) | [#13](https://github.com/pirrozani/django-api/issues/13) |
 | A15 | No tests; README is a placeholder | [#14](https://github.com/pirrozani/django-api/issues/14) |
-| A16 | App starts with a placeholder or weak `SECRET_KEY` when `DEBUG` is off | [#17](https://github.com/pirrozani/django-api/issues/17) |
+| A16 | App starts with a placeholder or weak `SECRET_KEY` when `DEBUG` is off (**resolved**: startup raises `ImproperlyConfigured` for `change-me` or keys under 50 characters) | [#17](https://github.com/pirrozani/django-api/issues/17) |
 | A17 | `populate` writes phone numbers longer than `User.mobile` (20 chars), so seeding fails on Postgres | [#20](https://github.com/pirrozani/django-api/issues/20) |
 | A18 | No `/api/health/` endpoint for Render's health check; the HTTPS redirect would also hide it from plain-HTTP probes | [#26](https://github.com/pirrozani/django-api/issues/26) |
 | A19 | `SPECTACULAR_SETTINGS['SECURITY']` holds a scheme definition, adding an invalid `TokenAuth` requirement to every operation in the OpenAPI schema (**resolved**: `SECURITY` removed; schemes come from `DEFAULT_AUTHENTICATION_CLASSES`, hint moved to `DESCRIPTION`) | [#27](https://github.com/pirrozani/django-api/issues/27) |
 | A20 | No database connect timeout: an unreachable Postgres hangs requests until gunicorn kills the worker (502), so `?db=1` can't return 503 | [#29](https://github.com/pirrozani/django-api/issues/29) |
-| A21 | `env.list` keeps spaces after commas, so `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS` and `CORS_ALLOWED_ORIGINS` entries after the first silently never match | [#33](https://github.com/pirrozani/django-api/issues/33) |
+| A21 | `env.list` keeps spaces after commas, so `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS` and `CORS_ALLOWED_ORIGINS` entries after the first silently never match (**resolved**: `env_list` strips the whitespace around each entry) | [#33](https://github.com/pirrozani/django-api/issues/33) |
 | A22 | `NUM_PROXIES` can't be verified on Render: the request log records the client-controlled leftmost `X-Forwarded-For` entry, never `REMOTE_ADDR` or the full chain | [#36](https://github.com/pirrozani/django-api/issues/36) |
 | A23 | No blog ownership: any account can edit/delete any blog or post as any author (no `auth.User` ↔ author link) (**resolved** for `/api/blogs/`: `api.User.account` links an author to a login account; blog writes are owner-or-staff, `user` is read-only. `/api/users/` writes are covered by A24) | [#39](https://github.com/pirrozani/django-api/issues/39) |
 | A24 | Any account can edit or delete any author via `/api/users/`; author `DELETE` cascades to its blogs, bypassing blog ownership (**resolved**: author edits are own-account-or-staff; author `POST`/`DELETE` are staff-only) | [#40](https://github.com/pirrozani/django-api/issues/40) |
 | A25 | `/api/auth/me/` has no author id, so the SPA can't tell which blogs the caller may change | [#41](https://github.com/pirrozani/django-api/issues/41) |
 | A26 | No `/release` skill: the `develop` → `main` release (merge commit, version bump, tag, back-merge) is done by hand | [#43](https://github.com/pirrozani/django-api/issues/43) |
+| A27 | No linter or formatter: `ruff` isn't a dependency or configured, so CI has no lint stage (28 lint errors, 38 files unformatted at line length 120) (**resolved**: ruff in the `dev` group, rules E/F/I, line length 120, one formatting pass skipped by `.git-blame-ignore-revs`) | [#52](https://github.com/pirrozani/django-api/issues/52) |
 
 ## Unmerged branches
 

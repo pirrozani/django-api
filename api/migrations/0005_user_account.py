@@ -6,21 +6,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ("api", "0004_default_ordering"),
+        ('api', '0004_default_ordering'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AddField(
-            model_name="user",
-            name="account",
+            model_name='user',
+            name='account',
             field=models.OneToOneField(
                 blank=True,
                 null=True,
                 on_delete=django.db.models.deletion.SET_NULL,
-                related_name="author",
+                related_name='author',
                 to=settings.AUTH_USER_MODEL,
             ),
         ),

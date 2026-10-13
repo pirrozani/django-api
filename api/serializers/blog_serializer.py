@@ -1,7 +1,8 @@
+from drf_spectacular.utils import OpenApiExample, extend_schema_serializer
 from rest_framework import serializers
+
 from api.models.blog import Blog
 from api.models.user import User
-from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
 
 
 # The AuthorSummarySerializer class is a read-only summary of a blog's author
@@ -28,7 +29,7 @@ class AuthorSummarySerializer(serializers.ModelSerializer):
                 },
                 'title': 'Doloremque et et.',
                 'content': 'Discuss than some debate this. Entire him certain single west rock......',
-                'created_at': '2021-06-11'
+                'created_at': '2021-06-11',
             },
             response_only=True,
         ),

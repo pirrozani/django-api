@@ -6,7 +6,7 @@
 
 | Variable | Local dev | Production | Introduced by |
 |---|---|---|---|
-| `SECRET_KEY` | any generated value | strong random (Render "Generate") | exists ([#2](https://github.com/pirrozani/django-api/issues/2)) |
+| `SECRET_KEY` | any generated value | random, **50+ characters** (Render's "Generate" or the command below). With `DEBUG=False`, a shorter key or `change-me` stops startup with `ImproperlyConfigured` | exists ([#2](https://github.com/pirrozani/django-api/issues/2)), checked by [#17](https://github.com/pirrozani/django-api/issues/17) |
 | `DEBUG` | `True` | `False` | exists |
 | `ALLOWED_HOSTS` | `127.0.0.1,localhost` | `<backend>.onrender.com` | exists |
 | `DATABASE_URL` | unset (SQLite), a local Postgres (Docker) or a Neon dev branch | Neon **direct** (non `-pooler`) connection string with `sslmode=require` | [#5](https://github.com/pirrozani/django-api/issues/5) |
@@ -17,11 +17,11 @@
 | `SECURE_HSTS_SECONDS` | unset (ignored while `DEBUG=True`) | unset (3600 s); raise (e.g. `31536000`) once HTTPS is confirmed stable | [#7](https://github.com/pirrozani/django-api/issues/7) |
 | `SECURE_SSL_REDIRECT` | unset (ignored while `DEBUG=True`) | unset (`True`); set `False` only for tests/CI that run with `DEBUG=False` | [#7](https://github.com/pirrozani/django-api/issues/7) |
 | `DEMO_USERNAME` / `DEMO_PASSWORD` | `demo` / local value | set only where `create_demo_user` / `reset_demo` runs (both fail without a password; a staff username is refused) | [#9](https://github.com/pirrozani/django-api/issues/9) |
-| `NUM_PROXIES` | unset (`0`: throttles use `REMOTE_ADDR`) | the number of proxies in front of gunicorn (Render: verify, likely `1`). Left at `0`, every visitor shares one login bucket (Render's proxy IP). Never set it higher than the real count: the extra `X-Forwarded-For` entries are client-controlled | [#9](https://github.com/pirrozani/django-api/issues/9) |
+| `NUM_PROXIES` | unset (`0`: throttles use `REMOTE_ADDR`) | the number of proxies in front of gunicorn. On Render, set it from the observed chain (`3` as of 2026-10-13): see [Verify `NUM_PROXIES`](07-deployment.md#verify-num_proxies) ([#36](https://github.com/pirrozani/django-api/issues/36)). Left at `0`, every visitor shares one login bucket (Render's proxy IP). Never set it higher than the real count: the extra `X-Forwarded-For` entries are client-controlled | [#9](https://github.com/pirrozani/django-api/issues/9) |
 | `LOGIN_THROTTLE_RATE` | unset (`20/min`) | unset (`20/min`); per client IP (see `NUM_PROXIES`) and per gunicorn worker (local-memory cache); `<count>/<s|m|h|d>` form (e.g. `5/hour`), anything else stops startup with `ImproperlyConfigured` | [#9](https://github.com/pirrozani/django-api/issues/9) |
 | `PYTHON_VERSION` | — | only if Render ignores `.python-version` | [#1](https://github.com/pirrozani/django-api/issues/1) |
 
-Generate a secret key:
+Generate a secret key (50 characters, the minimum when `DEBUG=False`):
 
 ```bash
 uv run python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"

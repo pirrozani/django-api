@@ -320,7 +320,7 @@ Delete actions for blogs and users sit behind a confirm dialog and require auth.
 
 | Variable | Local dev | Production |
 |---|---|---|
-| `SECRET_KEY` | any random string | strong random (Render "Generate") |
+| `SECRET_KEY` | any random string | random, 50+ characters (`get_random_secret_key()`); shorter stops startup ([#17](https://github.com/pirrozani/django-api/issues/17)) |
 | `DEBUG` | `True` | `False` |
 | `ALLOWED_HOSTS` | `127.0.0.1,localhost` | `<backend>.onrender.com` |
 | `DATABASE_URL` | unset (SQLite) or Neon dev branch | Neon connection string with `sslmode=require` |

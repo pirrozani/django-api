@@ -6,6 +6,7 @@ Usage (from the repo root, any Python 3 works since it only uses the stdlib):
 Without an argument it checks `.venv` (uv), falling back to the legacy `venv`.
 Exit code 0 when every installed file matches its published hash, 1 otherwise.
 """
+
 import base64
 import csv
 import datetime
