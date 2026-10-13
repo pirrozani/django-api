@@ -1,7 +1,8 @@
 from django.urls import include, path
-from api.views import UserViewSet, BlogViewSet, HealthView, LoginView, LogoutView, MeView
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from rest_framework.routers import SimpleRouter
+
+from api.views import BlogViewSet, HealthView, LoginView, LogoutView, MeView, UserViewSet
 
 # SimpleRouter adds trailing-slash routes (user-list, user-detail, user-blogs, blog-list, blog-detail)
 # without DefaultRouter's API root and .json suffix routes, which aren't in the contract

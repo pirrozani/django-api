@@ -12,6 +12,9 @@ UNAUTHORIZED = OpenApiResponse(DetailSerializer, description='Missing or invalid
 FORBIDDEN = OpenApiResponse(DetailSerializer, description='The account may not change this resource')
 
 AUTHOR_FILTER_ERROR = OpenApiResponse(
-    inline_serializer(name='AuthorFilterError', fields={'author': serializers.ListField(child=serializers.CharField())}),
+    inline_serializer(
+        name='AuthorFilterError',
+        fields={'author': serializers.ListField(child=serializers.CharField())},
+    ),
     description='`author` is not an integer',
 )

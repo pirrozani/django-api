@@ -1,8 +1,9 @@
-from django.core.management.base import BaseCommand, CommandError
 from django.contrib.auth.hashers import make_password
+from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from faker import Faker
-from api.models import User, Blog
+
+from api.models import Blog, User
 
 
 class Command(BaseCommand):

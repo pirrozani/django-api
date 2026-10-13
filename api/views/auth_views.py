@@ -1,5 +1,3 @@
-from api.serializers import AccountSerializer
-from api.views.schema_responses import UNAUTHORIZED, DetailSerializer
 from drf_spectacular.utils import OpenApiResponse, extend_schema, inline_serializer
 from rest_framework import serializers, status
 from rest_framework.authentication import TokenAuthentication
@@ -9,6 +7,9 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
 from rest_framework.views import APIView
+
+from api.serializers import AccountSerializer
+from api.views.schema_responses import UNAUTHORIZED, DetailSerializer
 
 TokenSerializer = inline_serializer(
     name='Token',

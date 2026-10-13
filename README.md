@@ -115,7 +115,7 @@ uv run python manage.py check --deploy # production settings check (needs a prod
 
 The suite runs on whichever database `DATABASE_URL` points at, so run it once with it unset (SQLite) and once against Postgres. A process environment variable overrides `.env`, so `DATABASE_URL=sqlite:///db.sqlite3 uv run python manage.py test` forces SQLite without editing the file.
 
-Code style: single quotes, class-based views, `@extend_schema` on every endpoint. Lint with `uvx ruff check .` and `uvx ruff format --check .` (ruff isn't a project dependency yet, see [#52](https://github.com/pirrozani/django-api/issues/52); CI is planned as OPS-04).
+Code style: single quotes, class-based views, `@extend_schema` on every endpoint. Lint with `uv run ruff check .` and `uv run ruff format --check .` (ruff is in the `dev` dependency group; CI is planned as OPS-04).
 
 ## Deployment
 

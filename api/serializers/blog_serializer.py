@@ -1,7 +1,8 @@
+from drf_spectacular.utils import OpenApiExample, extend_schema_serializer
 from rest_framework import serializers
+
 from api.models.blog import Blog
 from api.models.user import User
-from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
 
 
 # The AuthorSummarySerializer class is a read-only summary of a blog's author
