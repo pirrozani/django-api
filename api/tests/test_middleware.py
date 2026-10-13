@@ -29,8 +29,7 @@ class LogUserRequestMiddlewareTests(TestCase):
         line = self.log_line(HTTP_X_FORWARDED_FOR=f'{SPOOFED}, {CLIENT}')
         self.assertEqual(
             line,
-            f'Request by Anonymous using IP: {PROXY} '
-            f'(remote_addr={PROXY}, x_forwarded_for={SPOOFED}, {CLIENT})',
+            f'Request by Anonymous using IP: {PROXY} (remote_addr={PROXY}, x_forwarded_for={SPOOFED}, {CLIENT})',
         )
 
     # NUM_PROXIES=1 logs the last header entry, not the client-controlled first one
@@ -39,8 +38,7 @@ class LogUserRequestMiddlewareTests(TestCase):
         line = self.log_line(HTTP_X_FORWARDED_FOR=f'{SPOOFED}, {CLIENT}')
         self.assertEqual(
             line,
-            f'Request by Anonymous using IP: {CLIENT} '
-            f'(remote_addr={PROXY}, x_forwarded_for={SPOOFED}, {CLIENT})',
+            f'Request by Anonymous using IP: {CLIENT} (remote_addr={PROXY}, x_forwarded_for={SPOOFED}, {CLIENT})',
         )
 
     # NUM_PROXIES above the chain length is clamped to the first entry, like DRF
@@ -55,8 +53,7 @@ class LogUserRequestMiddlewareTests(TestCase):
         line = self.log_line()
         self.assertEqual(
             line,
-            f'Request by Anonymous using IP: {PROXY} '
-            f'(remote_addr={PROXY}, x_forwarded_for=-)',
+            f'Request by Anonymous using IP: {PROXY} (remote_addr={PROXY}, x_forwarded_for=-)',
         )
 
     # A long client-supplied entry is capped both as the IP and as the raw header
@@ -66,8 +63,7 @@ class LogUserRequestMiddlewareTests(TestCase):
         line = self.log_line(HTTP_X_FORWARDED_FOR='1' * 1000)
         self.assertEqual(
             line,
-            f'Request by Anonymous using IP: {capped} '
-            f'(remote_addr={PROXY}, x_forwarded_for={capped})',
+            f'Request by Anonymous using IP: {capped} (remote_addr={PROXY}, x_forwarded_for={capped})',
         )
 
     # Token-authenticated requests log the username (health skips authentication)

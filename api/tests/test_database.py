@@ -31,9 +31,7 @@ class DatabaseSettingsTests(SimpleTestCase):
 
     # A Postgres DATABASE_URL selects the Postgres backend and keeps its options
     def test_postgres_database_url(self):
-        db = self.load_settings(
-            DATABASE_URL='postgresql://u:p@db.example.com:5432/demo?sslmode=require'
-        )
+        db = self.load_settings(DATABASE_URL='postgresql://u:p@db.example.com:5432/demo?sslmode=require')
         self.assertEqual(db['ENGINE'], 'django.db.backends.postgresql')
         self.assertEqual(db['NAME'], 'demo')
         self.assertEqual(db['HOST'], 'db.example.com')
@@ -46,9 +44,7 @@ class DatabaseSettingsTests(SimpleTestCase):
 
     # DB_CONNECT_TIMEOUT changes the default
     def test_postgres_connect_timeout_from_env(self):
-        db = self.load_settings(
-            DATABASE_URL='postgresql://u:p@db.example.com/demo', DB_CONNECT_TIMEOUT='5'
-        )
+        db = self.load_settings(DATABASE_URL='postgresql://u:p@db.example.com/demo', DB_CONNECT_TIMEOUT='5')
         self.assertEqual(db['OPTIONS']['connect_timeout'], 5)
 
     # A connect_timeout in DATABASE_URL wins over DB_CONNECT_TIMEOUT

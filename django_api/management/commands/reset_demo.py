@@ -17,9 +17,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         with transaction.atomic():
             call_command('clear', stdout=self.stdout)
-            call_command(
-                'populate', users=DEMO_USERS, articles=DEMO_ARTICLES, stdout=self.stdout
-            )
+            call_command('populate', users=DEMO_USERS, articles=DEMO_ARTICLES, stdout=self.stdout)
             call_command('create_demo_user', stdout=self.stdout)
 
         self.stdout.write(self.style.SUCCESS('Successfully reset the demo data.'))

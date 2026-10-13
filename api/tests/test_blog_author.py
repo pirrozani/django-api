@@ -19,7 +19,10 @@ class BlogAuthorTests(APITestCase):
     # Create an author whose email is derived from the username
     def make_author(self, username):
         return User.objects.create(
-            first_name='Ann', last_name='Lee', username=username, email=f'{username}@example.com',
+            first_name='Ann',
+            last_name='Lee',
+            username=username,
+            email=f'{username}@example.com',
             password='pbkdf2_sha256$1$salt$hash',
         )
 
@@ -35,9 +38,15 @@ class BlogAuthorTests(APITestCase):
         item = self.client.get(reverse('blog-list')).json()['results'][0]
         self.assertEqual(item['user'], self.user.id)
         self.assertEqual(set(item['author']), AUTHOR_FIELDS)
-        self.assertEqual(item['author'], {
-            'id': self.user.id, 'username': 'alee', 'first_name': 'Ann', 'last_name': 'Lee',
-        })
+        self.assertEqual(
+            item['author'],
+            {
+                'id': self.user.id,
+                'username': 'alee',
+                'first_name': 'Ann',
+                'last_name': 'Lee',
+            },
+        )
 
     # Detail and the user's blog list embed the author too
     def test_detail_and_user_blogs_embed_author(self):
@@ -62,8 +71,10 @@ class BlogAuthorTests(APITestCase):
 
     # The query count doesn't grow with the number of blogs (no N+1 on the author)
     def test_list_queries_do_not_scale(self):
-        cases = ((reverse('blog-list'), lambda: self.make_author(f'a{Blog.objects.count()}')),
-                 (reverse('user-blogs', args=[self.user.id]), lambda: self.user))
+        cases = (
+            (reverse('blog-list'), lambda: self.make_author(f'a{Blog.objects.count()}')),
+            (reverse('user-blogs', args=[self.user.id]), lambda: self.user),
+        )
         for url, author in cases:
             with self.subTest(url=url):
                 baseline = self.count_queries(url)

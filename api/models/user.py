@@ -15,7 +15,11 @@ class User(models.Model):
     register_at = models.DateField(default=datetime.date.today, editable=False)
     # The login account that writes as this author; seeded authors have none
     account = models.OneToOneField(
-        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name='author',
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='author',
     )
 
     class Meta:

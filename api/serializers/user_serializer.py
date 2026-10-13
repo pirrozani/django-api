@@ -17,7 +17,7 @@ from api.models.user import User
                 'username': 'lyang',
                 'mobile': '(482)598-4678',
                 'email': 'breanna03@example.com',
-                },
+            },
             response_only=True,
         )
     ]

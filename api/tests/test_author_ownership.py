@@ -127,9 +127,7 @@ class DemoAccountAuthorTests(APITestCase):
     def setUp(self):
         cache.clear()
         call_command('reset_demo', stdout=StringIO())
-        token = self.client.post(
-            reverse('auth-token'), {'username': 'demo', 'password': 'demo-pass'}
-        ).json()['token']
+        token = self.client.post(reverse('auth-token'), {'username': 'demo', 'password': 'demo-pass'}).json()['token']
         self.client.credentials(HTTP_AUTHORIZATION=f'Token {token}')
 
     # Every seeded author is read-only for the demo token, and every blog survives

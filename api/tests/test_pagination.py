@@ -20,7 +20,9 @@ class PaginationTests(APITestCase):
         start = datetime.date(2024, 1, 1)
         Blog.objects.bulk_create(
             Blog(
-                user=cls.ann if i % 2 else cls.bob, title=f'Post {i}', content='Body',
+                user=cls.ann if i % 2 else cls.bob,
+                title=f'Post {i}',
+                content='Body',
                 created_at=start + datetime.timedelta(days=i // 3),
             )
             for i in range(60)
@@ -30,8 +32,11 @@ class PaginationTests(APITestCase):
     @staticmethod
     def make_author(username, first_name, last_name):
         return User.objects.create(
-            first_name=first_name, last_name=last_name, username=username,
-            email=f'{username}@example.com', password='pbkdf2_sha256$1$salt$hash',
+            first_name=first_name,
+            last_name=last_name,
+            username=username,
+            email=f'{username}@example.com',
+            password='pbkdf2_sha256$1$salt$hash',
         )
 
     # GET a list and return its JSON body after checking for 200
@@ -57,8 +62,8 @@ class PaginationTests(APITestCase):
     # Pages are newest first, stable across requests, and never repeat or skip a blog
     def test_order_is_stable(self):
         def all_ids():
-            return [b['id'] for page in range(1, 7)
-                    for b in self.get_page(reverse('blog-list'), page=page)['results']]
+            return [b['id'] for page in range(1, 7) for b in self.get_page(reverse('blog-list'), page=page)['results']]
+
         first = all_ids()
         self.assertEqual(first, all_ids())
         expected = list(Blog.objects.order_by('-created_at', '-id').values_list('id', flat=True))

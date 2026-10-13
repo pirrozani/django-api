@@ -21,8 +21,12 @@ class ResponseShapeTests(APITestCase):
         account = Account.objects.create_user('demo', password='x', is_staff=True)
         self.client.force_authenticate(account)
         self.user = User.objects.create(
-            first_name='Ann', last_name='Lee', username='alee', email='ann@example.com',
-            password='pbkdf2_sha256$1$salt$hash', account=account,
+            first_name='Ann',
+            last_name='Lee',
+            username='alee',
+            email='ann@example.com',
+            password='pbkdf2_sha256$1$salt$hash',
+            account=account,
         )
         self.blog = Blog.objects.create(user=self.user, title='Hello', content='World')
 
@@ -68,7 +72,10 @@ class ResponseShapeTests(APITestCase):
         self.assertEqual([b['id'] for b in response.json()['results']], [self.blog.id])
 
         empty = User.objects.create(
-            first_name='No', last_name='Blogs', username='nb', email='nb@example.com',
+            first_name='No',
+            last_name='Blogs',
+            username='nb',
+            email='nb@example.com',
             password='pbkdf2_sha256$1$salt$hash',
         )
         response = self.client.get(reverse('user-blogs', args=[empty.id]))

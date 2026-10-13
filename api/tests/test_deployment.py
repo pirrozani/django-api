@@ -53,15 +53,11 @@ class StaticFilesSettingsTests(SimpleTestCase):
     def test_whitenoise_follows_security_middleware(self):
         middleware = settings.MIDDLEWARE
         index = middleware.index('django.middleware.security.SecurityMiddleware')
-        self.assertEqual(
-            middleware[index + 1], 'whitenoise.middleware.WhiteNoiseMiddleware'
-        )
+        self.assertEqual(middleware[index + 1], 'whitenoise.middleware.WhiteNoiseMiddleware')
 
     # collectstatic has a target and writes compressed, hashed files
     def test_static_root_and_storage(self):
-        self.assertEqual(
-            Path(settings.STATIC_ROOT), Path(settings.BASE_DIR) / 'staticfiles'
-        )
+        self.assertEqual(Path(settings.STATIC_ROOT), Path(settings.BASE_DIR) / 'staticfiles')
         self.assertEqual(
             settings.STORAGES['staticfiles']['BACKEND'],
             'whitenoise.storage.CompressedManifestStaticFilesStorage',
@@ -72,18 +68,14 @@ class SecuritySettingsTests(SimpleTestCase):
     # With DEBUG=False the app trusts Render's proxy and enforces HTTPS
     def test_production_security_settings(self):
         config = load_settings(**PRODUCTION_ENV)
-        self.assertEqual(
-            config['SECURE_PROXY_SSL_HEADER'], ('HTTP_X_FORWARDED_PROTO', 'https')
-        )
+        self.assertEqual(config['SECURE_PROXY_SSL_HEADER'], ('HTTP_X_FORWARDED_PROTO', 'https'))
         self.assertTrue(config['SECURE_SSL_REDIRECT'])
         self.assertEqual(config['SECURE_REDIRECT_EXEMPT'], [r'^api/health/$'])
         self.assertTrue(config['SESSION_COOKIE_SECURE'])
         self.assertTrue(config['CSRF_COOKIE_SECURE'])
         self.assertEqual(config['SECURE_HSTS_SECONDS'], 3600)
         self.assertTrue(config['SECURE_CONTENT_TYPE_NOSNIFF'])
-        self.assertEqual(
-            config['CSRF_TRUSTED_ORIGINS'], ['https://example.onrender.com']
-        )
+        self.assertEqual(config['CSRF_TRUSTED_ORIGINS'], ['https://example.onrender.com'])
 
     # SECURE_HSTS_SECONDS can be raised from the environment
     def test_hsts_seconds_from_env(self):
@@ -107,10 +99,7 @@ class SecuritySettingsTests(SimpleTestCase):
     # check --deploy only reports the documented, accepted warnings
     def test_deploy_checks_pass_with_production_env(self):
         config = load_settings(**PRODUCTION_ENV)
-        overrides = {
-            name: config[name]
-            for name in [*SECURITY_SETTINGS, 'SECRET_KEY', 'ALLOWED_HOSTS']
-        }
+        overrides = {name: config[name] for name in [*SECURITY_SETTINGS, 'SECRET_KEY', 'ALLOWED_HOSTS']}
         with override_settings(DEBUG=False, **overrides):
             messages = checks.run_checks(include_deployment_checks=True)
         ids = {m.id for m in messages if m.is_serious(checks.WARNING)}
@@ -222,14 +211,10 @@ class ProxyHttpsTests(SimpleTestCase):
     def test_plain_http_redirects_to_https(self):
         response = self.client.get('/api/schema/swagger-ui/')
         self.assertEqual(response.status_code, 301)
-        self.assertEqual(
-            response['Location'], 'https://testserver/api/schema/swagger-ui/'
-        )
+        self.assertEqual(response['Location'], 'https://testserver/api/schema/swagger-ui/')
 
     # A request the proxy marks as HTTPS is served, with HSTS
     def test_proxied_https_is_served_with_hsts(self):
-        response = self.client.get(
-            '/api/schema/swagger-ui/', HTTP_X_FORWARDED_PROTO='https'
-        )
+        response = self.client.get('/api/schema/swagger-ui/', HTTP_X_FORWARDED_PROTO='https')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Strict-Transport-Security'], 'max-age=3600')

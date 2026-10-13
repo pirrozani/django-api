@@ -4,18 +4,17 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ("api", "0003_hash_plain_text_passwords"),
+        ('api', '0003_hash_plain_text_passwords'),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name="blog",
-            options={"ordering": ["-created_at", "-id"]},
+            name='blog',
+            options={'ordering': ['-created_at', '-id']},
         ),
         migrations.AlterModelOptions(
-            name="user",
-            options={"ordering": ["-register_at", "-id"]},
+            name='user',
+            options={'ordering': ['-register_at', '-id']},
         ),
     ]

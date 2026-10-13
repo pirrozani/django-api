@@ -55,7 +55,9 @@ class LogoutView(APIView):
     renderer_classes = [JSONRenderer]
 
     @extend_schema(
-        operation_id='Delete_Auth_Token', request=None, responses={204: None, 401: UNAUTHORIZED},
+        operation_id='Delete_Auth_Token',
+        request=None,
+        responses={204: None, 401: UNAUTHORIZED},
     )
     # The post method deletes the request's token, so it stops working
     def post(self, request) -> Response:

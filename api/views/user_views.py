@@ -17,7 +17,8 @@ WRITE_ERRORS = {401: UNAUTHORIZED, 403: FORBIDDEN}
 @extend_schema_view(
     list=extend_schema(operation_id='Get_Users'),
     create=extend_schema(
-        operation_id='Create_User', responses={201: UserSerializer, **WRITE_ERRORS},
+        operation_id='Create_User',
+        responses={201: UserSerializer, **WRITE_ERRORS},
     ),
     retrieve=extend_schema(operation_id='Get_User'),
     update=extend_schema(

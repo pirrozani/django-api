@@ -24,7 +24,8 @@ WRITE_ERRORS = {401: UNAUTHORIZED, 403: FORBIDDEN}
     retrieve=extend_schema(operation_id='Get_Blog'),
     update=extend_schema(operation_id='Update_Blog', responses={200: BlogSerializer, **WRITE_ERRORS}),
     partial_update=extend_schema(
-        operation_id='Partial_Update_Blog', responses={200: BlogSerializer, **WRITE_ERRORS},
+        operation_id='Partial_Update_Blog',
+        responses={200: BlogSerializer, **WRITE_ERRORS},
     ),
     destroy=extend_schema(operation_id='Delete_Blog', responses={204: None, **WRITE_ERRORS}),
 )

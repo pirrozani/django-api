@@ -29,7 +29,7 @@ class AuthorSummarySerializer(serializers.ModelSerializer):
                 },
                 'title': 'Doloremque et et.',
                 'content': 'Discuss than some debate this. Entire him certain single west rock......',
-                'created_at': '2021-06-11'
+                'created_at': '2021-06-11',
             },
             response_only=True,
         ),

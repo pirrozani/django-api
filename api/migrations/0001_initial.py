@@ -7,11 +7,9 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
@@ -22,7 +20,10 @@ class Migration(migrations.Migration):
                 ('last_name', models.CharField(max_length=200)),
                 ('username', models.CharField(max_length=200)),
                 ('mobile', models.CharField(blank=True, max_length=20, null=True)),
-                ('password', models.CharField(max_length=256, validators=[django.core.validators.MinLengthValidator(6)])),
+                (
+                    'password',
+                    models.CharField(max_length=256, validators=[django.core.validators.MinLengthValidator(6)]),
+                ),
                 ('email', models.EmailField(max_length=254, unique=True)),
                 ('register_at', models.DateField(default=datetime.date.today, editable=False)),
             ],

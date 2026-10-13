@@ -49,9 +49,7 @@ class CorsSettingsTests(SimpleTestCase):
 
     # Origins come from the environment as a comma-separated list
     def test_origins_from_env(self):
-        values = load_settings(
-            CORS_ALLOWED_ORIGINS='http://localhost:5173,https://app.workers.dev'
-        )
+        values = load_settings(CORS_ALLOWED_ORIGINS='http://localhost:5173,https://app.workers.dev')
         self.assertEqual(
             values['CORS_ALLOWED_ORIGINS'],
             ['http://localhost:5173', 'https://app.workers.dev'],

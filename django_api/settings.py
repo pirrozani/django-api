@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
+
 import re
 from pathlib import Path
 
@@ -19,9 +20,7 @@ from django.core.exceptions import ImproperlyConfigured
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Read .env by absolute path so settings load from any working directory
-env = environ.Env(
-    DEBUG=(bool, False)
-)
+env = environ.Env(DEBUG=(bool, False))
 environ.Env.read_env(BASE_DIR / '.env')
 
 
@@ -42,9 +41,7 @@ DEBUG = env.bool('DEBUG', default=False)
 # Refuse to run in production with the example key or a weak one. 50 characters
 # matches Django's security.W009, which only warns under check --deploy
 if not DEBUG and (SECRET_KEY == 'change-me' or len(SECRET_KEY) < 50):
-    raise ImproperlyConfigured(
-        'SECRET_KEY must be a random value of 50+ characters when DEBUG is off.'
-    )
+    raise ImproperlyConfigured('SECRET_KEY must be a random value of 50+ characters when DEBUG is off.')
 
 ALLOWED_HOSTS = env_list('ALLOWED_HOSTS')
 
@@ -62,16 +59,14 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'api',
-    'drf_spectacular'
+    'drf_spectacular',
 ]
 
 # '<count>/<period>'. DRF parses it on the first login, so a bad value would turn every
 # login into a 500; fail at startup instead
 LOGIN_THROTTLE_RATE = env('LOGIN_THROTTLE_RATE', default='20/min')
 if not re.fullmatch(r'\d+/(s|sec|second|m|min|minute|h|hour|d|day)', LOGIN_THROTTLE_RATE):
-    raise ImproperlyConfigured(
-        f'LOGIN_THROTTLE_RATE must look like "20/min", got {LOGIN_THROTTLE_RATE!r}'
-    )
+    raise ImproperlyConfigured(f'LOGIN_THROTTLE_RATE must look like "20/min", got {LOGIN_THROTTLE_RATE!r}')
 
 REST_FRAMEWORK = {
     # Token first, so a 401 carries `WWW-Authenticate: Token` and browsers show no
@@ -82,9 +77,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     ),
     # Anyone can read; writes need a login account
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-    ),
+    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticatedOrReadOnly',),
     # Throttles key on REMOTE_ADDR when 0. With N trusted proxies (Render: set N from
     # the observed chain, see docs/07-deployment.md#verify-num_proxies)
     # they use the Nth-from-last X-Forwarded-For entry; None would trust the whole
@@ -114,7 +107,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'api.middleware.LogUserRequestMiddleware'
+    'api.middleware.LogUserRequestMiddleware',
 ]
 
 ROOT_URLCONF = 'django_api.urls'
@@ -256,10 +249,7 @@ LOGGING = {
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'DjangoAPI',
-    'DESCRIPTION': (
-        'User and Blog API for Django project. '
-        'Authorize with tokenAuth using the format "Token <token>".'
-    ),
+    'DESCRIPTION': ('User and Blog API for Django project. Authorize with tokenAuth using the format "Token <token>".'),
     'VERSION': '0.1.0',
     # Security schemes and per-operation requirements are generated from
     # DEFAULT_AUTHENTICATION_CLASSES; don't hand-write SECURITY.
