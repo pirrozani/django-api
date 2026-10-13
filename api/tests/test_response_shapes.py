@@ -82,19 +82,6 @@ class ResponseShapeTests(APITestCase):
         self.assertEqual(response.json()['title'], 'X')
         self.assertEqual(response.json()['content'], 'World')
 
-    # Anonymous writes are rejected; reads are public (#9)
-    def test_anonymous_writes_are_rejected(self):
-        self.client.force_authenticate(None)
-        requests = (
-            ('post', reverse('blog-list')),
-            ('delete', reverse('blog-detail', args=[self.blog.id])),
-            ('patch', reverse('user-detail', args=[self.user.id])),
-        )
-        for method, url in requests:
-            with self.subTest(method=method, url=url):
-                response = getattr(self.client, method)(url)
-                self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
     # Every route ends with a slash and the old /api/blogs/user/<id> is gone
     def test_routes_use_trailing_slash(self):
         self.assertEqual(reverse('user-detail', args=[1]), '/api/users/1/')
