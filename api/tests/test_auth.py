@@ -36,7 +36,7 @@ class AuthTests(APITestCase):
             first_name='Ann', last_name='Lee', username='alee', email='ann@example.com',
             password='pbkdf2_sha256$1$salt$hash',
         )
-        Blog.objects.create(user=self.author, title='Hello', content='World')
+        self.blog = Blog.objects.create(user=self.author, title='Hello', content='World')
 
     # Log in with form data, as curl -d does
     def login(self, username='demo', password='demo-pass', **extra):
@@ -69,6 +69,7 @@ class AuthTests(APITestCase):
             reverse('user-list'),
             reverse('user-detail', args=[self.author.id]),
             reverse('user-blogs', args=[self.author.id]),
+            reverse('blog-detail', args=[self.blog.id]),
         ]
         for url in urls:
             with self.subTest(url=url):
