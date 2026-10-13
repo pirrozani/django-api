@@ -6,7 +6,7 @@
 
 | Variable | Local dev | Production | Introduced by |
 |---|---|---|---|
-| `SECRET_KEY` | any generated value | strong random (Render "Generate") | exists ([#2](https://github.com/pirrozani/django-api/issues/2)) |
+| `SECRET_KEY` | any generated value | random, **50+ characters** (Render's "Generate" or the command below). With `DEBUG=False`, a shorter key or `change-me` stops startup with `ImproperlyConfigured` | exists ([#2](https://github.com/pirrozani/django-api/issues/2)), checked by [#17](https://github.com/pirrozani/django-api/issues/17) |
 | `DEBUG` | `True` | `False` | exists |
 | `ALLOWED_HOSTS` | `127.0.0.1,localhost` | `<backend>.onrender.com` | exists |
 | `DATABASE_URL` | unset (SQLite), a local Postgres (Docker) or a Neon dev branch | Neon **direct** (non `-pooler`) connection string with `sslmode=require` | [#5](https://github.com/pirrozani/django-api/issues/5) |
@@ -21,7 +21,7 @@
 | `LOGIN_THROTTLE_RATE` | unset (`20/min`) | unset (`20/min`); per client IP (see `NUM_PROXIES`) and per gunicorn worker (local-memory cache); `<count>/<s|m|h|d>` form (e.g. `5/hour`), anything else stops startup with `ImproperlyConfigured` | [#9](https://github.com/pirrozani/django-api/issues/9) |
 | `PYTHON_VERSION` | — | only if Render ignores `.python-version` | [#1](https://github.com/pirrozani/django-api/issues/1) |
 
-Generate a secret key:
+Generate a secret key (50 characters, the minimum when `DEBUG=False`):
 
 ```bash
 uv run python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
