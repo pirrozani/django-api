@@ -9,6 +9,7 @@ from django.core.management import call_command
 from django.test import SimpleTestCase, TestCase
 
 from api.models import User
+from api.tests.test_deployment import TEST_SECRET_KEY
 from django_api.management.commands.clear import flush_tables
 
 SETTINGS_FILE = Path(settings.BASE_DIR) / 'django_api' / 'settings.py'
@@ -17,7 +18,8 @@ SETTINGS_FILE = Path(settings.BASE_DIR) / 'django_api' / 'settings.py'
 class DatabaseSettingsTests(SimpleTestCase):
     # Evaluate settings.py with only the given environment, ignoring the local .env
     def load_settings(self, **environ):
-        with patch.dict(os.environ, {'SECRET_KEY': 'test', **environ}, clear=True):
+        environ = {'SECRET_KEY': TEST_SECRET_KEY, **environ}
+        with patch.dict(os.environ, environ, clear=True):
             with patch('environ.Env.read_env'):
                 return runpy.run_path(str(SETTINGS_FILE))['DATABASES']['default']
 

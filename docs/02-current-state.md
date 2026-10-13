@@ -70,7 +70,7 @@ Every finding maps to a GitHub issue; status lives in the [issue tracker](https:
 | A13 | Django 5.0 no longer receives security fixes (**resolved**: Django 5.2 LTS, DRF 3.18, drf-spectacular 0.30; transitive pins dropped from `pyproject.toml`) | [#4](https://github.com/pirrozani/django-api/issues/4) |
 | A14 | `DoesNotExist = None` / `objects = None` on models (**resolved**: removed IDE stub attributes) | [#13](https://github.com/pirrozani/django-api/issues/13) |
 | A15 | No tests; README is a placeholder | [#14](https://github.com/pirrozani/django-api/issues/14) |
-| A16 | App starts with a placeholder or weak `SECRET_KEY` when `DEBUG` is off | [#17](https://github.com/pirrozani/django-api/issues/17) |
+| A16 | App starts with a placeholder or weak `SECRET_KEY` when `DEBUG` is off (**resolved**: startup raises `ImproperlyConfigured` for `change-me` or keys under 50 characters) | [#17](https://github.com/pirrozani/django-api/issues/17) |
 | A17 | `populate` writes phone numbers longer than `User.mobile` (20 chars), so seeding fails on Postgres | [#20](https://github.com/pirrozani/django-api/issues/20) |
 | A18 | No `/api/health/` endpoint for Render's health check; the HTTPS redirect would also hide it from plain-HTTP probes | [#26](https://github.com/pirrozani/django-api/issues/26) |
 | A19 | `SPECTACULAR_SETTINGS['SECURITY']` holds a scheme definition, adding an invalid `TokenAuth` requirement to every operation in the OpenAPI schema (**resolved**: `SECURITY` removed; schemes come from `DEFAULT_AUTHENTICATION_CLASSES`, hint moved to `DESCRIPTION`) | [#27](https://github.com/pirrozani/django-api/issues/27) |

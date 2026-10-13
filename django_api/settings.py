@@ -34,6 +34,13 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DEBUG', default=False)
 
+# Refuse to run in production with the example key or a weak one. 50 characters
+# matches Django's security.W009, which only warns under check --deploy
+if not DEBUG and (SECRET_KEY == 'change-me' or len(SECRET_KEY) < 50):
+    raise ImproperlyConfigured(
+        'SECRET_KEY must be a random value of 50+ characters when DEBUG is off.'
+    )
+
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
 
 # Application definition

@@ -18,6 +18,7 @@ from rest_framework.settings import api_settings
 from rest_framework.test import APIClient, APITestCase
 
 from api.models import Blog, User
+from api.tests.test_deployment import TEST_SECRET_KEY
 from api.views.auth_views import LoginRateThrottle
 
 DEMO = {'DEMO_USERNAME': 'demo', 'DEMO_PASSWORD': 'demo-pass'}
@@ -279,7 +280,8 @@ class CreateDemoUserTests(APITestCase):
 class LoginThrottleRateSettingTests(SimpleTestCase):
     # Evaluate settings.py with only the given environment, ignoring the local settings file
     def load_settings(self, **environ):
-        with patch.dict(os.environ, {'SECRET_KEY': 'test', **environ}, clear=True):
+        environ = {'SECRET_KEY': TEST_SECRET_KEY, **environ}
+        with patch.dict(os.environ, environ, clear=True):
             with patch('environ.Env.read_env'):
                 return runpy.run_path(str(SETTINGS_FILE))
 
