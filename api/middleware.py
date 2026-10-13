@@ -26,9 +26,10 @@ class LogUserRequestMiddleware:
         logger.info(
             'Request by %s using IP: %s (remote_addr=%s, x_forwarded_for=%s)',
             username,
-            ip,
+            # Both can come from the client-controlled header, so capped to keep
+            # log lines bounded
+            str(ip)[:MAX_LOGGED_HEADER],
             request.META.get('REMOTE_ADDR'),
-            # Client-controlled, so capped to keep log lines bounded
             request.META.get('HTTP_X_FORWARDED_FOR', '-')[:MAX_LOGGED_HEADER],
         )
         return response

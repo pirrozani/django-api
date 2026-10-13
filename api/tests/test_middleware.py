@@ -59,10 +59,16 @@ class LogUserRequestMiddlewareTests(TestCase):
             f'(remote_addr={PROXY}, x_forwarded_for=-)',
         )
 
-    # A long client-supplied header is capped in the log
+    # A long client-supplied entry is capped both as the IP and as the raw header
+    @override_settings(REST_FRAMEWORK=rest_framework_with(1))
     def test_long_header_truncated(self):
+        capped = '1' * MAX_LOGGED_HEADER
         line = self.log_line(HTTP_X_FORWARDED_FOR='1' * 1000)
-        self.assertTrue(line.endswith(f'x_forwarded_for={"1" * MAX_LOGGED_HEADER})'))
+        self.assertEqual(
+            line,
+            f'Request by Anonymous using IP: {capped} '
+            f'(remote_addr={PROXY}, x_forwarded_for={capped})',
+        )
 
     # Token-authenticated requests log the username (health skips authentication)
     def test_authenticated_username(self):
