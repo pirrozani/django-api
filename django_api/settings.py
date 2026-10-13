@@ -80,7 +80,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ),
-    # Throttles key on REMOTE_ADDR when 0. With N trusted proxies (Render: verify, then 1)
+    # Throttles key on REMOTE_ADDR when 0. With N trusted proxies (Render: set N from
+    # the observed chain, see docs/07-deployment.md#verify-num_proxies)
     # they use the Nth-from-last X-Forwarded-For entry; None would trust the whole
     # client-supplied header, so every spoofed value would get a fresh bucket
     'NUM_PROXIES': env.int('NUM_PROXIES', default=0),

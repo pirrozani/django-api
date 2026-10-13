@@ -2,6 +2,8 @@ from django.conf import settings
 from django.contrib.auth.models import User as AuthUser
 from django.test import TestCase, override_settings
 
+from api.middleware import MAX_LOGGED_HEADER
+
 HEALTH_URL = '/api/health/'
 ME_URL = '/api/auth/me/'
 SPOOFED = '198.51.100.1'
@@ -56,6 +58,11 @@ class LogUserRequestMiddlewareTests(TestCase):
             f'Request by Anonymous using IP: {PROXY} '
             f'(remote_addr={PROXY}, x_forwarded_for=-)',
         )
+
+    # A long client-supplied header is capped in the log
+    def test_long_header_truncated(self):
+        line = self.log_line(HTTP_X_FORWARDED_FOR='1' * 1000)
+        self.assertTrue(line.endswith(f'x_forwarded_for={"1" * MAX_LOGGED_HEADER})'))
 
     # Token-authenticated requests log the username (health skips authentication)
     def test_authenticated_username(self):

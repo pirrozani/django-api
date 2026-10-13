@@ -4,6 +4,8 @@ from rest_framework.throttling import BaseThrottle
 
 logger = logging.getLogger(__name__)
 
+MAX_LOGGED_HEADER = 200
+
 
 class LogUserRequestMiddleware:
     def __init__(self, get_response):
@@ -26,6 +28,7 @@ class LogUserRequestMiddleware:
             username,
             ip,
             request.META.get('REMOTE_ADDR'),
-            request.META.get('HTTP_X_FORWARDED_FOR', '-'),
+            # Client-controlled, so capped to keep log lines bounded
+            request.META.get('HTTP_X_FORWARDED_FOR', '-')[:MAX_LOGGED_HEADER],
         )
         return response
