@@ -81,7 +81,7 @@ Every finding maps to a GitHub issue; status lives in the [issue tracker](https:
 | A24 | Any account can edit or delete any author via `/api/users/`; author `DELETE` cascades to its blogs, bypassing blog ownership (**resolved**: author edits are own-account-or-staff; author `POST`/`DELETE` are staff-only) | [#40](https://github.com/pirrozani/django-api/issues/40) |
 | A25 | `/api/auth/me/` has no author id, so the SPA can't tell which blogs the caller may change | [#41](https://github.com/pirrozani/django-api/issues/41) |
 | A26 | No `/release` skill: the `develop` → `main` release (merge commit, version bump, tag, back-merge) is done by hand | [#43](https://github.com/pirrozani/django-api/issues/43) |
-| A27 | No linter or formatter: `ruff` isn't a dependency or configured, so CI has no lint stage (28 lint errors, 38 files unformatted at line length 120) | [#52](https://github.com/pirrozani/django-api/issues/52) |
+| A27 | No linter or formatter: `ruff` isn't a dependency or configured, so CI has no lint stage (28 lint errors, 38 files unformatted at line length 120) (**resolved**: ruff in the `dev` group, rules E/F/I, line length 120, one formatting pass skipped by `.git-blame-ignore-revs`) | [#52](https://github.com/pirrozani/django-api/issues/52) |
 
 ## Unmerged branches
 

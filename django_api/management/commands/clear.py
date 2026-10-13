@@ -38,6 +38,4 @@ class Command(BaseCommand):
         with transaction.atomic():
             flush_tables(blog_model, user_model)
 
-        self.stdout.write(self.style.SUCCESS(
-            'Successfully clear and reset auto-increment index for each table.')
-        )
+        self.stdout.write(self.style.SUCCESS('Successfully clear and reset auto-increment index for each table.'))

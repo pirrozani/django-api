@@ -36,20 +36,26 @@ class HealthViewTests(TestCase):
 
     # A database failure turns ?db=1 into 503
     def test_db_check_unavailable(self):
-        with patch(
-            'api.views.health_views.connection.cursor',
-            side_effect=DatabaseError('connection refused'),
-        ), self.assertLogs('api.views.health_views', 'WARNING'):
+        with (
+            patch(
+                'api.views.health_views.connection.cursor',
+                side_effect=DatabaseError('connection refused'),
+            ),
+            self.assertLogs('api.views.health_views', 'WARNING'),
+        ):
             response = self.client.get(HEALTH_URL, {'db': '1'})
         self.assertEqual(response.status_code, 503)
         self.assertEqual(response.json(), {'status': 'error', 'db': 'unavailable'})
 
     # A closed connection (InterfaceError) is reported the same way, not as 500
     def test_db_check_interface_error(self):
-        with patch(
-            'api.views.health_views.connection.cursor',
-            side_effect=InterfaceError('connection already closed'),
-        ), self.assertLogs('api.views.health_views', 'WARNING'):
+        with (
+            patch(
+                'api.views.health_views.connection.cursor',
+                side_effect=InterfaceError('connection already closed'),
+            ),
+            self.assertLogs('api.views.health_views', 'WARNING'),
+        ):
             response = self.client.get(HEALTH_URL, {'db': '1'})
         self.assertEqual(response.status_code, 503)
 

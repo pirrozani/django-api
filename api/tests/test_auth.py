@@ -33,16 +33,17 @@ class AuthTests(APITestCase):
         cache.clear()
         call_command('create_demo_user', stdout=StringIO())
         self.author = User.objects.create(
-            first_name='Ann', last_name='Lee', username='alee', email='ann@example.com',
+            first_name='Ann',
+            last_name='Lee',
+            username='alee',
+            email='ann@example.com',
             password='pbkdf2_sha256$1$salt$hash',
         )
         self.blog = Blog.objects.create(user=self.author, title='Hello', content='World')
 
     # Log in with form data, as curl -d does
     def login(self, username='demo', password='demo-pass', **extra):
-        return self.client.post(
-            reverse('auth-token'), {'username': username, 'password': password}, **extra
-        )
+        return self.client.post(reverse('auth-token'), {'username': username, 'password': password}, **extra)
 
     # POST /api/auth/token/ with the demo credentials returns the account's token
     def test_login_returns_token(self):
@@ -87,9 +88,7 @@ class AuthTests(APITestCase):
     def test_token_authorizes_writes(self):
         token = self.login().json()['token']
         data = {'title': 'New', 'content': 'Body'}
-        response = self.client.post(
-            reverse('blog-list'), data, format='json', HTTP_AUTHORIZATION=f'Token {token}'
-        )
+        response = self.client.post(reverse('blog-list'), data, format='json', HTTP_AUTHORIZATION=f'Token {token}')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         demo_author = User.objects.get(account__username='demo')
         self.assertEqual(response.json()['user'], demo_author.id)
@@ -103,10 +102,15 @@ class AuthTests(APITestCase):
             response = self.client.get(reverse('auth-me'), **auth)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         account = Account.objects.get(username='demo')
-        self.assertEqual(response.json(), {
-            'id': account.id, 'username': 'demo', 'is_staff': False,
-            'author_id': account.author.id,
-        })
+        self.assertEqual(
+            response.json(),
+            {
+                'id': account.id,
+                'username': 'demo',
+                'is_staff': False,
+                'author_id': account.author.id,
+            },
+        )
 
     # An account without an author profile gets author_id null
     def test_me_without_author_returns_null_author_id(self):
@@ -155,13 +159,10 @@ class AuthTests(APITestCase):
     @patch.object(LoginRateThrottle, 'rate', '2/min', create=True)
     def test_spoofed_forwarded_for_shares_one_bucket(self):
         for num_proxies, real_ip in ((0, ''), (1, ', 203.0.113.7')):
-            with self.subTest(num_proxies=num_proxies), patch.object(
-                api_settings, 'NUM_PROXIES', num_proxies
-            ):
+            with self.subTest(num_proxies=num_proxies), patch.object(api_settings, 'NUM_PROXIES', num_proxies):
                 cache.clear()
                 codes = [
-                    self.login(password='wrong', HTTP_X_FORWARDED_FOR=f'10.0.0.{i}{real_ip}')
-                    .status_code
+                    self.login(password='wrong', HTTP_X_FORWARDED_FOR=f'10.0.0.{i}{real_ip}').status_code
                     for i in range(3)
                 ]
                 self.assertEqual(codes[-1], status.HTTP_429_TOO_MANY_REQUESTS)
@@ -255,9 +256,7 @@ class CreateDemoUserTests(APITestCase):
         call_command('create_demo_user', stdout=out)
         self.assertIn('Updated', out.getvalue())
         self.assertTrue(Account.objects.get(username='demo').is_active)
-        response = self.client.post(
-            reverse('auth-token'), {'username': 'demo', 'password': 'demo-pass'}
-        )
+        response = self.client.post(reverse('auth-token'), {'username': 'demo', 'password': 'demo-pass'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     # The command never resets a staff account's password
@@ -271,9 +270,7 @@ class CreateDemoUserTests(APITestCase):
     def test_reset_demo_creates_working_login(self):
         cache.clear()
         self.run_command('reset_demo')
-        response = self.client.post(
-            reverse('auth-token'), {'username': 'demo', 'password': 'demo-pass'}
-        )
+        response = self.client.post(reverse('auth-token'), {'username': 'demo', 'password': 'demo-pass'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('token', response.json())
 
@@ -290,9 +287,7 @@ class LoginThrottleRateSettingTests(SimpleTestCase):
     def test_default_and_custom_rate(self):
         rates = self.load_settings()['REST_FRAMEWORK']['DEFAULT_THROTTLE_RATES']
         self.assertEqual(rates['login'], '20/min')
-        rates = self.load_settings(LOGIN_THROTTLE_RATE='5/hour')['REST_FRAMEWORK'][
-            'DEFAULT_THROTTLE_RATES'
-        ]
+        rates = self.load_settings(LOGIN_THROTTLE_RATE='5/hour')['REST_FRAMEWORK']['DEFAULT_THROTTLE_RATES']
         self.assertEqual(rates['login'], '5/hour')
 
     # An empty or malformed rate stops startup instead of making every login a 500

@@ -1,13 +1,14 @@
-from api.models import Blog, User
-from api.permissions import IsAuthorAccountOrReadOnly, IsStaff
-from api.serializers import BlogSerializer, UserSerializer, UserUpdateSerializer
-from api.views.schema_responses import FORBIDDEN, UNAUTHORIZED
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import filters, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
+
+from api.models import Blog, User
+from api.permissions import IsAuthorAccountOrReadOnly, IsStaff
+from api.serializers import BlogSerializer, UserSerializer, UserUpdateSerializer
+from api.views.schema_responses import FORBIDDEN, UNAUTHORIZED
 
 # Writes need a token (401) and the author's own account, or staff for create/delete (403)
 WRITE_ERRORS = {401: UNAUTHORIZED, 403: FORBIDDEN}
@@ -16,7 +17,8 @@ WRITE_ERRORS = {401: UNAUTHORIZED, 403: FORBIDDEN}
 @extend_schema_view(
     list=extend_schema(operation_id='Get_Users'),
     create=extend_schema(
-        operation_id='Create_User', responses={201: UserSerializer, **WRITE_ERRORS},
+        operation_id='Create_User',
+        responses={201: UserSerializer, **WRITE_ERRORS},
     ),
     retrieve=extend_schema(operation_id='Get_User'),
     update=extend_schema(

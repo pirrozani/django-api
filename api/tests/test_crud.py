@@ -34,9 +34,7 @@ class CrudTests(APITestCase):
         self.assertEqual(response.json()['username'], 'ada')
 
         data = {k: v for k, v in NEW_AUTHOR.items() if k != 'password'}
-        response = self.client.put(
-            url, {**data, 'first_name': 'Augusta'}, format='json'
-        )
+        response = self.client.put(url, {**data, 'first_name': 'Augusta'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()['first_name'], 'Augusta')
 
@@ -45,9 +43,7 @@ class CrudTests(APITestCase):
         self.assertEqual(response.json()['first_name'], 'Augusta')
         self.assertEqual(response.json()['last_name'], 'King')
 
-        self.assertEqual(
-            self.client.delete(url).status_code, status.HTTP_204_NO_CONTENT
-        )
+        self.assertEqual(self.client.delete(url).status_code, status.HTTP_204_NO_CONTENT)
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(set(response.json()), {'detail'})
@@ -72,9 +68,7 @@ class CrudTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()['content'], 'New')
 
-        self.assertEqual(
-            self.client.delete(url).status_code, status.HTTP_204_NO_CONTENT
-        )
+        self.assertEqual(self.client.delete(url).status_code, status.HTTP_204_NO_CONTENT)
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(set(response.json()), {'detail'})
@@ -101,9 +95,7 @@ class AnonymousWriteTests(APITestCase):
     # One author with one blog; the client stays anonymous
     def setUp(self):
         self.author = make_author('alee')
-        self.blog = Blog.objects.create(
-            user=self.author, title='Hello', content='World'
-        )
+        self.blog = Blog.objects.create(user=self.author, title='Hello', content='World')
 
     # Anonymous POST, PUT, PATCH and DELETE are 401s with a detail body
     def test_writes_return_401(self):

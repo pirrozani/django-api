@@ -6,7 +6,9 @@ from rest_framework import serializers
 class AccountSerializer(serializers.ModelSerializer):
     # The author this account writes as; null when the account has no author profile
     author_id = serializers.IntegerField(
-        source='author.id', read_only=True, allow_null=True,
+        source='author.id',
+        read_only=True,
+        allow_null=True,
         help_text='Id of the author this account writes as, or null if it has none.',
     )
 
