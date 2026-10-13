@@ -1,5 +1,7 @@
 import logging
 
+from rest_framework.throttling import BaseThrottle
+
 logger = logging.getLogger(__name__)
 
 
@@ -9,17 +11,21 @@ class LogUserRequestMiddleware:
 
     def __call__(self, request):
         response = self.get_response(request)
-        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
         user = request.user
-
-        if x_forwarded_for:
-            ip = x_forwarded_for.split(',')[0]
-        else:
-            ip = request.META.get('REMOTE_ADDR')
 
         if user.is_authenticated:
             username = user.username
         else:
             username = 'Anonymous'
-        logger.info(f"Request by {username} using IP: {ip}")
+
+        # Client IP as the throttles see it (NUM_PROXIES), plus the raw chain to
+        # verify the hop count
+        ip = BaseThrottle().get_ident(request)
+        logger.info(
+            'Request by %s using IP: %s (remote_addr=%s, x_forwarded_for=%s)',
+            username,
+            ip,
+            request.META.get('REMOTE_ADDR'),
+            request.META.get('HTTP_X_FORWARDED_FOR', '-'),
+        )
         return response
