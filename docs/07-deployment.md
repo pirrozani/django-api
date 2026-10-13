@@ -45,4 +45,6 @@ Render doesn't document how many proxies sit in front of gunicorn, so set `NUM_P
 3. Set `NUM_PROXIES` in Render's environment and redeploy.
 4. Repeat the `curl`. The logged `IP:` must be your real IP, not `198.51.100.1` and not a Render address. Never set the value higher than the count you observed: the extra entries are client-controlled, so a client could pick its own throttle bucket.
 
+**Observed on Render (2026-10-13): `NUM_PROXIES=3`.** Render appends to a client-supplied header. After the client's own entry come a Cloudflare edge and a Render load balancer, and `remote_addr` is a local proxy inside the container that doesn't add an entry. So the chain ends `…, <client>, <cloudflare edge>, <render lb>`, and the client is third from the right. With `1` the throttle keyed on the load balancer and with `2` on the Cloudflare edge, both shared by many visitors. Render's own health probe sends no header, so it falls back to `remote_addr`.
+
 If logins start sharing one bucket again (everyone gets 429 together), Render's proxy topology changed: repeat these steps.
