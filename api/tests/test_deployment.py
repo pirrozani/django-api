@@ -154,6 +154,38 @@ class SecretKeyTests(SimpleTestCase):
             load_settings(**{**PRODUCTION_ENV, 'SECRET_KEY': 'change-me'})
 
 
+class EnvListSettingsTests(SimpleTestCase):
+    LIST_SETTINGS = ('ALLOWED_HOSTS', 'CSRF_TRUSTED_ORIGINS', 'CORS_ALLOWED_ORIGINS')
+
+    # Spaces around the commas are stripped, so every entry still matches (#33)
+    def test_spaced_values_are_stripped(self):
+        values = {
+            'ALLOWED_HOSTS': (
+                'localhost, api.example.com',
+                ['localhost', 'api.example.com'],
+            ),
+            'CSRF_TRUSTED_ORIGINS': (
+                'https://a.example , https://b.example',
+                ['https://a.example', 'https://b.example'],
+            ),
+            'CORS_ALLOWED_ORIGINS': (
+                'https://x.example, http://localhost:5173, ',
+                ['https://x.example', 'http://localhost:5173'],
+            ),
+        }
+        config = load_settings(**{name: raw for name, (raw, _) in values.items()})
+        for name, (_, expected) in values.items():
+            with self.subTest(setting=name):
+                self.assertEqual(config[name], expected)
+
+    # Unset variables give an empty list, never allow-all or default hosts
+    def test_unset_values_default_to_empty(self):
+        config = load_settings(DEBUG='True')
+        for name in self.LIST_SETTINGS:
+            with self.subTest(setting=name):
+                self.assertEqual(config[name], [])
+
+
 class StaticFilesServingTests(TestCase):
     # With DEBUG=False, WhiteNoise serves the collected admin CSS (#7)
     def test_admin_css_served_without_debug(self):
