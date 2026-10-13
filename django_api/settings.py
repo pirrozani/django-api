@@ -25,6 +25,11 @@ env = environ.Env(
 environ.Env.read_env(BASE_DIR / '.env')
 
 
+# Comma-separated env list with the whitespace around each entry removed
+def env_list(name):
+    return [value.strip() for value in env.list(name, default=[]) if value.strip()]
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -41,7 +46,7 @@ if not DEBUG and (SECRET_KEY == 'change-me' or len(SECRET_KEY) < 50):
         'SECRET_KEY must be a random value of 50+ characters when DEBUG is off.'
     )
 
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
+ALLOWED_HOSTS = env_list('ALLOWED_HOSTS')
 
 # Application definition
 
@@ -200,13 +205,13 @@ STORAGES = {
 
 # Exact origins only (scheme + host, no trailing slash). Token auth needs no cookies,
 # so CORS_ALLOW_CREDENTIALS stays False
-CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=[])
+CORS_ALLOWED_ORIGINS = env_list('CORS_ALLOWED_ORIGINS')
 
 
 # Security behind Render's HTTPS proxy
 # https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[])
+CSRF_TRUSTED_ORIGINS = env_list('CSRF_TRUSTED_ORIGINS')
 if not DEBUG:
     # Render terminates TLS and forwards the original scheme in X-Forwarded-Proto
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
