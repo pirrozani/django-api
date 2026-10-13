@@ -249,7 +249,7 @@ LOGGING = {
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'DjangoAPI',
-    'DESCRIPTION': ('User and Blog API for Django project. Authorize with tokenAuth using the format "Token <token>".'),
+    'DESCRIPTION': 'User and Blog API for Django project. Authorize with tokenAuth using the format "Token <token>".',
     'VERSION': '0.1.0',
     # Security schemes and per-operation requirements are generated from
     # DEFAULT_AUTHENTICATION_CLASSES; don't hand-write SECURITY.
